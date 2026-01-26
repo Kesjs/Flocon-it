@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Package, MapPin, User, LogOut, Menu, X } from "lucide-react";
+import { Package, MapPin, User, LogOut, Menu, X, ShoppingBag, Heart, TrendingUp, Calendar, CreditCard, Settings, Bell, Star, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 

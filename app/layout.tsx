@@ -15,6 +15,16 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "Flocon - E-commerce de qualité",
   description: "Découvrez nos collections hiver et Saint-Valentin",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon.svg', sizes: '16x16', type: 'image/svg+xml' }
+    ],
+    apple: [
+      { url: '/favicon.svg' }
+    ],
+    shortcut: '/favicon.svg'
+  }
 };
 
 export default function RootLayout({
