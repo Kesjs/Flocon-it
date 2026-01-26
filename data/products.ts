@@ -225,7 +225,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviewsCount: 198,
     images: [
-      'https://www.cdiscount.com/pdt2/1/2/0/1/700x700/auc9399422434120/rw/humidificateur-d-arome-purificateur-d-air-humidi.jpg'
+      'https://www.cdiscount.com/pdt2/6/4/1/1/700x700/aaarc22641/rw/diffuseur-darmes-.jpg'
     ],
     stock: 25,
     badge: 'Aromathérapie',
@@ -244,9 +244,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 156,
     images: [
-      '/images/products/duo-tasses-1.jpg',
-      '/images/products/duo-tasses-2.jpg',
-      '/images/products/duo-tasses-3.jpg'
+      'https://mycrazystuff.com/14544-width_1000/coffret-duo-mugs-toi-et-moi.jpg'
     ],
     stock: 22,
     badge: 'Cadeau parfait',
@@ -264,10 +262,8 @@ export const products: Product[] = [
     rating: 4.7,
     reviewsCount: 98,
     images: [
-      '/images/products/bijou-flocon-1.jpg',
-      '/images/products/bijou-flocon-2.jpg',
-      '/images/products/bijou-flocon-3.jpg',
-      '/images/products/bijou-flocon-4.jpg'
+      'https://www.emmafashionstyle.fr/img_s1/74984/boutique/img_5429.jpg',
+      
     ],
     stock: 8,
     badge: 'Édition limitée',
@@ -284,11 +280,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 267,
     images: [
-      '/images/products/pack-amoureux-1.jpg',
-      '/images/products/pack-amoureux-2.jpg',
-      '/images/products/pack-amoureux-3.jpg',
-      '/images/products/pack-amoureux-4.jpg',
-      '/images/products/pack-amoureux-5.jpg'
+      'https://m.media-amazon.com/images/I/81awtKl6JiL.jpg',
     ],
     stock: 12,
     badge: 'Coup de cœur',
@@ -305,9 +297,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviewsCount: 189,
     images: [
-      '/images/products/bracelet-couple-1.jpg',
-      '/images/products/bracelet-couple-2.jpg',
-      '/images/products/bracelet-couple-3.jpg'
+      'https://img.fruugo.com/product/9/66/451672669_max.jpg'
     ],
     stock: 15,
     badge: 'Personnalisable',
@@ -317,17 +307,15 @@ export const products: Product[] = [
     id: '17',
     slug: 'rose-éternelle',
     name: 'Rose Éternelle Dôme Verre',
-    price: 89.99,
-    oldPrice: 119.99,
+    price: 80,
+    oldPrice: 109.99,
     description: 'Rose naturelle stabilisée dans dôme en verre. Durée de vie 3-5 ans. Lumière LED intégrée. Message personnalisé possible.',
     category: 'Saint-Valentin',
     subCategory: 'Fleurs Symboliques',
     rating: 4.8,
     reviewsCount: 234,
     images: [
-      '/images/products/rose-eternelle-1.jpg',
-      '/images/products/rose-eternelle-2.jpg',
-      '/images/products/rose-eternelle-3.jpg'
+      'https://m.media-amazon.com/images/I/61vYxTN+w1L.jpg'
     ],
     stock: 18,
     badge: 'Amour éternel',
@@ -337,15 +325,14 @@ export const products: Product[] = [
     id: '18',
     slug: 'parfum-couple',
     name: 'Coffret Parfums Couple',
-    price: 159.99,
+    price: 130,
     description: 'Deux parfums créés pour s\'harmoniser. Notes femme : fleur blanche et vanille. Notes homme : bois de cèdre et musc.',
     category: 'Saint-Valentin',
     subCategory: 'Parfums & Senteurs',
     rating: 4.7,
     reviewsCount: 145,
     images: [
-      '/images/products/parfum-couple-1.jpg',
-      '/images/products/parfum-couple-2.jpg'
+      'https://www.yslbeauty.fr/on/demandware.static/-/Sites-ysl-master-catalog/default/dw04909e50/pdp/HOLIDAY-2025/pdpsection-le-parfum-holiday-collector-desk.jpg'
     ],
     stock: 10,
     badge: 'Harmonie',
@@ -362,9 +349,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 312,
     images: [
-      '/images/products/diner-chandelles-1.jpg',
-      '/images/products/diner-chandelles-2.jpg',
-      '/images/products/diner-chandelles-3.jpg'
+      'https://mongraindesucre.com/wp-content/uploads/2025/02/1738374093-diner-aux-chandelles-top-des-meilleures-recettes-pour-une-soiree-romantique-1024x585.jpg'
     ],
     stock: 20,
     badge: 'Moment magique',
@@ -373,7 +358,7 @@ export const products: Product[] = [
   {
     id: '20',
     slug: 'collier-message',
-    name: 'Collier Message Cacheté',
+    name: 'Collier Secretum',
     price: 119.99,
     description: 'Collier en argent avec médaillon ouvrant contenant un mini message personnalisé. Gravure extérieure incluse.',
     category: 'Saint-Valentin',
@@ -381,9 +366,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 167,
     images: [
-      '/images/products/collier-message-1.jpg',
-      '/images/products/collier-message-2.jpg',
-      '/images/products/collier-message-3.jpg'
+      'https://www.maisondpm.fr/cdn/shop/files/collier-personnalisable-avec-message-cache-Photoroom.jpg?v=1724542295'
     ],
     stock: 6,
     badge: 'Secret d\'amour',
@@ -393,15 +376,14 @@ export const products: Product[] = [
     id: '21',
     slug: 'massage-couple',
     name: 'Kit Massage Couple Luxe',
-    price: 69.99,
+    price: 49.99,
     description: 'Set complet avec 3 huiles de massage bio, bougies parfumées et guide des techniques. Packaging élégant et recyclable.',
     category: 'Saint-Valentin',
     subCategory: 'Bien-être Couple',
     rating: 4.6,
     reviewsCount: 198,
     images: [
-      '/images/products/massage-couple-1.jpg',
-      '/images/products/massage-couple-2.jpg'
+      'https://i.etsystatic.com/40337439/r/il/270617/7599337322/il_fullxfull.7599337322_2stz.jpg'
     ],
     stock: 25,
     badge: 'Détente',
@@ -418,9 +400,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 89,
     images: [
-      '/images/products/coffre-romantique-1.jpg',
-      '/images/products/coffre-romantique-2.jpg',
-      '/images/products/coffre-romantique-3.jpg'
+      'https://cadeau-couple.fr/wp-content/uploads/2024/09/Boitesouvenircouple_2_1.jpg'
     ],
     stock: 12,
     badge: 'Héritage',
@@ -437,8 +417,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviewsCount: 234,
     images: [
-      '/images/products/champagne-amour-1.jpg',
-      '/images/products/champagne-amour-2.jpg'
+      'https://www.brut-de-champ.com/wp-content/uploads/william_deutz.10.jpg'
     ],
     stock: 30,
     badge: 'Célébration',
@@ -448,15 +427,14 @@ export const products: Product[] = [
     id: '24',
     slug: 'puzzle-cœur',
     name: 'Puzzle Photo Cœur 1000pcs',
-    price: 54.99,
+    price: 34.99,
     description: 'Puzzle personnalisé avec votre photo en forme de cœur. 1000 pièces de qualité premium. Boîte cadeau design.',
     category: 'Saint-Valentin',
     subCategory: 'Jeux & Divertissement',
     rating: 4.5,
     reviewsCount: 156,
     images: [
-      '/images/products/puzzle-coeur-1.jpg',
-      '/images/products/puzzle-coeur-2.jpg'
+      'https://m.media-amazon.com/images/I/71ZTg9+7AXL._AC_UF1000,1000_QL80_.jpg'
     ],
     stock: 35,
     badge: 'Personnalisé',
