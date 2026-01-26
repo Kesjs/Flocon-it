@@ -113,7 +113,7 @@ export default function HomePage() {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1544441893-675973e31985?w=1920&h=1080&fit=crop"
+            src="/white-rose-flower-red-tablecloth-blue.jpg"
             alt="Hero background"
             fill
             className="object-cover"
