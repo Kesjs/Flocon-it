@@ -22,7 +22,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-rose rounded-lg hover:bg-opacity-90 transition-colors font-medium"
+                className="px-6 py-2 bg-rose-custom rounded-lg hover:bg-opacity-90 transition-colors font-medium"
               >
                 Iscriviti
               </button>

@@ -125,7 +125,7 @@ export default function ProductPage() {
               >
                 <Heart 
                   className={`w-5 h-5 ${
-                    isWishlisted ? 'fill-rose text-rose' : 'text-gray-600'
+                    isWishlisted ? 'fill-rose text-rose-custom' : 'text-gray-600'
                   }`}
                 />
               </button>
@@ -139,7 +139,7 @@ export default function ProductPage() {
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
                     className={`relative aspect-square w-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                      selectedImageIndex === index ? 'border-rose' : 'border-gray-200'
+                      selectedImageIndex === index ? 'border-rose-custom' : 'border-gray-200'
                     }`}
                   >
                     <Image
@@ -166,7 +166,7 @@ export default function ProductPage() {
                     product.badge === 'Nouveauté' ? 'bg-blue-100 text-blue-800' :
                     product.badge === 'Cadeau parfait' ? 'bg-pink-100 text-pink-800' :
                     product.badge === 'Édition limitée' ? 'bg-purple-100 text-purple-800' :
-                    'bg-rose-100 text-rose-800'
+                    'bg-rose-custom-100 text-rose-custom-800'
                   }`}>
                     {product.badge}
                   </span>
@@ -249,7 +249,7 @@ export default function ProductPage() {
 
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-rose text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center space-x-2"
+                className="w-full text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center space-x-2" style={{ backgroundColor: 'var(--rose)' }}
                 disabled={product.stock === 0}
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -260,21 +260,21 @@ export default function ProductPage() {
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-6 border-t border-gray-200">
               <div className="flex items-center space-x-3">
-                <Truck className="w-5 h-5 text-rose" />
+                <Truck className="w-5 h-5 text-rose-custom" />
                 <div>
                   <div className="font-medium text-textDark">Livraison offerte</div>
                   <div className="text-sm text-gray-600">Dès 50€ d'achat</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Shield className="w-5 h-5 text-rose" />
+                <Shield className="w-5 h-5 text-rose-custom" />
                 <div>
                   <div className="font-medium text-textDark">Garantie 30 jours</div>
                   <div className="text-sm text-gray-600">Satisfait ou remboursé</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <RefreshCw className="w-5 h-5 text-rose" />
+                <RefreshCw className="w-5 h-5 text-rose-custom" />
                 <div>
                   <div className="font-medium text-textDark">Retour facile</div>
                   <div className="text-sm text-gray-600">Sans questions</div>

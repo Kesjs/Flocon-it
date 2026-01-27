@@ -61,7 +61,7 @@ export default function ForgotPassword() {
           <div className="mt-8">
             <Link
               href="/login"
-              className="block w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors"
+              className="block w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors"
             >
               Retour à la connexion
             </Link>
@@ -122,7 +122,7 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

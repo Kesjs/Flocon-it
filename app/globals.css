@@ -7,7 +7,7 @@
 :root {
   --cream: #f9f7f2;
   --ice-blue: #93adb8;
-  --rose: #d48c8c;
+  --rose: #f52f71;
   --text-dark: #2c2c2c;
 }
 
@@ -19,4 +19,61 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif;
+}
+
+/* Classes personnalisées pour la couleur rose */
+.text-rose-custom {
+  color: var(--rose) !important;
+}
+
+.bg-rose-custom {
+  background-color: var(--rose) !important;
+}
+
+.border-rose-custom {
+  border-color: var(--rose) !important;
+}
+
+/* Classes pour les dégradés */
+.from-rose-custom {
+  --tw-gradient-from: var(--rose) !important;
+}
+
+.to-rose-custom {
+  --tw-gradient-to: var(--rose) !important;
+}
+
+.via-rose-custom {
+  --tw-gradient-via: var(--rose) !important;
+}
+
+/* Classes pour les variations de couleur */
+.from-rose-custom-50 {
+  --tw-gradient-from: rgba(245, 47, 113, 0.05) !important;
+}
+
+.to-rose-custom-50 {
+  --tw-gradient-to: rgba(245, 47, 113, 0.05) !important;
+}
+
+.from-rose-custom-100 {
+  --tw-gradient-from: rgba(245, 47, 113, 0.1) !important;
+}
+
+.to-rose-custom-100 {
+  --tw-gradient-to: rgba(245, 47, 113, 0.1) !important;
+}
+
+/* Classes pour les hover */
+.hover\:text-rose-custom:hover {
+  color: var(--rose) !important;
+}
+
+.hover\:bg-rose-custom:hover {
+  background-color: var(--rose) !important;
+}
+
+/* Classes pour les focus */
+.focus\:ring-rose-custom:focus {
+  --tw-ring-color: var(--rose) !important;
 }

@@ -75,7 +75,7 @@ export default function CheckoutSuccess() {
           </p>
           <Link
             href="/checkout"
-            className="inline-block bg-rose text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors"
+            className="inline-block bg-rose-custom text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors"
           >
             Retour au paiement
           </Link>
@@ -88,7 +88,7 @@ export default function CheckoutSuccess() {
     return (
       <div className="pt-28 min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-rose border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement des détails de votre commande...</p>
         </div>
       </div>
@@ -161,13 +161,13 @@ export default function CheckoutSuccess() {
         <div className="space-y-3">
           <Link
             href="/dashboard"
-            className="block w-full bg-gradient-to-r from-rose to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="block w-full bg-gradient-to-r from-rose-custom to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             Voir mes commandes
           </Link>
           <Link
             href="/boutique"
-            className="inline-flex items-center gap-2 text-rose hover:underline"
+            className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ShoppingBag className="w-4 h-4" />
             Continuer mes achats

@@ -130,10 +130,10 @@ export default function Login() {
 
           <div className="flex items-center justify-between">
             <label className="flex items-center">
-              <input type="checkbox" className="rounded border-gray-300 text-rose focus:ring-rose" />
+              <input type="checkbox" className="rounded border-gray-300 text-rose-custom focus:ring-rose" />
               <span className="ml-2 text-sm text-gray-600">Ricordami</span>
             </label>
-            <Link href="/forgot-password" className="text-sm text-rose hover:underline">
+            <Link href="/forgot-password" className="text-sm text-rose-custom hover:underline">
               Password dimenticata?
             </Link>
           </div>
@@ -141,7 +141,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -160,7 +160,7 @@ export default function Login() {
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Non hai ancora un account? {" "}
-            <Link href="/register" className="text-rose hover:underline font-medium">
+            <Link href="/register" className="text-rose-custom hover:underline font-medium">
               Registrati
             </Link>
           </p>

@@ -131,11 +131,11 @@ export default function BoutiquePage() {
             className="text-center"
           >
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Negozio Flocon
+              Boutique Flocon
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
-              Scopri la nostra selezione unica di prodotti per l'inverno e San Valentino. 
-              Creazioni artigianali che scaldano il cuore e l'anima.
+              Découvrez notre sélection unique de produits pour l'hiver et la Saint-Valentin.
+              Créations artisanales qui réchauffent le cœur et l'âme.
             </p>
           </motion.div>
         </div>
@@ -147,7 +147,7 @@ export default function BoutiquePage() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-8">
               <span className="text-sm text-gray-600">
-                {filteredProducts.length} prodotto{filteredProducts.length > 1 ? 's' : ''} trovato{filteredProducts.length > 1 ? 's' : ''}
+                {filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
               </span>
               
               {/* View Mode Toggle */}
@@ -173,7 +173,7 @@ export default function BoutiquePage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Cerca un prodotto..."
+                  placeholder="Rechercher un produit..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose w-64"
@@ -195,7 +195,7 @@ export default function BoutiquePage() {
               {/* Mobile Filter Button */}
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-rose text-white rounded-lg"
+                className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg" style={{ backgroundColor: 'var(--rose)' }}
               >
                 <Filter className="w-4 h-4" />
                 <span>Filtri</span>
@@ -219,9 +219,10 @@ export default function BoutiquePage() {
                     onClick={() => handleCategorySelect(category.id)}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                       selectedCategory === category.id
-                        ? 'bg-rose text-white'
+                        ? 'text-white'
                         : 'hover:bg-gray-100 text-textDark'
                     }`}
+                    style={{ backgroundColor: selectedCategory === category.id ? 'var(--rose)' : 'transparent' }}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{category.name}</span>
@@ -308,7 +309,7 @@ export default function BoutiquePage() {
                       }}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                         selectedCategory === category.id
-                          ? 'bg-rose text-white'
+                          ? 'bg-rose-custom text-white'
                           : 'hover:bg-gray-100 text-textDark'
                       }`}
                     >

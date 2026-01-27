@@ -75,7 +75,7 @@ export default function TrackOrder() {
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-rose hover:underline mb-8"
+          className="inline-flex items-center gap-2 text-rose-custom hover:underline mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour à l'accueil
@@ -128,7 +128,7 @@ export default function TrackOrder() {
                       width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
                     }}
                     transition={{ duration: 1, ease: "easeInOut" }}
-                    className="h-full bg-rose"
+                    className="h-full bg-rose-custom"
                   />
                 </div>
 
@@ -151,7 +151,7 @@ export default function TrackOrder() {
                           transition={{ delay: index * 0.2 }}
                           className={`w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all ${
                             isCompleted
-                              ? "bg-rose border-rose text-white"
+                              ? "bg-rose-custom border-rose-custom text-white"
                               : "bg-white border-gray-200 text-gray-400"
                           } ${isCurrent ? "ring-4 ring-rose/20" : ""}`}
                         >
@@ -187,7 +187,7 @@ export default function TrackOrder() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Statut actuel</p>
-                    <p className="font-semibold text-rose">
+                    <p className="font-semibold text-rose-custom">
                       {steps[currentStepIndex]?.label}
                     </p>
                   </div>
@@ -212,7 +212,7 @@ export default function TrackOrder() {
               <div className="text-center text-sm text-gray-600">
                 <p>
                   Des questions ?{" "}
-                  <Link href="/contact" className="text-rose hover:underline">
+                  <Link href="/contact" className="text-rose-custom hover:underline">
                     Contactez-nous
                   </Link>
                 </p>

@@ -11,8 +11,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
-  title: "Flocon - E-commerce di qualità",
-  description: "Scopri le nostre collezioni invernali e di San Valentino",
+  title: "Flocon - E-commerce de qualité",
+  description: "Découvrez nos collections hivernales et de la Saint-Valentin",
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },

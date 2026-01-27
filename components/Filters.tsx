@@ -97,7 +97,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="text-sm text-rose hover:text-rose-600 transition-colors"
+            className="text-sm text-rose-custom hover:text-rose-custom-600 transition-colors"
           >
             Cancella tutto
           </button>
@@ -110,7 +110,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
           onClick={() => toggleSection('category')}
           className="flex items-center justify-between w-full text-left mb-3 group"
         >
-          <h4 className="font-medium text-textDark group-hover:text-rose transition-colors">
+          <h4 className="font-medium text-textDark group-hover:text-rose-custom transition-colors">
             Categoria
           </h4>
           {expandedSections.category ? (
@@ -128,7 +128,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
                   type="checkbox"
                   checked={selectedCategories.includes(category)}
                   onChange={() => handleCategoryChange(category)}
-                  className="w-4 h-4 text-rose border-gray-300 rounded focus:ring-rose focus:ring-2"
+                  className="w-4 h-4 text-rose-custom border-gray-300 rounded focus:ring-rose focus:ring-2"
                 />
                 <span className="text-gray-700 group-hover:text-textDark transition-colors">
                   {category}
@@ -145,7 +145,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
           onClick={() => toggleSection('price')}
           className="flex items-center justify-between w-full text-left mb-3 group"
         >
-          <h4 className="font-medium text-textDark group-hover:text-rose transition-colors">
+          <h4 className="font-medium text-textDark group-hover:text-rose-custom transition-colors">
             Prezzo
           </h4>
           {expandedSections.price ? (
@@ -188,7 +188,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
           onClick={() => toggleSection('ambiance')}
           className="flex items-center justify-between w-full text-left mb-3 group"
         >
-          <h4 className="font-medium text-textDark group-hover:text-rose transition-colors">
+          <h4 className="font-medium text-textDark group-hover:text-rose-custom transition-colors">
             Ambienza
           </h4>
           {expandedSections.ambiance ? (
@@ -206,7 +206,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
                   type="checkbox"
                   checked={selectedAmbiances.includes(ambiance)}
                   onChange={() => handleAmbianceChange(ambiance)}
-                  className="w-4 h-4 text-rose border-gray-300 rounded focus:ring-rose focus:ring-2"
+                  className="w-4 h-4 text-rose-custom border-gray-300 rounded focus:ring-rose focus:ring-2"
                 />
                 <span className="text-gray-700 group-hover:text-textDark transition-colors">
                   {ambiance}
@@ -225,12 +225,12 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
             {selectedCategories.map((cat) => (
               <span
                 key={cat}
-                className="px-2 py-1 bg-rose-100 text-rose-800 text-xs rounded-full flex items-center space-x-1"
+                className="px-2 py-1 bg-rose-custom-100 text-rose-custom-800 text-xs rounded-full flex items-center space-x-1"
               >
                 <span>{cat}</span>
                 <button
                   onClick={() => handleCategoryChange(cat)}
-                  className="hover:text-rose-600"
+                  className="hover:text-rose-custom-600"
                 >
                   <X className="w-3 h-3" />
                 </button>

@@ -82,6 +82,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'mongraindesucre.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+      },
     ],
   },
 }

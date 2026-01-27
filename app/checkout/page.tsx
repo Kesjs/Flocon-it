@@ -166,7 +166,7 @@ export default function Checkout() {
           </h1>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-rose hover:underline"
+            className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
             Continuer vos achats
@@ -181,7 +181,7 @@ export default function Checkout() {
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-rose hover:underline mb-8"
+          className="inline-flex items-center gap-2 text-rose-custom hover:underline mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour à la boutique
@@ -217,7 +217,7 @@ export default function Checkout() {
               </div>
 
               {/* Informations sur le paiement */}
-              <div className="bg-gradient-to-r from-rose-50 to-iceBlue-50 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-rose-custom-50 to-iceBlue-50 rounded-lg p-4">
                 <h3 className="font-semibold text-textDark mb-3">Informations de livraison et paiement</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Vos informations de livraison et de paiement seront collectées de manière sécurisée via Stripe Checkout.
@@ -242,13 +242,13 @@ export default function Checkout() {
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-semibold">Total ({cartItems.length} article{cartItems.length > 1 ? 's' : ''})</span>
-                  <span className="text-2xl font-bold text-rose">{total.toFixed(2)} €</span>
+                  <span className="text-2xl font-bold text-rose-custom">{total.toFixed(2)} €</span>
                 </div>
               </div>
 
               <button
                 onClick={handleProceedToPayment}
-                className="w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2"
               >
                 <CreditCard className="w-5 h-5" />
                 Voir le résumé et payer
@@ -327,7 +327,7 @@ export default function Checkout() {
                         </p>
                         <div className="flex items-center gap-4 mt-2">
                           <span className="text-sm text-gray-600">Quantité: {item.quantity}</span>
-                          <span className="text-sm font-medium text-rose">{item.price.toFixed(2)} €/pièce</span>
+                          <span className="text-sm font-medium text-rose-custom">{item.price.toFixed(2)} €/pièce</span>
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -336,7 +336,7 @@ export default function Checkout() {
                         </div>
                         <button
                           onClick={() => handleQuickView(item)}
-                          className="text-xs text-rose hover:underline flex items-center gap-1 mt-1"
+                          className="text-xs text-rose-custom hover:underline flex items-center gap-1 mt-1"
                         >
                           <Eye className="w-3 h-3" />
                           Voir
@@ -352,7 +352,7 @@ export default function Checkout() {
                       <div className="text-lg font-bold text-textDark">Total</div>
                       <div className="text-sm text-gray-600">TVA incluse</div>
                     </div>
-                    <div className="text-2xl font-bold text-rose">{total.toFixed(2)} €</div>
+                    <div className="text-2xl font-bold text-rose-custom">{total.toFixed(2)} €</div>
                   </div>
                 </div>
               </div>
@@ -389,7 +389,7 @@ export default function Checkout() {
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
-                  className="w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <>
@@ -411,7 +411,7 @@ export default function Checkout() {
 
               <button
                 onClick={() => setShowSummary(false)}
-                className="w-full text-center text-rose hover:underline text-sm font-medium"
+                className="w-full text-center text-rose-custom hover:underline text-sm font-medium"
               >
                 Modifier mes informations
               </button>
@@ -473,7 +473,7 @@ export default function Checkout() {
                 
                 <div className="space-y-4">
                   <div>
-                    <p className="text-3xl font-bold text-rose">{selectedProduct.price.toFixed(2)} €</p>
+                    <p className="text-3xl font-bold text-rose-custom">{selectedProduct.price.toFixed(2)} €</p>
                     <p className="text-sm text-gray-600">Prix unitaire</p>
                   </div>
                   
@@ -493,7 +493,7 @@ export default function Checkout() {
                       </div>
                       <div className="flex justify-between items-center mt-2">
                         <span className="text-gray-600">Total:</span>
-                        <span className="font-bold text-lg text-rose">
+                        <span className="font-bold text-lg text-rose-custom">
                           {(selectedProduct.price * selectedProduct.quantity).toFixed(2)} €
                         </span>
                       </div>
@@ -510,7 +510,7 @@ export default function Checkout() {
                     <Link
                       href={`/boutique`}
                       onClick={closeProductModal}
-                      className="flex-1 bg-rose text-white py-2 rounded-lg font-medium hover:bg-rose/90 transition-colors text-center"
+                      className="flex-1 bg-rose-custom text-white py-2 rounded-lg font-medium hover:bg-rose-custom/90 transition-colors text-center"
                     >
                       Voir la boutique
                     </Link>

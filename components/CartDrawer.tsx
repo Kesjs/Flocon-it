@@ -61,7 +61,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <Link
                     href="/"
                     onClick={onClose}
-                    className="text-rose hover:underline"
+                    className="text-rose-custom hover:underline"
                   >
                     Continua i tuoi acquisti
                   </Link>

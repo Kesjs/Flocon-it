@@ -186,15 +186,15 @@ export default function Register() {
               type="checkbox"
               id="terms"
               required
-              className="rounded border-gray-300 text-rose focus:ring-rose"
+              className="rounded border-gray-300 text-rose-custom focus:ring-rose"
             />
             <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
               Accetto le{" "}
-              <Link href="/cgv" className="text-rose hover:underline">
+              <Link href="/cgv" className="text-rose-custom hover:underline">
                 condizioni generali di vendita
               </Link>{" "}
               e la{" "}
-              <Link href="/politique-confidentialite" className="text-rose hover:underline">
+              <Link href="/politique-confidentialite" className="text-rose-custom hover:underline">
                 politica sulla privacy
               </Link>
             </label>
@@ -203,7 +203,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading || checkingEmail}
-            className="w-full bg-rose text-white py-3 rounded-lg font-semibold hover:bg-rose/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {checkingEmail ? (
               <>
@@ -227,7 +227,7 @@ export default function Register() {
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Hai già un account? {" "}
-            <Link href="/login" className="text-rose hover:underline font-medium">
+            <Link href="/login" className="text-rose-custom hover:underline font-medium">
               Accedi
             </Link>
           </p>

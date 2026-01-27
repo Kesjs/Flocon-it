@@ -58,11 +58,12 @@ export default function Header() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <Link href="#collection-hiver" className="text-textDark hover:text-rose transition-all duration-300 font-medium relative group">
+                <Link href="#collection-hiver" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    L'Arte del Cocooning
+                    L'Art du Cocooning
                     <motion.div 
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose origin-left"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
+                      style={{ backgroundColor: 'var(--rose)' }}
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -75,11 +76,12 @@ export default function Header() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <Link href="#collection-valentin" className="text-textDark hover:text-rose transition-all duration-300 font-medium relative group">
+                <Link href="#collection-valentin" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    Fiocchi di Tenerezza
+                    Flocons de Tendresse
                     <motion.div 
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose origin-left"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
+                      style={{ backgroundColor: 'var(--rose)' }}
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -92,11 +94,12 @@ export default function Header() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <Link href="/boutique" className="text-textDark hover:text-rose transition-all duration-300 font-medium relative group">
+                <Link href="/boutique" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    Negozio
+                    Boutique
                     <motion.div 
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose origin-left"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
+                      style={{ backgroundColor: 'var(--rose)' }}
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -119,11 +122,11 @@ export default function Header() {
                   animate={{ rotate: isScrolled ? 360 : 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
                 >
-                  <Search className="w-4 h-4 text-gray-600 group-hover:text-rose transition-colors duration-200" />
+                  <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
                 </motion.div>
                 <input
                   type="text"
-                  placeholder="Cerca..."
+                  placeholder="Rechercher..."
                   className="ml-2 bg-transparent border-none outline-none text-sm w-32 group-hover:w-40 transition-all duration-300"
                 />
               </motion.div>
@@ -136,21 +139,22 @@ export default function Header() {
                   <>
                     <motion.button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                      className="p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 flex items-center justify-center group"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.9 }}
+                      className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       transition={{ duration: 0.2 }}
                     >
                       <motion.div
                         animate={{ rotate: isProfileDropdownOpen ? 360 : 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                       >
-                        <div className="w-8 h-8 bg-rose rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-semibold">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
+                          <span className="text-white text-xs font-semibold">
                             {user.email?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                       </motion.div>
+                      <span className="text-sm font-medium">Mon compte</span>
                     </motion.button>
 
                     <AnimatePresence>
@@ -165,7 +169,7 @@ export default function Header() {
                           {/* User Info Header */}
                           <div className="px-4 pb-4 border-b border-gray-100">
                             <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 bg-rose rounded-full flex items-center justify-center">
+                              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
                                 <span className="text-white text-lg font-semibold">
                                   {user.email?.charAt(0).toUpperCase()}
                                 </span>
@@ -190,7 +194,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Settings className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose transition-colors">Cruscotto</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Tableau de bord</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -204,7 +208,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Package className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose transition-colors">I miei ordini</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Mes commandes</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -218,7 +222,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Heart className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose transition-colors">La mia wishlist</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Ma wishlist</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -236,7 +240,7 @@ export default function Header() {
                               <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
                                 <LogOut className="w-4 h-4 text-red-600" />
                               </div>
-                              <span className="text-red-600 group-hover:text-red-700 transition-colors">Disconnessione</span>
+                              <span className="text-red-600 group-hover:text-red-700 transition-colors">Déconnexion</span>
                             </button>
                           </div>
                         </motion.div>
@@ -246,12 +250,13 @@ export default function Header() {
                 ) : (
                   <Link href="/login">
                     <motion.button
-                      className="p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 flex items-center justify-center group"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.9 }}
+                      className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <User className="w-5 h-5 text-textDark group-hover:text-rose transition-colors duration-200" />
+                      <User className="w-4 h-4" />
+                      <span className="text-sm font-medium">Se connecter</span>
                     </motion.button>
                   </Link>
                 )}
@@ -269,11 +274,11 @@ export default function Header() {
                   animate={{ rotate: cartCount > 0 ? 360 : 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
                 >
-                  <ShoppingCart className="w-5 h-5 text-textDark group-hover:text-rose transition-colors duration-200" />
+                  <ShoppingCart className="w-5 h-5 text-textDark group-hover:text-rose-custom-custom transition-colors duration-200" />
                 </motion.div>
                 {cartCount > 0 && (
                   <motion.span 
-                    className="absolute top-0 right-0 bg-rose text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                    className="absolute top-0 right-0 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 500, damping: 20 }}
@@ -296,21 +301,13 @@ export default function Header() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                   {isMenuOpen ? (
-                    <X className="w-5 h-5 text-textDark group-hover:text-rose transition-colors duration-200" />
+                    <X className="w-5 h-5 text-textDark group-hover:text-rose-custom-custom transition-colors duration-200" />
                   ) : (
-                    <Menu className="w-5 h-5 text-textDark group-hover:text-rose transition-colors duration-200" />
+                    <Menu className="w-5 h-5 text-textDark group-hover:text-rose-custom-custom transition-colors duration-200" />
                   )}
                 </motion.div>
               </motion.button>
 
-              {/* Italian Flag */}
-              <div className="hidden md:flex items-center ml-4 pl-4 border-l border-gray-200">
-                <div className="w-8 h-5 bg-white border border-gray-300 rounded shadow-sm relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-1/3 bg-green-600"></div>
-                  <div className="absolute inset-x-0 top-1/3 h-1/3 bg-white"></div>
-                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-red-600"></div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -325,7 +322,7 @@ export default function Header() {
                 className="md:hidden pb-4 border-t border-gray-200/50 mt-4 pt-4 overflow-hidden"
               >
                 <nav className="flex flex-col space-y-4">
-                  {["L'Arte del Cocooning", "Fiocchi di Tenerezza", "Negozio"].map((item, index) => (
+                  {["L'Art du Cocooning", "Flocons de Tendresse", "Boutique"].map((item, index) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -333,14 +330,15 @@ export default function Header() {
                       transition={{ duration: 0.2, delay: index * 0.1 }}
                     >
                       <Link
-                        href={item === "L'Arte del Cocooning" ? "#collection-hiver" : item === "Fiocchi di Tenerezza" ? "#collection-valentin" : "/boutique"}
+                        href={item === "L'Art du Cocooning" ? "#collection-hiver" : item === "Flocons de Tendresse" ? "#collection-valentin" : "/boutique"}
                         onClick={() => setIsMenuOpen(false)}
-                        className="text-textDark hover:text-rose transition-all duration-300 font-medium relative group block py-2"
+                        className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group block py-2"
                       >
                         <span className="relative">
                           {item}
                           <motion.div 
-                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose origin-left"
+                            className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
+                            style={{ backgroundColor: 'var(--rose)' }}
                             initial={{ scaleX: 0 }}
                             whileHover={{ scaleX: 1 }}
                             transition={{ duration: 0.3, ease: "easeOut" }}
@@ -356,10 +354,10 @@ export default function Header() {
                     className="flex items-center bg-gray-100/50 rounded-full px-4 py-2 mt-2 group"
                     whileHover={{ scale: 1.02 }}
                   >
-                    <Search className="w-4 h-4 text-gray-600 group-hover:text-rose transition-colors duration-200" />
+                    <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
                     <input
                       type="text"
-                      placeholder="Cerca..."
+                      placeholder="Rechercher..."
                       className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-40 transition-all duration-300"
                     />
                   </motion.div>

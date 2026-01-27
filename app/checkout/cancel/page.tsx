@@ -28,13 +28,13 @@ export default function CheckoutCancel() {
         <div className="space-y-3">
           <Link
             href="/checkout"
-            className="block w-full bg-gradient-to-r from-rose to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="block w-full bg-gradient-to-r from-rose-custom to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             Réessayer le paiement
           </Link>
           <Link
             href="/boutique"
-            className="inline-flex items-center gap-2 text-rose hover:underline"
+            className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ShoppingBag className="w-4 h-4" />
             Retour à la boutique

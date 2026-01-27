@@ -5,8 +5,8 @@ import { Truck, Gift } from "lucide-react";
 
 export default function AnnounceBar() {
   const messages = [
-    { icon: Truck, text: "Spedizione gratuita da 50€ di acquisto" },
-    { icon: Gift, text: "Confezione regalo San Valentino gratuita !" },
+    { icon: Truck, text: "Livraison gratuite à partir de 50€ d'achat" },
+    { icon: Gift, text: "Emballage cadeau Saint-Valentin gratuit !" },
   ];
 
   const fullMessage = messages
@@ -17,7 +17,7 @@ export default function AnnounceBar() {
     .join(" | ");
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-rose text-white py-2 overflow-hidden relative">
+    <div className="fixed top-0 left-0 right-0 z-40 text-white py-2 overflow-hidden relative" style={{ backgroundColor: 'var(--rose)' }}>
       <div className="flex items-center gap-2 whitespace-nowrap">
         <motion.div
           className="flex items-center gap-8"

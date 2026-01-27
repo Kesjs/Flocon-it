@@ -52,7 +52,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             product.badge === 'Nouveauté' ? 'bg-blue-100 text-blue-800' :
             product.badge === 'Cadeau parfait' ? 'bg-pink-100 text-pink-800' :
             product.badge === 'Édition limitée' ? 'bg-purple-100 text-purple-800' :
-            'bg-rose-100 text-rose-800'
+            'bg-rose-custom-100 text-rose-custom-800'
           }`}>
             {product.badge}
           </span>
@@ -66,7 +66,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       >
         <Heart 
           className={`w-4 h-4 ${
-            isWishlisted ? 'fill-rose text-rose' : 'text-gray-600'
+            isWishlisted ? 'fill-rose text-rose-custom' : 'text-gray-600'
           }`}
         />
       </button>
@@ -109,7 +109,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       <div className="p-4 pt-6">
         <div className="mb-2">
           <Link href={`/boutique/${product.slug}`} className="block">
-            <h3 className="font-semibold text-textDark hover:text-rose transition-colors line-clamp-2 leading-tight">
+            <h3 className="font-semibold text-textDark hover:text-rose-custom transition-colors line-clamp-2 leading-tight">
               {product.name}
             </h3>
           </Link>
@@ -121,7 +121,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
           <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
-          <Link href={`/boutique/${product.slug}`} className="text-xs text-rose hover:text-rose/80 font-medium mt-1 transition-colors inline-block">
+          <Link href={`/boutique/${product.slug}`} className="text-xs text-rose-custom hover:text-rose-custom/80 font-medium mt-1 transition-colors inline-block">
             Vedi di più →
           </Link>
         </div>

@@ -100,7 +100,7 @@ export default function Dashboard() {
     <div className="pt-28 min-h-screen bg-cream">
       {loading ? (
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-custom"></div>
         </div>
       ) : !user ? (
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -124,7 +124,7 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-rose to-iceBlue rounded-2xl p-8 mb-8 text-white shadow-xl"
+            className="bg-gradient-to-r from-rose-custom to-iceBlue rounded-2xl p-8 mb-8 text-white shadow-xl"
           >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-center gap-4">
@@ -166,7 +166,7 @@ export default function Dashboard() {
                 <div className="hidden lg:block w-px h-16 bg-white/30"></div>
                 <Link
                   href="/boutique"
-                  className="px-8 py-4 bg-white text-rose rounded-xl hover:bg-white/90 transition-all duration-300 font-black flex items-center justify-center gap-2 shadow-xl hover:scale-105"
+                  className="px-8 py-4 bg-white text-rose-custom rounded-xl hover:bg-white/90 transition-all duration-300 font-black flex items-center justify-center gap-2 shadow-xl hover:scale-105"
                 >
                   <ShoppingBag className="w-5 h-5" />
                   <span>Boutique</span>
@@ -215,7 +215,7 @@ export default function Dashboard() {
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       currentView === item.id
-                        ? "bg-rose text-white"
+                        ? "bg-rose-custom text-white"
                         : "text-textDark hover:bg-gray-100"
                     }`}
                   >
@@ -250,7 +250,7 @@ export default function Dashboard() {
                     </h1>
                     <p className="text-gray-600">Suivez votre activité et vos récompenses</p>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose to-iceBlue text-white rounded-full">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-custom to-iceBlue text-white rounded-full">
                     <Star className="w-5 h-5" />
                     <span className="font-semibold">{mockStats.loyaltyPoints} points</span>
                   </div>
@@ -262,11 +262,11 @@ export default function Dashboard() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-gradient-to-br from-rose-50 to-rose-100 p-6 rounded-xl border border-rose-200"
+                    className="bg-gradient-to-br from-rose-custom-50 to-rose-custom-100 p-6 rounded-xl border border-rose-custom-200"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <ShoppingBag className="w-8 h-8 text-rose" />
-                      <ArrowUpRight className="w-4 h-4 text-rose" />
+                      <ShoppingBag className="w-8 h-8 text-rose-custom" />
+                      <ArrowUpRight className="w-4 h-4 text-rose-custom" />
                     </div>
                     <div className="text-2xl font-bold text-textDark">{mockStats.totalOrders}</div>
                     <div className="text-sm text-gray-600">Commandes totales</div>
@@ -320,7 +320,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="bg-gradient-to-r from-rose to-iceBlue p-6 rounded-xl text-white"
+                  className="bg-gradient-to-r from-rose-custom to-iceBlue p-6 rounded-xl text-white"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -352,7 +352,7 @@ export default function Dashboard() {
                   </div>
                   <Link
                     href="/boutique"
-                    className="flex items-center gap-2 px-4 py-2 bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     <span>Nouvelle commande</span>
@@ -403,7 +403,7 @@ export default function Dashboard() {
                             <div className="text-sm text-gray-600">{order.items} article(s)</div>
                             <div className="text-xl font-bold text-textDark">{order.total.toFixed(2)} €</div>
                           </div>
-                          <button className="px-4 py-2 border border-rose text-rose rounded-lg hover:bg-rose hover:text-white transition-colors text-sm font-medium">
+                          <button className="px-4 py-2 border border-rose-custom text-rose-custom rounded-lg hover:bg-rose-custom hover:text-white transition-colors text-sm font-medium">
                             Voir détails
                           </button>
                         </div>
@@ -419,7 +419,7 @@ export default function Dashboard() {
                     <p className="text-gray-600 mb-6">Commencez vos achats pour voir vos commandes ici</p>
                     <Link
                       href="/boutique"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors font-medium"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors font-medium"
                     >
                       <ShoppingBag className="w-4 h-4" />
                       Découvrir nos produits
@@ -438,7 +438,7 @@ export default function Dashboard() {
                     </h1>
                     <p className="text-gray-600">Gérez vos adresses de livraison</p>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors">
                     <MapPin className="w-4 h-4" />
                     <span>Ajouter une adresse</span>
                   </button>
@@ -448,14 +448,14 @@ export default function Dashboard() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-br from-rose-50 to-rose-100 border border-rose-200 rounded-xl p-6"
+                    className="bg-gradient-to-br from-rose-custom-50 to-rose-custom-100 border border-rose-custom-200 rounded-xl p-6"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-rose rounded-full"></div>
+                        <div className="w-2 h-2 bg-rose-custom rounded-full"></div>
                         <h3 className="font-semibold text-textDark">Adresse principale</h3>
                       </div>
-                      <button className="text-rose hover:underline text-sm font-medium">
+                      <button className="text-rose-custom hover:underline text-sm font-medium">
                         Modifier
                       </button>
                     </div>
@@ -475,7 +475,7 @@ export default function Dashboard() {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="font-semibold text-textDark">Adresse secondaire</h3>
-                      <button className="text-rose hover:underline text-sm font-medium">
+                      <button className="text-rose-custom hover:underline text-sm font-medium">
                         Modifier
                       </button>
                     </div>
@@ -499,7 +499,7 @@ export default function Dashboard() {
                     </h1>
                     <p className="text-gray-600">Gérez vos informations personnelles</p>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose to-iceBlue text-white rounded-lg hover:opacity-90 transition-opacity">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-custom to-iceBlue text-white rounded-lg hover:opacity-90 transition-opacity">
                     <Settings className="w-4 h-4" />
                     <span>Paramètres</span>
                   </button>
@@ -548,7 +548,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="mt-6 flex gap-4">
-                        <button className="px-6 py-3 bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors font-medium">
+                        <button className="px-6 py-3 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors font-medium">
                           Sauvegarder
                         </button>
                         <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
@@ -570,14 +570,14 @@ export default function Dashboard() {
                             <div className="font-medium text-textDark">Newsletter</div>
                             <div className="text-sm text-gray-600">Recevoir nos offres et nouveautés</div>
                           </div>
-                          <input type="checkbox" defaultChecked className="w-5 h-5 text-rose rounded focus:ring-rose" />
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-rose-custom rounded focus:ring-rose" />
                         </label>
                         <label className="flex items-center justify-between">
                           <div>
                             <div className="font-medium text-textDark">Notifications SMS</div>
                             <div className="text-sm text-gray-600">Alertes de livraison et promotions</div>
                           </div>
-                          <input type="checkbox" className="w-5 h-5 text-rose rounded focus:ring-rose" />
+                          <input type="checkbox" className="w-5 h-5 text-rose-custom rounded focus:ring-rose" />
                         </label>
                       </div>
                     </motion.div>
@@ -589,7 +589,7 @@ export default function Dashboard() {
                     transition={{ delay: 0.2 }}
                     className="space-y-6"
                   >
-                    <div className="bg-gradient-to-br from-rose to-iceBlue rounded-xl p-6 text-white text-center">
+                    <div className="bg-gradient-to-br from-rose-custom to-iceBlue rounded-xl p-6 text-white text-center">
                       <div className="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center">
                         <User className="w-10 h-10" />
                       </div>
