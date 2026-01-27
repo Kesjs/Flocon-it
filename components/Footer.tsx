@@ -12,26 +12,26 @@ export default function Footer() {
               Newsletter
             </h3>
             <p className="text-gray-300 mb-4">
-              Ricevi le nostre ultime novità e offerte esclusive
+              Recevez nos dernières nouveautés et offres exclusives
             </p>
             <form className="flex gap-2">
               <input
                 type="email"
-                placeholder="La tua email"
+                placeholder="Votre email"
                 className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/40"
               />
               <button
                 type="submit"
                 className="px-6 py-2 bg-rose-custom rounded-lg hover:bg-opacity-90 transition-colors font-medium"
               >
-                Iscriviti
+                S'inscrire
               </button>
             </form>
           </div>
 
           {/* Liens légaux */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Informazioni</h3>
+            <h3 className="text-xl font-display font-bold mb-4">Informations</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/cgv" className="text-gray-300 hover:text-white transition-colors">
@@ -58,7 +58,7 @@ export default function Footer() {
 
           {/* Réseaux sociaux */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Seguici</h3>
+            <h3 className="text-xl font-display font-bold mb-4">Suivez-nous</h3>
             <div className="flex gap-4">
               <a
                 href="#"
@@ -93,7 +93,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-gray-300">
-          <p>&copy; 2026 Flocon. Tutti i diritti riservati.</p>
+          <p>&copy; 2026 Flocon. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

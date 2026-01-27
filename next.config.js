@@ -86,6 +86,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'img.freepik.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'placeducouple.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lemondedescadeaux.fr',
+      },
     ],
   },
 }

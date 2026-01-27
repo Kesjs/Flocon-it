@@ -6,154 +6,154 @@ export default function CGV() {
     <div className="pt-28 min-h-screen bg-gray-50 px-4">
       <div className="max-w-4xl mx-auto py-12">
         <h1 className="text-4xl font-display font-bold text-textDark mb-8">
-          Condizioni Generali di Vendita
+          Conditions Générales de Vente
         </h1>
         <div className="bg-white rounded-lg shadow-md p-8 space-y-6 text-gray-700">
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              1. Oggetto
+              1. Objet
             </h2>
             <p>
-              Le presenti Condizioni Generali di Vendita (CGV) regolano i rapporti contrattuali 
-              tra la società Flocon, SAS con capitale di 10 000€, iscritta al RCS di Parigi 
-              con il numero 123 456 789, con sede legale in 123 Rue de la Mode, 
-              75001 Parigi, Francia, e qualsiasi persona fisica o giuridica che acquista prodotti 
-              sul sito internet www.flocon.fr.
+              Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles 
+              entre la société Flocon, SAS avec capital de 10 000€, inscrite au RCS de Paris 
+              sous le numéro 123 456 789, ayant son siège social au 123 Rue de la Mode, 
+              75001 Paris, France, et toute personne physique ou morale achetant des produits 
+              sur le site internet www.flocon.fr.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              2. Prodotti
+              2. Produits
             </h2>
             <p>
-              I prodotti offerti in vendita sono quelli presenti sul sito internet 
-              www.flocon.fr nei limiti delle scorte disponibili. Flocon si impegna a fornire 
-              informazioni il più precise possibile sulle caratteristiche dei prodotti. 
-              Tuttavia, le foto dei prodotti non sono contrattuali.
+              Les produits proposés à la vente sont ceux présents sur le site internet 
+              www.flocon.fr dans la limite des stocks disponibles. Flocon s'engage à fournir 
+              des informations les plus précises possibles sur les caractéristiques des produits. 
+              Cependant, les photos des produits ne sont pas contractuelles.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              3. Prezzi
+              3. Prix
             </h2>
             <p>
-              I prezzi sono indicati in euro, tasse incluse (IVA). I costi di spedizione 
-              sono calcolati in base all'importo totale dell'ordine e alla modalità di spedizione scelta. 
-              Flocon si riserva il diritto di modificare i prezzi in qualsiasi momento, i prodotti essendo fatturati 
-              sulla base delle tariffe in vigore al momento della conferma dell'ordine.
+              Les prix sont indiqués en euros, toutes taxes comprises (TVA). Les frais de livraison 
+              sont calculés en fonction du montant total de la commande et du mode de livraison choisi. 
+              Flocon se réserve le droit de modifier les prix à tout moment, les produits étant facturés 
+              sur la base des tarifs en vigueur au moment de la confirmation de la commande.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              4. Ordine
+              4. Commande
             </h2>
             <p>
-              Ogni ordine effettuato sul sito www.flocon.fr costituisce la formazione di un contratto 
-              di vendita tra il cliente e Flocon. La conferma dell'ordine avviene dopo 
-              la conferma del pagamento da parte del cliente. Flocon si riserva il diritto di rifiutare 
-              qualsiasi ordine per motivi legittimi.
+              Toute commande passée sur le site www.flocon.fr constitue la formation d'un contrat 
+              de vente entre le client et Flocon. La confirmation de la commande intervient après 
+              la confirmation du paiement par le client. Flocon se réserve le droit de refuser 
+              toute commande pour des motifs légitimes.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              5. Pagamento
+              5. Paiement
             </h2>
             <p>
-              Il pagamento avviene tramite carta di credito tramite il nostro partner Stripe, sicuro 
-              secondo il protocollo SSL. L'addebito sulla carta viene effettuato al momento della conferma 
-              dell'ordine. In caso di rifiuto del pagamento da parte del centro di autorizzazione bancaria, 
-              l'ordine verrà annullato.
+              Le paiement s'effectue par carte de crédit via notre partenaire Stripe, sécurisé 
+              selon le protocole SSL. Le débit sur la carte est effectué au moment de la confirmation 
+              de la commande. En cas de refus de paiement par le centre d'autorisation bancaire, 
+              la commande sera annulée.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              6. Spedizione
+              6. Livraison
             </h2>
             <p>
-              I prodotti vengono spediti all'indirizzo di spedizione indicato dal cliente. 
-              I tempi di spedizione sono di 3-5 giorni lavorativi per la Francia metropolitana. 
-              Le spese di spedizione sono gratuite a partire da 50€ di acquisto. In caso di ritardo nella spedizione 
-              superiore a 30 giorni, il cliente può risolvere la vendita.
+              Les produits sont expédiés à l'adresse de livraison indiquée par le client. 
+              Les délais de livraison sont de 3-5 jours ouvrables pour la France métropolitaine. 
+              Les frais de livraison sont gratuits à partir de 50€ d'achat. En cas de retard de livraison 
+              supérieur à 30 jours, le client peut résoudre la vente.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              7. Diritto di recesso
+              7. Droit de rétractation
             </h2>
             <p>
-              In conformità con le disposizioni dell'articolo L121-21 del Codice del consumo, 
-              il cliente ha un termine di 14 giorni dalla ricezione del suo ordine 
-              per esercitare il suo diritto di recesso senza dover giustificare motivi né pagare 
-              penalità. Le spese di restituzione sono a carico del cliente.
+              Conformément aux dispositions de l'article L121-21 du Code de la consommation, 
+              le client dispose d'un délai de 14 jours à compter de la réception de sa commande 
+              pour exercer son droit de rétractation sans avoir à justifier de motifs ni à payer 
+              de pénalités. Les frais de retour sont à la charge du client.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              8. Garanzia
+              8. Garantie
             </h2>
             <p>
-              Tutti i prodotti beneficiano della garanzia legale di conformità di 2 anni. 
-              In caso di non conformità, il cliente può cambiare il prodotto o ottenere un rimborso. 
-              La garanzia non copre i danni derivanti da un uso improprio o da un 
-              uso non conforme dei prodotti.
+              Tous les produits bénéficient de la garantie légale de conformité de 2 ans. 
+              En cas de non-conformité, le client peut échanger le produit ou obtenir un remboursement. 
+              La garantie ne couvre pas les dommages résultant d'une utilisation inappropriée ou 
+              d'une utilisation non conforme des produits.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              9. Dati personali
+              9. Données personnelles
             </h2>
             <p>
-              Le informazioni personali raccolte durante l'ordine vengono trattate 
-              in conformità con il Regolamento Generale sulla Protezione dei Dati (GDPR). 
-              Il cliente ha diritto di accesso, modifica e cancellazione dei suoi dati.
+              Les informations personnelles collectées lors de la commande sont traitées 
+              conformément au Règlement Général sur la Protection des Données (RGPD). 
+              Le client a un droit d'accès, de modification et de suppression de ses données.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              10. Controversie
+              10. Litiges
             </h2>
             <p>
-              Per qualsiasi controversia, il cliente può contattare il servizio clienti all'indirizzo 
-              contact@flocon.fr. In assenza di accordo bonario, la controversia sarà sottoposta 
-              al tribunale commerciale di Parigi.
+              Pour tout litige, le client peut contacter le service client à l'adresse 
+              contact@flocon.fr. En l'absence d'accord amiable, le litige sera soumis 
+              au tribunal de commerce de Paris.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              11. Proprietà intellettuale
+              11. Propriété intellectuelle
             </h2>
             <p>
-              Tutti gli elementi del sito www.flocon.fr, inclusi testi, immagini, 
-              grafica, loghi e icone, sono proprietà esclusiva di Flocon e sono protetti 
-              dal diritto d'autore. Qualsiasi riproduzione, distribuzione o modifica di questi elementi 
-              è severamente vietata senza autorizzazione preventiva.
+              Tous les éléments du site www.flocon.fr, incluant textes, images, 
+              graphismes, logos et icônes, sont la propriété exclusive de Flocon et sont protégés 
+              par le droit d'auteur. Toute reproduction, distribution ou modification de ces éléments 
+              est strictement interdite sans autorisation préalable.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              12. Forza maggiore
+              12. Force majeure
             </h2>
             <p>
-              Flocon non potrà essere ritenuta responsabile in caso di inadempimento o ritardo 
-              nell'esecuzione dei suoi obblighi dovuto a un caso di forza maggiore, in particolare 
-              sciopero, guasto, guerra, tumulto, o qualsiasi evento fuori dal suo controllo.
+              Flocon ne pourra être tenue responsable en cas d'inexécution ou de retard 
+              dans l'exécution de ses obligations dû à un cas de force majeure, notamment 
+              grève, panne, guerre, émeute, ou tout événement hors de son contrôle.
             </p>
           </section>
 
           <div className="mt-8 p-4 bg-gray-100 rounded-lg">
             <p className="text-sm text-gray-600">
-              Data ultimo aggiornamento: 20 gennaio 2026
+              Date dernière mise à jour : 20 janvier 2026
             </p>
           </div>
         </div>

@@ -11,8 +11,7 @@ interface Message {
   timestamp: Date;
 }
 
-export default function ChatbotModal() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatbotModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -82,17 +81,6 @@ export default function ChatbotModal() {
 
   return (
     <>
-      {/* Bouton flottant du chatbot */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-40 md:hidden"
-        style={{ backgroundColor: 'var(--rose)' }}
-      >
-        <Bot className="w-6 h-6 text-white" />
-      </motion.button>
-
       {/* Modal du chatbot */}
       <AnimatePresence>
         {isOpen && (
@@ -102,7 +90,7 @@ export default function ChatbotModal() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
+              onClick={onClose}
               className="fixed inset-0 bg-black/50 z-40"
             />
 
@@ -111,7 +99,7 @@ export default function ChatbotModal() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="fixed bottom-0 right-0 w-full md:w-96 h-[600px] bg-white rounded-t-3xl md:rounded-3xl shadow-2xl z-50 flex flex-col"
+              className="fixed bottom-0 right-4 w-[90%] md:w-96 h-[600px] bg-white rounded-t-2xl md:rounded-2xl shadow-2xl z-50 flex flex-col mx-auto"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: 'var(--rose)' }}>
@@ -125,7 +113,7 @@ export default function ChatbotModal() {
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={onClose}
                   className="p-2 hover:bg-white/20 rounded-full transition-colors"
                 >
                   <X className="w-5 h-5 text-white" />

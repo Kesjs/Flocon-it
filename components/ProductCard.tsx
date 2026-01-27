@@ -45,8 +45,13 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Badge */}
-      {product.badge && (
-        <div className="absolute top-3 left-3 z-10">
+      <div className="absolute top-3 left-3 z-10">
+        {product.oldPrice && product.oldPrice > product.price && (
+          <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            Promo -{discount}%
+          </span>
+        )}
+        {product.badge && !product.oldPrice && (
           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
             product.badge === 'Best-seller' ? 'bg-green-100 text-green-800' :
             product.badge === 'Nouveauté' ? 'bg-blue-100 text-blue-800' :
@@ -56,8 +61,8 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
           }`}>
             {product.badge}
           </span>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Wishlist button */}
       <button
@@ -100,7 +105,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center space-x-2"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Aggiungi al carrello</span>
+            <span>Ajouter au panier</span>
           </button>
         </div>
       </div>
@@ -122,7 +127,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             {product.description}
           </p>
           <Link href={`/boutique/${product.slug}`} className="text-xs text-rose-custom hover:text-rose-custom/80 font-medium mt-1 transition-colors inline-block">
-            Vedi di più →
+            Voir plus →
           </Link>
         </div>
 

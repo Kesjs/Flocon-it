@@ -46,8 +46,8 @@ export default function Header() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <div className="text-2xl font-display font-bold text-textDark">
-                ❄️ Flocon
+              <div className="text-2xl font-display font-bold text-rose-custom">
+                Flocon
               </div>
             </Link>
 

@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={`${inter.variable} ${playfair.variable} antialiased`} suppressHydrationWarning>
         <AuthProvider>
           <CartProviderWrapper>

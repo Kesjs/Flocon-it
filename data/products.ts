@@ -20,10 +20,10 @@ export const products: Product[] = [
   {
     id: '1',
     slug: 'plaid-manche',
-    name: 'Coperta Manica',
+    name: 'Plaid Manche',
     price: 27.99,
     oldPrice: 38.99,
-    description: 'Una coperta incredibilmente morbida che ti avvolge nel calore. Tessuta in fibre premium con una texture nuvolosa che invita al relax assoluto.',
+    description: 'Une couverture incroyablement douce qui vous enveloppe de chaleur. Tissée en fibres premium avec une texture nuageuse qui invite au relax absolu.',
     category: 'Hiver',
     subCategory: 'Coperte & Texture',
     rating: 4.8,
@@ -39,10 +39,10 @@ export const products: Product[] = [
   {
     id: '2',
     slug: 'bougie-crepitement',
-    name: 'WoodWick Ellipse Candela',
+    name: 'Bougie Crépitement',
     price: 34.99,
     oldPrice: 44,
-    description: 'Una candela artigianale che riproduce il suono rilassante di un caminetto. Profumo di legno di cedro e vaniglia.',
+    description: 'Une bougie artisanale qui reproduit le son relaxant d\'un cheminée. Parfum de bois de cèdre et vanille.',
     category: 'Hiver',
     subCategory: 'Atmosfera & Candele',
     rating: 4.6,
@@ -51,15 +51,15 @@ export const products: Product[] = [
       'https://m.media-amazon.com/images/I/81WCvlPi2TL.jpg'
     ],
     stock: 28,
-    badge: 'Novità',
+    badge: 'Nouveauté',
     ambiance: 'Cocooning'
   },
   {
     id: '6',
     slug: 'chaussons-laine',
-    name: 'Pantofole Lana Merinos',
+    name: 'Chaussons Laine Merinos',
     price: 39.99,
-    description: 'Pantofole foderate in lana merinos ultra-morbida. Suola antiscivolo e design elegante per un comfort massimo.',
+    description: 'Chaussons doublés en laine merinos ultra-douce. Semelle antidérapante et design élégant pour un confort maximum.',
     category: 'Hiver',
     subCategory: 'Comfort & Calore',
     rating: 4.7,
@@ -69,15 +69,15 @@ export const products: Product[] = [
       'https://alpesdusud.ch/wp-content/uploads/2021/10/2-11.webp'
     ],
     stock: 35,
-    badge: 'Comfort garantito',
+    badge: 'Confort garanti',
     ambiance: 'Cocooning'
   },
   {
     id: '7',
     slug: 'thermos-luxe',
-    name: 'Miniland Borraccia Termica 500ml',
+    name: 'Thermos Luxe',
     price: 21.99,
-    description: 'La borraccia termica deluxe rosa mantiene la temperatura dei liquidi, freddi o caldi, fino a 12 ore.',
+    description: 'Le thermos deluxe rose maintient la température des liquides, froids ou chauds, jusqu\'à 12 heures.',
     category: 'Hiver',
     subCategory: 'Accessoires',
     rating: 4.5,
@@ -87,16 +87,16 @@ export const products: Product[] = [
       'https://www.goldengames.ma/wp-content/uploads/2023/05/5005089260_1_4-800x800.webp'
     ],
     stock: 22,
-    badge: 'Qualità premium',
+    badge: 'Qualité premium',
     ambiance: 'Cocooning'
   },
   {
     id: '8',
     slug: 'couverture-électrique',
-    name: 'Coperta Elettrica Intelligente',
+    name: 'Couverture Électrique Intelligente',
     price: 89,
     oldPrice: 109.99,
-    description: 'Coperta riscaldante con 9 livelli di temperatura. Timer automatico e tessuto anallergico.',
+    description: 'Couverture chauffante avec 9 niveaux de température. Minuterie automatique et tissu hypoallergénique.',
     category: 'Hiver',
     subCategory: 'Tecnologia & Comfort',
     rating: 4.9,
@@ -106,15 +106,15 @@ export const products: Product[] = [
       'https://m.media-amazon.com/images/I/71zb9kVJUOL._AC_SL1500_.jpg'
     ],
     stock: 18,
-    badge: 'Innovazione',
+    badge: 'Innovation',
     ambiance: 'Cocooning'
   },
   {
     id: '9',
     slug: 'tasse-ceramique',
-    name: 'Tazza Ceramica Artigianale',
+    name: 'Tasse Céramique Artisanale',
     price: 24.99,
-    description: 'Tazza unica modellata a mano. Ceramica di alta qualità con smalto opaco. Perfetta per le tue bevande calde.',
+    description: 'Tasse unique modelée à la main. Céramique de haute qualité avec émail mat. Parfaite pour vos boissons chaudes.',
     category: 'Hiver',
     subCategory: 'Accessoires',
     rating: 4.4,
@@ -123,33 +123,33 @@ export const products: Product[] = [
       'https://cdn.shopify.com/s/files/1/0516/3171/8560/products/tassestricoloresn_b_4.jpg?v=1659114955'
     ],
     stock: 45,
-    badge: 'Artigianale',
+    badge: 'Artisanal',
     ambiance: 'Cocooning'
   },
   {
     id: '10',
     slug: 'lampe-cheminee',
-    name: 'Lampada Caminetto LED',
+    name: 'Lampe Cheminée LED',
     price: 89,
-    description: 'Lampada che riproduce l\'effetto visivo di un caminetto. LED a basso consumo e telecomando incluso. Atmosfera calda garantita.',
+    description: 'Lampe qui reproduit l\'effet visuel d\'une cheminée. LED basse consommation et télécommande incluse. Atmosphère chaude garantie.',
     category: 'Hiver',
-    subCategory: 'Atmosfera & Luce',
+    subCategory: 'Atmosphère & Lumière',
     rating: 4.6,
     reviewsCount: 156,
     images: [
       'https://m.media-amazon.com/images/I/717qElrKoeL._AC_UF1000,1000_QL80_.jpg'
     ],
     stock: 12,
-    badge: 'Atmosfera magica',
+    badge: 'Atmosphère magique',
     ambiance: 'Cocooning'
   },
   {
     id: '11',
     slug: 'bonnet-cachemire',
-    name: 'Cappello Aspen Uomo-Cashmere',
+    name: 'Bonnet Aspen Homme-Cachemire',
     price: 102.99,
     oldPrice: 130,
-    description: 'Cappello in cashmere 100% della Mongolia. Morbidezza senza pari e termoregolazione naturale. Eleganza senza tempo.',
+    description: 'Bonnet en cachemire 100% de Mongolie. Douceur inégalée et thermorégulation naturelle. Élégance intemporelle.',
     category: 'Hiver',
     subCategory: 'Mode & Accessoires',
     rating: 4.8,
@@ -160,15 +160,15 @@ export const products: Product[] = [
       '/images/products/bonnet-cachemire-3.jpg'
     ],
     stock: 8,
-    badge: 'Lusso',
+    badge: 'Luxe',
     ambiance: 'Cocooning'
   },
   {
     id: '12',
     slug: 'infusion-hivernale',
-    name: 'Confezione Infusioni Invernali',
+    name: 'Boîte Infusions Hivernales',
     price: 39.99,
-    description: '30 bustine di tè e infusi confortanti. Miscele esclusive: cannella-arancio, zenzero-limone, camomilla-miele.',
+    description: '30 sachets de thés et infusions réconfortants. Mélanges exclusifs : cannelle-orange, gingembre-citron, camomille-miel.',
     category: 'Hiver',
     subCategory: 'Gourmandises',
     rating: 4.7,
@@ -183,26 +183,26 @@ export const products: Product[] = [
   {
     id: '13',
     slug: 'coussin-chaleur',
-    name: 'Cuscino Calore Cocco',
+    name: 'Coussin Chaleur Coco',
     price: 45.99,
-    description: 'Cuscino riscaldante con nocci di cocco bio. Allevia le tensioni e procura un calore diffuso e duraturo. Lavabile.',
+    description: 'Coussin chauffant avec noix de coco bio. Soulage les tensions et procure une chaleur diffuse et durable. Lavable.',
     category: 'Hiver',
-    subCategory: 'Benessere',
+    subCategory: 'Bien-être',
     rating: 4.5,
     reviewsCount: 167,
     images: [
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqaEsJW4WOnRp3HBHkh5EjkfBJtGENySgzbA&s'
     ],
     stock: 30,
-    badge: 'Terapia',
+    badge: 'Thérapie',
     ambiance: 'Cocooning'
   },
   {
     id: '14',
     slug: 'gants-tactiles',
-    name: 'Guanti Lana Tattili',
+    name: 'Gants Laine Tactiles',
     price: 34.99,
-    description: 'Guanti in lana merinos con punte delle dita tattili. Calore estremo e compatibilità smartphone. Unisex.',
+    description: 'Gants en laine merinos avec bouts des doigts tactiles. Chaleur extrême et compatibilité smartphone. Unisexe.',
     category: 'Hiver',
     subCategory: 'Mode & Accessoires',
     rating: 4.3,
@@ -211,24 +211,24 @@ export const products: Product[] = [
       'https://lespetitsimprimes.com/cdn/shop/products/gant-tactile-femme-gant-tactile-homme-gants-femme-tactile-4.jpg?v=1672427974'
     ],
     stock: 40,
-    badge: 'Pratico',
+    badge: 'Pratique',
     ambiance: 'Cocooning'
   },
   {
     id: '15',
     slug: 'diffuseur-humidite',
-    name: 'Diffusore Umidità Legno',
+    name: 'Diffuseur Humidité Bois',
     price: 69.99,
-    description: 'Diffusore di oli essenziali con umidificatore. Design in legno naturale. LED colorate e programmazione oraria.',
+    description: 'Diffuseur d\'huiles essentielles avec humidificateur. Design en bois naturel. LED colorées et programmation horaire.',
     category: 'Hiver',
-    subCategory: 'Atmosfera & Benessere',
+    subCategory: 'Atmosphère & Bien-être',
     rating: 4.6,
     reviewsCount: 198,
     images: [
       'https://www.cdiscount.com/pdt2/6/4/1/1/700x700/aaarc22641/rw/diffuseur-darmes-.jpg'
     ],
     stock: 25,
-    badge: 'Aromaterapia',
+    badge: 'Aromathérapie',
     ambiance: 'Cocooning'
   },
   
@@ -236,29 +236,29 @@ export const products: Product[] = [
   {
     id: '3',
     slug: 'duo-de-tasses',
-    name: 'Duo di Tazze Cuore',
+    name: 'Duo de Tasses Cœur',
     price: 49.99,
-    description: 'Un set di due tazze in porcellana fine con motivo cuore sottile. Perfetto per condividere un momento caldo con la tua metà.',
+    description: 'Un set de deux tasses en porcelaine fine avec motif cœur délicat. Parfait pour partager un moment chaud avec votre moitié.',
     category: 'Saint-Valentin',
-    subCategory: 'Cofanetti Duo',
+    subCategory: 'Coffrets Duo',
     rating: 4.9,
     reviewsCount: 156,
     images: [
       'https://mycrazystuff.com/14544-width_1000/coffret-duo-mugs-toi-et-moi.jpg'
     ],
     stock: 22,
-    badge: 'Regalo perfetto',
+    badge: 'Cadeau parfait',
     ambiance: 'Romantique'
   },
   {
     id: '4',
     slug: 'bijou-flocon',
-    name: 'Gioiello Fiocco',
+    name: 'Bijou Flocon',
     price: 149.99,
     oldPrice: 199.99,
-    description: 'Un pendente delicato in argento 925 a forma di fiocco di neve. Ogni pezzo è unico e simboleggia purezza ed eleganza.',
+    description: 'Un pendentif délicat en argent 925 en forme de flocon de neige. Chaque pièce est unique et symbolise pureté et élégance.',
     category: 'Saint-Valentin',
-    subCategory: 'Gioielli Eccezionali',
+    subCategory: 'Bijoux Exceptionnels',
     rating: 4.7,
     reviewsCount: 98,
     images: [
@@ -266,24 +266,24 @@ export const products: Product[] = [
       
     ],
     stock: 8,
-    badge: 'Edizione limitata',
+    badge: 'Édition limitée',
     ambiance: 'Romantique'
   },
   {
     id: '5',
     slug: 'pack-amoureux',
-    name: 'Pack Serata Amore',
+    name: 'Pack Soirée Amour',
     price: 129.99,
-    description: 'Il pack completo per una serata romantica indimenticabile: candele profumate, coperta morbida, due calici da vino e cioccolatini.',
+    description: 'Le pack complet pour une soirée romantique inoubliable : bougies parfumées, couverture douce, deux flûtes à vin et chocolats.',
     category: 'Saint-Valentin',
-    subCategory: 'Esperienze Romantiche',
+    subCategory: 'Expériences Romantiques',
     rating: 4.8,
     reviewsCount: 267,
     images: [
-      'https://m.media-amazon.com/images/I/81awtKl6JiL.jpg',
+      'https://m.media-amazon.com/images/I/81awtKl6JiL.jpg'
     ],
     stock: 12,
-    badge: 'Colpo di cuore',
+    badge: 'Coup de cœur',
     ambiance: 'Romantique'
   },
   {
