@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,11 +14,22 @@ export default function HomePage() {
   const valentinProducts = getProductsByCategory('Saint-Valentin');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [currentMomentIndex, setCurrentMomentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Détecter si on est sur mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen md:h-screen flex items-center overflow-hidden min-h-[600px] md:min-h-screen">
+      <section className="relative h-[70vh] md:h-screen flex items-center overflow-hidden min-h-[500px] md:min-h-screen">
         <div className="absolute inset-0">
           {/* Desktop Image */}
           <div className="hidden md:block absolute inset-0">
@@ -41,7 +52,12 @@ export default function HomePage() {
               alt="Hero background mobile - Cadeau Saint-Valentin pour Flocon"
               fill
               className="object-cover"
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
+              style={{ 
+                objectFit: 'cover', 
+                objectPosition: 'center top',
+                width: '100%',
+                height: '100%'
+              }}
               priority={true}
               quality={95}
               sizes="100vw"
@@ -237,7 +253,7 @@ export default function HomePage() {
         <div className="overflow-hidden">
           <div 
             className="flex transition-all duration-500 ease-out gap-4"
-            style={{ transform: `translateX(-${currentMomentIndex * 25}%)` }}
+            style={{ transform: `translateX(-${currentMomentIndex * (isMobile ? 100 : 25)}%)` }}
           >
             {/* 8 cartes au total dans une seule ligne */}
             {[
@@ -250,7 +266,7 @@ export default function HomePage() {
               { icon: Heart, title: "Remerciement", description: "Dire merci avec le cœur", color: "text-amber-500" },
               { icon: Gift, title: "Cadeau Surprise", description: "L'émotion de l'inattendu", color: "text-indigo-500" }
             ].map((moment, index) => (
-              <div key={index} className="w-1/4 flex-shrink-0 p-6 rounded-3xl bg-white border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div key={index} className="w-full md:w-1/4 flex-shrink-0 p-6 rounded-3xl bg-white border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
                     <moment.icon className={`w-8 h-8 ${moment.color}`} />
@@ -274,11 +290,11 @@ export default function HomePage() {
           <ChevronLeft className="w-6 h-6 text-gray-800" />
         </motion.button>
         <motion.button
-          onClick={() => setCurrentMomentIndex(prev => Math.min(4, prev + 1))}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 p-3 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 ${currentMomentIndex === 4 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}`}
-          disabled={currentMomentIndex === 4}
-          whileHover={{ scale: currentMomentIndex === 4 ? 1 : 1.1 }}
-          whileTap={{ scale: currentMomentIndex === 4 ? 1 : 0.95 }}
+          onClick={() => setCurrentMomentIndex(prev => Math.min(isMobile ? 7 : 4, prev + 1))}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 p-3 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 ${currentMomentIndex === (isMobile ? 7 : 4) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}`}
+          disabled={currentMomentIndex === (isMobile ? 7 : 4)}
+          whileHover={{ scale: currentMomentIndex === (isMobile ? 7 : 4) ? 1 : 1.1 }}
+          whileTap={{ scale: currentMomentIndex === (isMobile ? 7 : 4) ? 1 : 0.95 }}
         >
           <ArrowRight className="w-6 h-6 text-gray-800" />
         </motion.button>
