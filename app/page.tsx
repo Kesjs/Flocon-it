@@ -88,7 +88,7 @@ export default function HomePage() {
               className="text-3xl md:text-5xl lg:text-7xl font-display font-bold mb-4 md:mb-6 leading-tight will-change-transform"
               style={{ transform: 'translateZ(0)' }}
             >
-              L'amour mérite <br className="md:hidden" />un écrin à sa mesure.
+              L'amour se mérite.<br />Votre cadeau aussi.
             </motion.h1>
 
             <motion.p

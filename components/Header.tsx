@@ -34,11 +34,7 @@ export default function Header() {
     <>
       <motion.header
         suppressHydrationWarning
-        className={`fixed left-0 right-0 z-50 border-b border-gray-200/50 transition-all duration-300 ${
-          isScrolled 
-            ? "bg-white shadow-lg" 
-            : "bg-white/80 backdrop-blur-md"
-        }`}
+        className={`fixed left-0 right-0 z-50 border-b border-gray-200/50 transition-all duration-300 bg-white shadow-lg`}
         animate={{ top: isScrolled ? 0 : 32 }}
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       >
@@ -159,7 +155,7 @@ export default function Header() {
                           </span>
                         </div>
                       </motion.div>
-                      <span className="text-sm font-medium">Mon compte</span>
+                      <span className="text-sm font-medium text-black group-hover:text-rose-custom transition-colors duration-200">Mon compte</span>
                     </motion.button>
 
                     <AnimatePresence>
@@ -327,32 +323,12 @@ export default function Header() {
                 className="md:hidden pb-4 border-t border-gray-200/50 mt-4 pt-4 overflow-hidden"
               >
                 <nav className="flex flex-col space-y-4">
-                  {/* Logo dans le menu mobile */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: 0 }}
-                  >
-                    <Link
-                      href="/"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center space-x-3 text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group py-2"
-                    >
-                      <img
-                        src="/logof.jpg?v=1"
-                        alt="Flocon Logo"
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <span>Flocon</span>
-                    </Link>
-                  </motion.div>
-                  
                   {["L'Art du Cocooning", "Flocons de Tendresse", "Boutique"].map((item, index) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.1 }}
+                      transition={{ duration: 0.2, delay: index * 0.1 + 0.1 }}
                     >
                       <Link
                         href={item === "L'Art du Cocooning" ? "/#collection-hiver" : item === "Flocons de Tendresse" ? "/#collection-valentin" : "/boutique"}

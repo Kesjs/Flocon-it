@@ -11,6 +11,7 @@ interface OptimizedImageProps {
   quality?: number;
   sizes?: string;
   style?: React.CSSProperties;
+  onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 export default function OptimizedImage({
@@ -24,6 +25,7 @@ export default function OptimizedImage({
   quality = 75,
   sizes,
   style,
+  onError,
 }: OptimizedImageProps) {
   const imageProps = {
     src,
@@ -33,6 +35,7 @@ export default function OptimizedImage({
     quality,
     sizes,
     style,
+    onError,
   };
 
   if (fill) {
