@@ -56,9 +56,10 @@ export default function Header() {
             {/* Navigation Desktop */}
             <nav className="hidden md:flex items-center space-x-8">
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
+                className="px-3 py-2 rounded-lg transition-all duration-200"
               >
                 <Link href="/#collection-hiver" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
@@ -74,9 +75,10 @@ export default function Header() {
                 </Link>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
+                className="px-3 py-2 rounded-lg transition-all duration-200"
               >
                 <Link href="/#collection-valentin" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
@@ -92,9 +94,10 @@ export default function Header() {
                 </Link>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
+                className="px-3 py-2 rounded-lg transition-all duration-200"
               >
                 <Link href="/boutique" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
@@ -116,8 +119,8 @@ export default function Header() {
               {/* Search */}
               <motion.div 
                 className="hidden sm:flex items-center bg-gray-100/50 rounded-full px-4 py-2 group"
-                whileHover={{ scale: 1.02 }}
-                whileFocus={{ scale: 1.02 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                whileFocus={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                 transition={{ duration: 0.2 }}
               >
                 <motion.div
@@ -142,8 +145,8 @@ export default function Header() {
                     <motion.button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                       className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                      whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                       transition={{ duration: 0.2 }}
                     >
                       <motion.div
@@ -253,8 +256,8 @@ export default function Header() {
                   <Link href="/login">
                     <motion.button
                       className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                      whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                       transition={{ duration: 0.2 }}
                     >
                       <User className="w-4 h-4" />
@@ -268,8 +271,8 @@ export default function Header() {
               <motion.button
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 group"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
               >
                 <motion.div
@@ -294,8 +297,8 @@ export default function Header() {
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 group"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)', rotate: 90 }}
+                whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
               >
                 <motion.div
@@ -354,7 +357,7 @@ export default function Header() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2, delay: 0.3 }}
                     className="flex items-center bg-gray-100/50 rounded-full px-4 py-2 mt-2 group"
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                   >
                     <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
                     <input
