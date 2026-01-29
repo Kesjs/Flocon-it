@@ -16,7 +16,7 @@ export default function PersonnalisePage() {
   const { sections } = useProductDisplay('personnalise');
   const personalizedProducts = sections[0]?.products || [];
 
-  const filteredProducts = personalizedProducts.filter(product =>
+  const filteredProducts = personalizedProducts.filter((product: any) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -232,7 +232,7 @@ export default function PersonnalisePage() {
 
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-              {filteredProducts.map((product, index) => (
+              {filteredProducts.map((product: any, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}

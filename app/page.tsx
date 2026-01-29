@@ -319,7 +319,7 @@ export default function HomePage() {
 </section>
 
       {/* Collections Section - Nouveau système de configuration */}
-      {sections.map((section, index) => (
+      {sections.map((section: any, index: number) => (
         <ProductSection
           key={section.title}
           title={section.title}
