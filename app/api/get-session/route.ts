@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Vérifier si Stripe est configuré avant de l'initialiser
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-12-15.clover',
-});
+}) : null;
 
 export async function GET(request: NextRequest) {
+  // Vérifier si Stripe est configuré
+  if (!stripe) {
+    console.error('Stripe n\'est pas configuré - STRIPE_SECRET_KEY manquant');
+    return NextResponse.json(
+      { error: 'Service de paiement non disponible' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('session_id');

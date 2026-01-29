@@ -4,20 +4,34 @@ import { createClient } from '@supabase/supabase-js';
 import { corsMiddleware, handleOptions } from '@/lib/cors';
 import { webhookRateLimit } from '@/lib/rate-limit';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Vérifier si Stripe est configuré avant de l'initialiser
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-12-15.clover',
-});
+}) : null;
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Vérifier si Supabase est configuré avant de l'initialiser
+const supabase = (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) 
+  ? createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    )
+  : null;
 
 export async function OPTIONS(request: NextRequest) {
   return handleOptions(request) || new NextResponse(null, { status: 405 });
 }
 
 export async function POST(request: NextRequest) {
+  // Vérifier si Stripe est configuré
+  if (!stripe) {
+    console.error('Stripe n\'est pas configuré - STRIPE_SECRET_KEY manquant');
+    const response = NextResponse.json(
+      { error: 'Service de paiement non disponible' },
+      { status: 503 }
+    );
+    return corsMiddleware(request, response);
+  }
+
   // Rate limiting basé sur l'IP
   const ip = request.headers.get('x-forwarded-for') || 
              request.headers.get('x-real-ip') || 
@@ -78,6 +92,17 @@ export async function POST(request: NextRequest) {
 
 async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
   try {
+    // Vérifier si les services sont configurés
+    if (!stripe) {
+      console.error('Stripe n\'est pas configuré');
+      throw new Error('Stripe non configuré');
+    }
+
+    if (!supabase) {
+      console.error('Supabase n\'est pas configuré');
+      throw new Error('Supabase non configuré');
+    }
+
     // Récupérer les détails complets de la session
     const sessionWithDetails = await stripe.checkout.sessions.retrieve(session.id, {
       expand: ['line_items', 'customer_details'],
