@@ -4,13 +4,24 @@ import { corsMiddleware, handleOptions } from '@/lib/cors';
 import { validateCheckoutRequest, sanitizeString } from '@/lib/validation';
 import { apiRateLimit } from '@/lib/rate-limit';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+// Vérifier si Stripe est configuré avant de l'initialiser
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 export async function OPTIONS(request: NextRequest) {
   return handleOptions(request) || new NextResponse(null, { status: 405 });
 }
 
 export async function POST(request: NextRequest) {
+  // Vérifier si Stripe est configuré
+  if (!stripe) {
+    console.error('Stripe n\'est pas configuré - STRIPE_SECRET_KEY manquant');
+    const response = NextResponse.json(
+      { error: 'Service de paiement non disponible' },
+      { status: 503 }
+    );
+    return corsMiddleware(request, response);
+  }
+
   // Rate limiting
   const ip = request.headers.get('x-forwarded-for') || 
              request.headers.get('x-real-ip') || 
@@ -28,16 +39,6 @@ export async function POST(request: NextRequest) {
 
   try {
     console.log('Début de la création de session Stripe...');
-    
-    // Vérifier les variables d'environnement
-    if (!process.env.STRIPE_SECRET_KEY) {
-      console.error('STRIPE_SECRET_KEY manquant');
-      const response = NextResponse.json(
-        { error: 'Configuration Stripe manquante' },
-        { status: 500 }
-      );
-      return corsMiddleware(request, response);
-    }
 
     const body = await request.json();
     
