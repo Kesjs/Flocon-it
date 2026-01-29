@@ -21,7 +21,7 @@ export default function LoginContent() {
   useEffect(() => {
     const status = searchParams.get('status');
     if (status === 'signup_success') {
-      setSuccessMessage("Registrazione completata! Un'email di conferma ti è stata inviata. Per favore controlla la tua casella di posta.");
+      setSuccessMessage("Inscription réussie ! Un email de confirmation vous a été envoyé. Merci de vérifier votre boîte de réception.");
       // Nettoyer l'URL pour ne pas afficher le message à nouveau en cas de rafraîchissement
       router.replace('/login', { scroll: false });
     }
@@ -36,7 +36,7 @@ export default function LoginContent() {
 
     if (error) {
       if (error.message === "Invalid login credentials") {
-        setError("L'email o la password sono errati. Per favore verifica le tue informazioni o conferma la tua registrazione.");
+        setError("L'email ou le mot de passe est incorrect. Merci de vérifier vos informations ou de confirmer votre inscription.");
       } else {
         setError(error.message);
       }
@@ -57,9 +57,9 @@ export default function LoginContent() {
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display font-bold text-textDark mb-2">
-            Accedi
+            Connexion
           </h1>
-          <p className="text-gray-600">Accedi al tuo spazio personale</p>
+          <p className="text-gray-600">Accédez à votre espace personnel</p>
         </div>
 
         {successMessage && (
@@ -98,7 +98,7 @@ export default function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-all"
-                placeholder="tua@email.com"
+                placeholder="votre@email.com"
               />
             </div>
           </div>
@@ -131,10 +131,10 @@ export default function LoginContent() {
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input type="checkbox" className="rounded border-gray-300 text-rose-custom focus:ring-rose" />
-              <span className="ml-2 text-sm text-gray-600">Ricordami</span>
+              <span className="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
             </label>
             <Link href="/forgot-password" className="text-sm text-rose-custom hover:underline">
-              Password dimenticata?
+              Mot de passe oublié ?
             </Link>
           </div>
 
@@ -146,11 +146,11 @@ export default function LoginContent() {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Login...
+                Connexion...
               </>
             ) : (
               <>
-                Accedi
+                Connexion
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
@@ -159,9 +159,9 @@ export default function LoginContent() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Non hai ancora un account? {" "}
+            Vous n'avez pas encore de compte ? {" "}
             <Link href="/register" className="text-rose-custom hover:underline font-medium">
-              Registrati
+              S'inscrire
             </Link>
           </p>
         </div>

@@ -27,13 +27,13 @@ export default function Register() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Le password non corrispondono");
+      setError("Les mots de passe ne correspondent pas");
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("La password deve contenere almeno 6 caratteri");
+      setError("Le mot de passe doit contenir au moins 6 caractères");
       setLoading(false);
       return;
     }
@@ -78,9 +78,9 @@ export default function Register() {
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display font-bold text-textDark mb-2">
-            Registrazione
+            Inscription
           </h1>
-          <p className="text-gray-600">Crea il tuo spazio personale</p>
+          <p className="text-gray-600">Créez votre espace personnel</p>
         </div>
 
         {error && (
@@ -97,7 +97,7 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-textDark mb-2">
-              Nome completo
+              Nom complet
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -126,7 +126,7 @@ export default function Register() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-all"
-                placeholder="tua@email.com"
+                placeholder="votre@email.com"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-textDark mb-2">
-              Conferma password
+              Confirmation du mot de passe
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -189,13 +189,13 @@ export default function Register() {
               className="rounded border-gray-300 text-rose-custom focus:ring-rose"
             />
             <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-              Accetto le{" "}
+              J'accepte les{" "}
               <Link href="/cgv" className="text-rose-custom hover:underline">
-                condizioni generali di vendita
+                conditions générales de vente
               </Link>{" "}
-              e la{" "}
+              et la{" "}
               <Link href="/politique-confidentialite" className="text-rose-custom hover:underline">
-                politica sulla privacy
+                politique de confidentialité
               </Link>
             </label>
           </div>
@@ -213,11 +213,11 @@ export default function Register() {
             ) : loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Registrazione...
+                Inscription...
               </>
             ) : (
               <>
-                Registrati
+                S'inscrire
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
@@ -226,9 +226,9 @@ export default function Register() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Hai già un account? {" "}
+            Vous avez déjà un compte ? {" "}
             <Link href="/login" className="text-rose-custom hover:underline font-medium">
-              Accedi
+              Se connecter
             </Link>
           </p>
         </div>
