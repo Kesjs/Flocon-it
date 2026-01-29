@@ -7,6 +7,7 @@ import { Search, User, ShoppingCart, Menu, X, Package, Heart, Settings, LogOut, 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ProgressBar from "./ProgressBar";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -367,6 +368,9 @@ export default function Header() {
             )}
           </AnimatePresence>
         </div>
+        
+        {/* Barre de progression horizontale */}
+        <ProgressBar />
       </motion.header>
 
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
