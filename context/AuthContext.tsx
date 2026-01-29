@@ -27,6 +27,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
+    if (!supabase) {
+      console.warn('Supabase client not available, auth features disabled');
+      setLoading(false);
+      return;
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -50,6 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     const supabase = createClient();
+    if (!supabase) {
+      return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
+    }
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -62,6 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const supabase = createClient();
+    if (!supabase) {
+      return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -72,12 +84,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     const supabase = createClient();
+    if (!supabase) {
+      return;
+    }
     await supabase.auth.signOut();
     router.refresh();
   };
 
   const resetPassword = async (email: string) => {
     const supabase = createClient();
+    if (!supabase) {
+      return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
+    }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -86,6 +104,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkEmailExists = async (email: string) => {
     const supabase = createClient();
+    if (!supabase) {
+      return { exists: false, error: { message: 'Service d\'authentification non disponible' } as AuthError };
+    }
     try {
       // Utiliser signIn pour vérifier si l'email existe
       // Si l'email existe, on obtiendra une erreur de mot de passe incorrect
