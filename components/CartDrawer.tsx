@@ -7,6 +7,7 @@ import { X, Plus, Minus, Trash2, ShoppingBag, Heart, CreditCard, ArrowRight } fr
 import Link from "next/link";
 import OptimizedImage from "@/components/OptimizedImage";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { cartItems, removeFromCart, updateQuantity, clearCart, addToCart } = useCart();
+  const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
@@ -43,6 +45,20 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       // Simuler un traitement très court pour le feedback visuel
       await new Promise(resolve => setTimeout(resolve, 800));
       
+      // Vérifier si l'utilisateur est connecté
+      console.log('🔍 Vérification authentification utilisateur:', user ? 'Connecté' : 'Non connecté');
+      
+      if (!user) {
+        console.log('🚪 Utilisateur non connecté, redirection vers login');
+        // Fermer le drawer
+        onClose();
+        // Petite pause pour laisser le drawer se fermer
+        await new Promise(resolve => setTimeout(resolve, 300));
+        // Rediriger vers login avec intention de checkout
+        router.push('/login?redirect=checkout');
+        return;
+      }
+      
       // Fermer le drawer
       console.log('🔄 Fermeture du drawer');
       onClose();
@@ -50,7 +66,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       // Petite pause pour laisser le drawer se fermer
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Rediriger directement vers la page de checkout
+      // Rediriger vers la page de checkout
       console.log('🔄 Redirection vers /checkout');
       router.push('/checkout');
     } catch (error) {

@@ -28,6 +28,12 @@ export default function LoginContent() {
       router.replace('/login', { scroll: false });
     }
     
+    // Vérifier si c'est un flux de checkout via paramètre URL
+    const redirectParam = searchParams.get('redirect') || searchParams.get('redirectTo');
+    if (redirectParam === 'checkout') {
+      setIsCheckoutFlow(true);
+    }
+    
     // Pré-remplir l'email depuis l'intention de checkout si disponible
     const checkoutIntent = RedirectManager.getIntent();
     if (checkoutIntent?.type === 'checkout' && checkoutIntent.data?.email) {
@@ -56,19 +62,23 @@ export default function LoginContent() {
         setError(error.message);
       }
     } else {
-      // Vérifier s'il y a une intention de redirection
-      const checkoutIntent = RedirectManager.getIntent();
-      
-      if (checkoutIntent?.type === 'checkout') {
-        // Rediriger vers checkout et nettoyer l'intention
-        RedirectManager.clearIntent();
-        router.push('/checkout');
-      } else {
-        // Comportement par défaut
-        const redirectTo = searchParams.get('redirectTo');
-        router.push(redirectTo || "/dashboard");
+        // Vérifier s'il y a une intention de redirection
+        const checkoutIntent = RedirectManager.getIntent();
+        
+        if (checkoutIntent?.type === 'checkout') {
+          // Rediriger vers checkout et nettoyer l'intention
+          RedirectManager.clearIntent();
+          router.push('/checkout');
+        } else {
+          // Comportement par défaut
+          const redirectTo = searchParams.get('redirectTo') || searchParams.get('redirect');
+          if (redirectTo === 'checkout') {
+            router.push('/checkout');
+          } else {
+            router.push(redirectTo || "/dashboard");
+          }
+        }
       }
-    }
     
     setLoading(false);
   };
