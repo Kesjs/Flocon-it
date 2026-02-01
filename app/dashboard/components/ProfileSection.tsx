@@ -107,7 +107,12 @@ export function ProfileSection({ user, onLogout }: ProfileSectionProps) {
           </div>
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-2">
-              {user?.email?.split('@')[0]?.charAt(0)?.toUpperCase() + user?.email?.split('@')[0]?.slice(1)}
+              {(() => {
+                const emailUsername = user?.email?.split('@')[0];
+                return emailUsername 
+                  ? emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1)
+                  : 'Utilisateur';
+              })()}
             </h3>
             <p className="text-white/90 mb-4">{user?.email}</p>
             <div className="flex items-center gap-4">

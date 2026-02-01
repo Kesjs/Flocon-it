@@ -162,7 +162,12 @@ export default function Dashboard() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  {user.email?.split('@')[0]?.charAt(0)?.toUpperCase() + user.email?.split('@')[0]?.slice(1)}
+                  {(() => {
+                    const emailUsername = user.email?.split('@')[0];
+                    return emailUsername 
+                      ? emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1)
+                      : 'Utilisateur';
+                  })()}
                 </h1>
                 <p className="text-sm text-gray-600">
                   {user.email}

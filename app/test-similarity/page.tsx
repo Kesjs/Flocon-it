@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { products } from '../../data/products';
-import { getSimilarProducts, calculateSimilarity } from '../../data/similarity';
+import { getSimilarProducts, calculateSimilarityScore } from '../../data/similarity';
 import ProductCard from '../../components/ProductCard';
 
 export default function TestSimilarity() {
@@ -17,7 +17,7 @@ export default function TestSimilarity() {
         .filter(p => p.id !== currentProduct.id)
         .map(p => ({
           product: p,
-          score: calculateSimilarity(currentProduct, p)
+          score: calculateSimilarityScore(currentProduct, p)
         }))
         .filter(s => s.score.score > 0)
         .sort((a, b) => b.score.score - a.score.score)
@@ -82,7 +82,7 @@ export default function TestSimilarity() {
             <div key={product.id} className="relative">
               <ProductCard product={product} />
               <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                {calculateSimilarity(currentProduct, product).reasons.join(' • ')}
+                {calculateSimilarityScore(currentProduct, product).reasons.join(' • ')}
               </div>
             </div>
           ))}

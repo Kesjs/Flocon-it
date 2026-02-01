@@ -34,6 +34,12 @@ export default function ConfirmEmail() {
         const supabase = createClient();
 
         // Authentifier avec les tokens reçus
+        if (!supabase) {
+          setStatus('error');
+          setMessage("Erreur de configuration. Veuillez réessayer.");
+          return;
+        }
+
         const { error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,

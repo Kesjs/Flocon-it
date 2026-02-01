@@ -57,13 +57,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Nettoyer les données
-    const { cartItems, customerEmail, metadata } = {
+    const { cartItems, customerEmail, shippingAddress, metadata } = {
       cartItems: body.cartItems.map((item: any) => ({
         ...item,
         name: sanitizeString(item.name),
         description: item.description ? sanitizeString(item.description) : undefined
       })),
       customerEmail: sanitizeString(body.customerEmail),
+      shippingAddress: body.shippingAddress || {},
       metadata: body.metadata || {}
     };
 

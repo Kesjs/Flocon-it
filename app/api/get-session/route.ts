@@ -47,7 +47,10 @@ export async function GET(request: NextRequest) {
         name: item.description,
         quantity: item.quantity,
         price: item.amount_total ? item.amount_total / 100 : 0,
-        image: item.price?.product?.images?.[0] || '/logof.jpg',
+        image: (typeof item.price?.product === 'object' && 
+                item.price?.product && 
+                'images' in item.price.product && 
+                item.price.product.images?.[0]) || '/logof.jpg',
       })) || [],
       metadata: session.metadata,
     };
