@@ -1,19 +1,20 @@
 "use client";
 
 import CartDrawer from "@/components/CartDrawer";
+import CheckoutModal from "@/components/CheckoutModal";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { Search, User, ShoppingCart, Menu, X, Package, Heart, Settings, LogOut, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ProgressBar from "./ProgressBar";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { cartItems } = useCart();
   const { user, signOut, loading } = useAuth();
 
@@ -22,8 +23,7 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const shouldBeScrolled = scrollPosition > 10; // Réduit à 10px pour déclencher plus tôt
-      console.log('Scroll position:', scrollPosition, 'Should be scrolled:', shouldBeScrolled);
+      const shouldBeScrolled = scrollPosition > 10;
       setIsScrolled(shouldBeScrolled);
     };
 
@@ -35,9 +35,7 @@ export default function Header() {
     <>
       <motion.header
         suppressHydrationWarning
-        className={`fixed left-0 right-0 z-50 border-b border-gray-200/50 transition-all duration-300 bg-white shadow-lg`}
-        animate={{ top: isScrolled ? 0 : 32 }}
-        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className={`fixed left-0 right-0 top-0 z-50 border-b border-gray-200/50 transition-all duration-300 bg-white shadow-lg`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -196,43 +194,35 @@ export default function Header() {
                               onClick={() => setIsProfileDropdownOpen(false)}
                             >
                               <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <Settings className="w-4 h-4 text-gray-600" />
+                                <div className="w-8 h-8 bg-rose-custom/10 rounded-lg flex items-center justify-center">
+                                  <Package className="w-4 h-4 text-rose-custom" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Tableau de bord</span>
+                                <div>
+                                  <span className="text-textDark group-hover:text-rose-custom-custom transition-colors font-medium">Mes commandes</span>
+                                  <span className="text-xs text-gray-500 block">Voir mes achats</span>
+                                </div>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
 
                             <Link
-                              href="/orders"
+                              href="/dashboard"
                               className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group"
                               onClick={() => setIsProfileDropdownOpen(false)}
                             >
                               <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <Package className="w-4 h-4 text-gray-600" />
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                  <Settings className="w-4 h-4 text-blue-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Mes commandes</span>
+                                <div>
+                                  <span className="text-textDark group-hover:text-rose-custom-custom transition-colors font-medium">Tableau de bord</span>
+                                  <span className="text-xs text-gray-500 block">Gérer mon compte</span>
+                                </div>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
 
-                            <Link
-                              href="/wishlist"
-                              className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group"
-                              onClick={() => setIsProfileDropdownOpen(false)}
-                            >
-                              <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <Heart className="w-4 h-4 text-gray-600" />
-                                </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Ma wishlist</span>
-                              </div>
-                              <ChevronRight className="w-4 h-4 text-gray-400" />
-                            </Link>
-                          </div>
-
+                            </div>
                           {/* Footer */}
                           <div className="pt-4 border-t border-gray-100">
                             <button
@@ -371,12 +361,14 @@ export default function Header() {
             )}
           </AnimatePresence>
         </div>
-        
-        {/* Barre de progression horizontale */}
-        <ProgressBar />
       </motion.header>
 
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        onCheckout={() => setIsCheckoutOpen(true)} 
+      />
+      <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </>
   );
 }

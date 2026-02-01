@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { RedirectManager } from "@/lib/redirect-manager";
 
 export default function LoginContent() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,8 @@ export default function LoginContent() {
   const [successMessage, setSuccessMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signIn } = useAuth();
+  const { signIn, checkEmailExists } = useAuth();
+  const [isCheckoutFlow, setIsCheckoutFlow] = useState(false);
 
   useEffect(() => {
     const status = searchParams.get('status');
@@ -24,6 +26,13 @@ export default function LoginContent() {
       setSuccessMessage("Inscription réussie ! Un email de confirmation vous a été envoyé. Merci de vérifier votre boîte de réception.");
       // Nettoyer l'URL pour ne pas afficher le message à nouveau en cas de rafraîchissement
       router.replace('/login', { scroll: false });
+    }
+    
+    // Pré-remplir l'email depuis l'intention de checkout si disponible
+    const checkoutIntent = RedirectManager.getIntent();
+    if (checkoutIntent?.type === 'checkout' && checkoutIntent.data?.email) {
+      setEmail(checkoutIntent.data.email);
+      setIsCheckoutFlow(true);
     }
   }, [searchParams, router]);
 
@@ -36,12 +45,29 @@ export default function LoginContent() {
 
     if (error) {
       if (error.message === "Invalid login credentials") {
-        setError("L'email ou le mot de passe est incorrect. Merci de vérifier vos informations ou de confirmer votre inscription.");
+        // Vérifier si l'email existe mais n'est pas confirmé
+        const { exists } = await checkEmailExists(email);
+        if (exists) {
+          setError("Votre compte n'est pas encore confirmé. Veuillez vérifier votre email et cliquer sur le lien de confirmation.");
+        } else {
+          setError("L'email ou le mot de passe est incorrect.");
+        }
       } else {
         setError(error.message);
       }
     } else {
-      router.push("/dashboard");
+      // Vérifier s'il y a une intention de redirection
+      const checkoutIntent = RedirectManager.getIntent();
+      
+      if (checkoutIntent?.type === 'checkout') {
+        // Rediriger vers checkout et nettoyer l'intention
+        RedirectManager.clearIntent();
+        router.push('/checkout');
+      } else {
+        // Comportement par défaut
+        const redirectTo = searchParams.get('redirectTo');
+        router.push(redirectTo || "/dashboard");
+      }
     }
     
     setLoading(false);
@@ -70,6 +96,19 @@ export default function LoginContent() {
           >
             <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
             <p className="text-green-700 text-sm">{successMessage}</p>
+          </motion.div>
+        )}
+
+        {isCheckoutFlow && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0" />
+            <p className="text-blue-700 text-sm">
+              Connectez-vous pour finaliser votre commande. Vous serez redirigé automatiquement vers la page de paiement.
+            </p>
           </motion.div>
         )}
 

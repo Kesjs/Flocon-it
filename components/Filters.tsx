@@ -146,7 +146,7 @@ export default function Filters({ onFiltersChange, className = "" }: FiltersProp
           className="flex items-center justify-between w-full text-left mb-3 group"
         >
           <h4 className="font-medium text-textDark group-hover:text-rose-custom transition-colors">
-            Prezzo
+            Prix
           </h4>
           {expandedSections.price ? (
             <ChevronUp className="w-4 h-4 text-gray-500" />

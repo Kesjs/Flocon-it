@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getProductsByCategory, Product } from "../../../data/products";
+import { getProductBySlug, getProductsByCategory, Product, products } from "../../../data/products";
+import { getSimilarProducts } from "../../../data/similarity";
+import { preloadImages } from "../../../image-loader";
 import { useCart } from "@/context/CartContext";
 import { Star, ShoppingCart, Heart, Truck, Shield, RefreshCw, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
@@ -24,9 +26,14 @@ export default function ProductPage() {
     notFound();
   }
 
-  const relatedProducts = getProductsByCategory(product.category)
-    .filter(p => p.id !== product.id)
-    .slice(0, 3);
+  const relatedProducts = getSimilarProducts(product, products, 3);
+
+  // Précharger les images du produit actuel (priorité haute)
+  preloadImages(product.images, 'high');
+  
+  // Précharger les images des produits similaires (priorité basse, en arrière-plan)
+  const similarImages = relatedProducts.flatMap(p => p.images);
+  preloadImages(similarImages, 'low');
 
   const discount = product.oldPrice 
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
@@ -86,7 +93,7 @@ export default function ProductPage() {
             {/* Main Image */}
             <div className="relative aspect-square bg-white rounded-xl overflow-hidden">
               <img
-                src={product.images[selectedImageIndex].startsWith('/') ? product.images[selectedImageIndex] : `/${product.images[selectedImageIndex]}`}
+                src={product.images[selectedImageIndex].startsWith('http') ? product.images[selectedImageIndex] : product.images[selectedImageIndex].startsWith('/') ? product.images[selectedImageIndex] : `/${product.images[selectedImageIndex]}`}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 loading="eager"
@@ -141,7 +148,7 @@ export default function ProductPage() {
                     }`}
                   >
                     <img
-                      src={image.startsWith('/') ? image : `/${image}`}
+                      src={image.startsWith('http') ? image : image.startsWith('/') ? image : `/${image}`}
                       alt={`${product.name} - Image ${index + 1}`}
                       className="w-full h-full object-cover"
                       loading="lazy"

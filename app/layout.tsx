@@ -23,8 +23,51 @@ try {
 
 
 export const metadata: Metadata = {
-  title: "Flocon - E-commerce de qualité",
-  description: "Découvrez nos collections hivernales et de la Saint-Valentin",
+  title: {
+    default: "Flocon - E-commerce de qualité",
+    template: "%s | Flocon"
+  },
+  description: "Découvrez nos collections hivernales et de la Saint-Valentin. Produits artisanaux, cadeaux uniques et créations faites avec amour.",
+  keywords: ["e-commerce", "cadeaux", "saint-valentin", "hiver", "artisanat", "décoration", "flocon"],
+  authors: [{ name: "Flocon" }],
+  creator: "Flocon",
+  publisher: "Flocon",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://flocon.example.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: '/',
+    title: 'Flocon - E-commerce de qualité',
+    description: 'Découvrez nos collections hivernales et de la Saint-Valentin',
+    siteName: 'Flocon',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Flocon - E-commerce de qualité',
+    description: 'Découvrez nos collections hivernales et de la Saint-Valentin',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+  },
   icons: {
     icon: [
       { url: '/logof.jpg', type: 'image/jpeg' }
@@ -48,16 +91,16 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/logof.jpg" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <AuthProvider>
-          <CartProviderWrapper>
-            <AnnounceBar />
-            <Header />
-            <ClientLayoutWrapper>
+        <ClientLayoutWrapper>
+          <AuthProvider>
+            <CartProviderWrapper>
+              <AnnounceBar />
+              <Header />
               <main className="min-h-screen">{children}</main>
-            </ClientLayoutWrapper>
-            <Footer />
-          </CartProviderWrapper>
-        </AuthProvider>
+              <Footer />
+            </CartProviderWrapper>
+          </AuthProvider>
+        </ClientLayoutWrapper>
       </body>
     </html>
   );

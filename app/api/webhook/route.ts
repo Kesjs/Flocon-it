@@ -108,12 +108,20 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
       expand: ['line_items', 'customer_details'],
     });
 
-    // Récupérer les métadonnées du panier
-    const cartItems = JSON.parse(session.metadata?.cartItems || '[]');
+    // Récupérer les détails des produits depuis les line_items de Stripe
+    // Plus besoin de parser cartItems depuis metadata (limite 500 caractères)
+    const lineItems = sessionWithDetails.line_items?.data || [];
+    const cartItems = lineItems.map((item: any) => ({
+      id: item.price?.metadata?.product_id || 'unknown',
+      name: item.description || 'Produit',
+      price: item.amount_total ? item.amount_total / 100 : 0,
+      quantity: item.quantity || 1,
+      image: item.price?.metadata?.image || ''
+    }));
     
     // Créer une commande dans la base de données
     const orderData = {
-      id: `CMD-${Date.now()}`,
+      id: session.metadata?.order_id || `CMD-${Date.now()}`,
       user_email: session.customer_email || session.customer_details?.email,
       status: 'En préparation',
       total: session.amount_total ? session.amount_total / 100 : 0, // Convertir en euros

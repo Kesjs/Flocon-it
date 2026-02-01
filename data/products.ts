@@ -104,7 +104,7 @@ export const products: Product[] = [
     subCategory: 'Plaids & Textures',
     rating: 4.7,
     reviewsCount: 520,
-    images: ['https://m.media-amazon.com/images/I/81WCvlPi2TL.jpg'],
+    images: ['https://cdn.manomano.com/couverture-couvre-lit-rayee-fauteuil-de-lit-grande-couverture-peluche-grise-160x200cm-P-35187212-153505597_1.jpg'],
     stock: 28,
     badge: 'Bestseller Cocooning',
     ambiance: 'Cocooning',
@@ -193,7 +193,7 @@ export const products: Product[] = [
     subCategory: 'Chambre',
     rating: 4.6,
     reviewsCount: 180,
-    images: ['https://www.leparisien.fr/resizer/Dc5u6PddIxtfv7Od3K0bjRdnzzk=/932x582/cloudfront-eu-central-1.images.arcpublishing.com/lpguideshopping/Q6BSEKYX6RHF7E6M5YCENO3FCQ.jpg'],
+    images: ['https://image.made-in-china.com/202f0j00rtTbvBVlHCgy/Battery-Heated-Blanket-Cuddly-Soft-Heat-Blanket-Use-Fast-Heating-Technology.webp'],
     stock: 15,
     badge: 'Chaleur Instantanée',
     ambiance: 'Cocooning',
@@ -459,7 +459,7 @@ export const products: Product[] = [
     reviewsCount: 260,
     images: ['https://boutique-rose-eternelle.com/wp-content/uploads/2024/07/H154cd4f8747f413fbcca203aa74d0de0x_106e1bb4-3eb3-4cac-a21c-b42846caeb49-598679.jpg'],
     stock: 20,
-    badge: 'Eterno',
+    badge: 'Eternelle',
     ambiance: 'Romantique'
   },
   {
@@ -1016,7 +1016,7 @@ export const products: Product[] = [
     subCategory: 'Cuisine',
     rating: 4.8,
     reviewsCount: 140,
-    images: ['https://www.maisonsdumonde.com/resize/600/600/true/etagere-murale-chene-metal.jpghttps://pierimport.imgix.net/produits/etagere-murale-bois-metal-moderne-lot-de-3-melbourne-63c092982a5ea.jpg?auto=format'],
+    images: ['https://pierimport.imgix.net/produits/etagere-murale-bois-metal-moderne-lot-de-3-melbourne-63c092982a5ea.jpg?auto=format'],
     stock: 25,
     badge: 'Rangement Chic',
     ambiance: 'Moderne'

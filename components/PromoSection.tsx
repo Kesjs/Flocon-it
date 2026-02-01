@@ -15,15 +15,6 @@ export default function PromoSection() {
     }))
     .sort((a, b) => b.discountPercentage - a.discountPercentage) // Meilleures réductions en premier
     .slice(0, 4);
-  
-  // Debug pour voir les produits trouvés
-  console.log('Produits en promotion trouvés:', coupsDeCoeur.map(p => ({ 
-    id: p.id, 
-    name: p.name, 
-    price: p.price, 
-    oldPrice: p.oldPrice,
-    discount: p.discountPercentage
-  })));
 
   return (
     <section className="py-16 bg-gradient-to-br from-rose-custom/5 to-pink-50">
@@ -49,7 +40,7 @@ export default function PromoSection() {
         </motion.div>
 
         {/* Produits en ligne horizontale */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {coupsDeCoeur.map((product, index) => (
             <motion.div
               key={product.id}

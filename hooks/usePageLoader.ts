@@ -14,6 +14,23 @@ export function usePageLoader() {
       setTimeout(() => setIsLoading(false), 200);
     };
 
+    // Détecter le chargement initial de la page
+    const handlePageLoad = () => {
+      handleStart();
+      setTimeout(() => {
+        handleComplete();
+      }, 800); // Durée plus longue pour voir le loader au chargement
+    };
+
+    // Si la page vient de se charger, afficher le loader
+    if (document.readyState === 'complete') {
+      // Page déjà chargée, ne rien faire
+    } else {
+      // Page en cours de chargement
+      handlePageLoad();
+      window.addEventListener('load', handleComplete);
+    }
+
     // Écouter les événements de route
     const originalPush = router.push;
     const originalReplace = router.replace;
@@ -39,6 +56,7 @@ export function usePageLoader() {
     return () => {
       router.push = originalPush;
       router.replace = originalReplace;
+      window.removeEventListener('load', handleComplete);
     };
   }, [router]);
 

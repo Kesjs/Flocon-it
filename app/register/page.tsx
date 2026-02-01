@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { RedirectManager } from "@/lib/redirect-manager";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -20,6 +21,14 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { signUp, checkEmailExists } = useAuth();
+
+  // Pré-remplir l'email depuis l'intention de checkout si disponible
+  useEffect(() => {
+    const checkoutIntent = RedirectManager.getIntent();
+    if (checkoutIntent?.type === 'checkout' && checkoutIntent.data?.email) {
+      setEmail(checkoutIntent.data.email);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +73,18 @@ export default function Register() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push('/login?status=signup_success');
+      // Sauvegarder l'email pour la page de confirmation
+      localStorage.setItem('pending_confirmation_email', email);
+      
+      // Vérifier s'il y a une intention de checkout
+      const checkoutIntent = RedirectManager.getIntent();
+      if (checkoutIntent?.type === 'checkout') {
+        // Rediriger vers pending-confirmation avec l'email en paramètre
+        router.push(`/pending-confirmation?email=${encodeURIComponent(email)}&redirect=checkout`);
+      } else {
+        // Comportement par défaut
+        router.push(`/pending-confirmation?email=${encodeURIComponent(email)}`);
+      }
     }
   };
 

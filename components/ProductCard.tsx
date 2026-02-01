@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Star, ShoppingCart } from "lucide-react";
 import { Product } from "../data/products";
 import { useCart } from "@/context/CartContext";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import OptimizedImage from "./OptimizedImage";
 
 interface ProductCardProps {
   product: Product;
@@ -60,29 +61,27 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       </div>
 
 
-      {/* Product Image - Version corrigée */}
-      <div className="relative aspect-square overflow-hidden bg-gray-50">
+      {/* Product Image - Version optimisée */}
+      <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
         <Link href={`/boutique/${product.slug}`} className="block w-full h-full">
-          {imageError ? (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-gray-500 text-sm">Image non disponible</span>
-            </div>
-          ) : (
-            <img
-              src={product.images[0].startsWith('http') ? product.images[0] : (product.images[0].startsWith('/') ? product.images[0] : `/${product.images[0]}`)}
-              alt={product.name}
-              className={`w-full h-full object-cover transition-transform duration-700 ${
-                isHovered ? 'scale-110' : 'scale-100'
-              }`}
-              onError={() => setImageError(true)}
-              loading="lazy"
-            />
-          )}
+          <OptimizedImage
+            src={product.images[0].startsWith('http') ? product.images[0] : 
+                 (product.images[0].startsWith('/') ? product.images[0] : `/${product.images[0]}`)}
+            alt={product.name}
+            fill
+            className={`object-cover transition-transform duration-700 ${
+              isHovered ? 'scale-110' : 'scale-100'
+            }`}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            quality={80}
+            loading="lazy"
+            fallbackSrc="/placeholder-product.webp"
+            onError={() => setImageError(true)}
+          />
         </Link>
-        
         {/* Quick add to cart on hover */}
         <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
+          isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}>
           <button
             onClick={handleAddToCart}

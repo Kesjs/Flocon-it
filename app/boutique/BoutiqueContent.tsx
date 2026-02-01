@@ -9,7 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import Filters from "@/components/Filters";
 import { Grid, List, SlidersHorizontal, Search, Filter, X, Heart, Snowflake, Gift, Star } from "lucide-react";
 
-export default function BoutiqueContent() {
+export default function BoutiqueContent({ onViewModeChange }: { onViewModeChange?: (mode: 'classic' | 'organized') => void }) {
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'name' | 'price-asc' | 'price-desc' | 'rating'>('name');
@@ -147,7 +147,28 @@ export default function BoutiqueContent() {
               Découvrez nos collections uniques pour l'hiver et la Saint-Valentin.
               Des cadeaux qui marquent les esprits.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+            
+            {/* Boutons de changement de vue */}
+            {onViewModeChange && (
+              <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-lg p-1">
+                <button
+                  onClick={() => onViewModeChange('classic')}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors bg-white text-rose-custom shadow-sm"
+                >
+                  <List className="w-4 h-4" />
+                  <span>Vue Classique</span>
+                </button>
+                <button
+                  onClick={() => onViewModeChange('organized')}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors text-white/80 hover:text-white"
+                >
+                  <Grid className="w-4 h-4" />
+                  <span>Vue Organisée</span>
+                </button>
+              </div>
+            )}
+            
+            <div className="flex flex-wrap gap-3 mt-6">
               <a
                 href="#produits"
                 className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-rose-custom text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all duration-300 shadow-xl text-sm md:text-base"
@@ -294,7 +315,7 @@ export default function BoutiqueContent() {
             ) : (
               <div className={`grid gap-6 ${
                 viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                  ? 'grid-cols-2 md:grid-cols-2 xl:grid-cols-3' 
                   : 'grid-cols-1'
               }`}>
                 {filteredProducts.map((product, index) => (

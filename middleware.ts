@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Routes protégées
-  const protectedRoutes = ['/dashboard', '/orders', '/wishlist', '/checkout']
+  const protectedRoutes = ['/dashboard', '/checkout']
   const authRoutes = ['/login', '/register']
   const { pathname } = request.nextUrl
 

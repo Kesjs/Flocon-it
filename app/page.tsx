@@ -10,6 +10,7 @@ import ChatbotModal from "@/components/ChatbotModal";
 import { useScrollOptimization } from "@/hooks/useScrollOptimization";
 import FAQSection from "@/components/FAQSection";
 import PromoSection from "@/components/PromoSection";
+import CheckoutModal from "@/components/CheckoutModal";
 
 export default function HomePage() {
   const { sections } = useProductDisplay('accueil');
@@ -18,6 +19,7 @@ export default function HomePage() {
   const [isMobile, setIsMobile] = useState(false);
   const [shouldReduceMotion] = useState(false);
   const { scrollY } = useScrollOptimization();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Détecter si on est côté client et mobile
   useEffect(() => {
@@ -29,6 +31,18 @@ export default function HomePage() {
       window.addEventListener('resize', checkMobile);
       return () => window.removeEventListener('resize', checkMobile);
     }
+  }, []);
+
+  // Écouter les messages du CartDrawer
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'SHOW_CHECKOUT') {
+        setIsCheckoutOpen(true);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   // Gérer le scroll vers les ancres
@@ -76,18 +90,19 @@ export default function HomePage() {
         </div>
         
         {/* Grille de contenu Hero */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-center md:items-end md:justify-between h-full pb-8 md:pb-16 min-h-[500px] md:min-h-full pt-20 md:pt-0">
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-center md:items-end md:justify-between h-full pb-8 md:pb-16 min-h-[500px] md:min-h-full pt-40 md:pt-0">
           
           {/* Texte et Bouton - CENTRE sur mobile, GAUCHE sur desktop */}
-          <div className="text-center text-white max-w-2xl mb-8 md:mb-0 md:text-left md:mt-auto px-4 md:px-0">
+          <div className="text-center text-white max-w-4xl mb-8 md:mb-0 md:text-left md:mt-auto px-4 md:px-0">
             <motion.h1
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-3xl md:text-5xl lg:text-7xl font-display font-bold mb-4 md:mb-6 leading-tight will-change-transform"
+              className="text-3xl md:text-5xl lg:text-7xl font-display font-bold mb-4 md:mb-6 leading-tight will-change-transform flex flex-col"
               style={{ transform: 'translateZ(0)' }}
             >
-              L'amour se mérite. <br />Votre cadeau aussi.
+              <span>L'amour se mérite,</span>
+              <span>votre cadeau aussi</span>
             </motion.h1>
 
             <motion.p
@@ -516,6 +531,7 @@ export default function HomePage() {
       <FAQSection />
 
       <ChatbotModal isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
+      <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
   );
 }

@@ -14,6 +14,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   checkEmailExists: (email: string) => Promise<{ exists: boolean; error: AuthError | null }>;
+  confirmEmail: (accessToken: string, refreshToken: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -133,6 +134,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const confirmEmail = async (accessToken: string, refreshToken: string) => {
+    const supabase = createClient();
+    if (!supabase) {
+      return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
+    }
+    
+    const { error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    
+    if (!error) {
+      router.refresh();
+    }
+    
+    return { error };
+  };
+
   const value = {
     user,
     session,
@@ -142,6 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     checkEmailExists,
+    confirmEmail,
   };
 
   return (

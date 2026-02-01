@@ -29,29 +29,32 @@ export default function PageLoader({ isLoading }: PageLoaderProps) {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-white"
         >
-          <div className="relative">
+          <div className="flex flex-col items-center justify-center gap-6">
             {/* Logo animé */}
             <motion.div
               animate={{ 
-                rotate: 360,
-                scale: [1, 1.2, 1]
+                scale: [1, 1.3, 0.9, 1.2, 1],
+                rotateZ: [0, 5, -5, 0],
+                opacity: [0.8, 1, 0.9, 1, 0.8]
               }}
               transition={{ 
-                rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-                scale: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.25, 0.5, 0.75, 1]
               }}
-              className="w-20 h-20 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: 'var(--rose)' }}
+              className="w-20 h-20 rounded-full flex items-center justify-center "
+             
             >
               <img
-                src="https://img.freepik.com/vecteurs-premium/pet-love-logo-coeur-symbole-chat-au-design-plat-couleur-rose_8586-1132.jpg?semt=ais_hybrid&w=740&q=80"
+                src="/logof.jpg?v=1"
                 alt="Flocon"
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-18 h-18 rounded-full object-cover"
               />
             </motion.div>
             
             {/* Points de chargement */}
-            <div className="flex gap-3 mt-6 justify-center">
+            {/* <div className="flex gap-3">
               {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
@@ -69,21 +72,7 @@ export default function PageLoader({ isLoading }: PageLoaderProps) {
                   style={{ backgroundColor: 'var(--rose)' }}
                 />
               ))}
-            </div>
-            
-            {/* Texte de chargement */}
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="text-center mt-4 font-medium"
-              style={{ color: 'var(--rose)' }}
-            >
-              Chargement...
-            </motion.p>
+            </div> */}
           </div>
         </motion.div>
       )}

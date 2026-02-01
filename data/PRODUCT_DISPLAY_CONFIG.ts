@@ -125,24 +125,6 @@ export const PRODUCT_DISPLAY_CONFIG: ProductDisplayConfig = {
           layout: 'grid',
           columns: 4
         },
-        {
-          title: ' Offre Spéciale - Nos Coups de Cœur du Moment',
-          subtitle: 'Découvrez nos créations favorites, sélectionnées avec amour pour illuminer vos plus beaux moments',
-          rule: {
-            filterBy: { 
-              tags: ['personnalisable', 'gravure', 'luxe', 'premium', 'promo'],
-              inStock: true 
-            },
-            maxProducts: 4,
-            sortBy: 'rating',
-            sortOrder: 'desc',
-            showExploreButton: true,
-            exploreButtonText: 'Explorer toutes les promotions',
-            exploreButtonLink: '/promotions'
-          },
-          layout: 'grid',
-          columns: 4
-        }
       ]
     },
     boutique: {

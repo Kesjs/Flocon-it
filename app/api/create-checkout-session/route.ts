@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { corsMiddleware, handleOptions } from '@/lib/cors';
 import { validateCheckoutRequest, sanitizeString } from '@/lib/validation';
 import { apiRateLimit } from '@/lib/rate-limit';
+import { APP_CONFIG } from '@/lib/config';
 
 // Vérifier si Stripe est configuré avant de l'initialiser
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -56,43 +57,81 @@ export async function POST(request: NextRequest) {
     }
 
     // Nettoyer les données
-    const { cartItems, customerEmail } = {
+    const { cartItems, customerEmail, metadata } = {
       cartItems: body.cartItems.map((item: any) => ({
         ...item,
         name: sanitizeString(item.name),
         description: item.description ? sanitizeString(item.description) : undefined
       })),
-      customerEmail: sanitizeString(body.customerEmail)
+      customerEmail: sanitizeString(body.customerEmail),
+      metadata: body.metadata || {}
     };
 
     console.log('Données validées:', { cartItems: cartItems.length, customerEmail });
 
     // Créer les line items pour Stripe
-    const lineItems = cartItems.map((item: any) => ({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: item.name,
-          description: item.description && item.description.trim() ? item.description : `Produit: ${item.name}`,
-          images: item.image ? [item.image] : [],
+    const lineItems = cartItems.map((item: any, index: number) => {
+      console.log(`Traitement de l'article ${index}:`, item.name, 'image:', item.image);
+      
+      const productData: any = {
+        name: item.name,
+        description: item.description && item.description.trim() ? item.description : `Produit: ${item.name}`,
+      };
+      
+      // N'ajouter la propriété images que si on a des images valides
+      // TEMPORAIRE: Désactivé pour éviter l'erreur Stripe
+      /*
+      const validImage = APP_CONFIG.validateImageUrl(item.image);
+      if (validImage) {
+        productData.images = [validImage];
+        console.log(`✅ Image ${index} valide:`, validImage);
+      } else {
+        console.warn(`❌ Image ${index} invalide ou filtrée:`, item.image);
+      }
+      */
+
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: productData,
+          unit_amount: Math.round(item.price * 100), // Convertir en centimes
         },
-        unit_amount: Math.round(item.price * 100), // Convertir en centimes
-      },
-      quantity: item.quantity,
-    }));
+        quantity: item.quantity,
+      };
+    });
 
     console.log('Line items créés:', lineItems.length);
+
+    // Calculer le total
+    const total = cartItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+
+    // Obtenir les URLs de redirection depuis la configuration
+    const stripeUrls = APP_CONFIG.getStripeUrls();
+    console.log('Urls de redirection:', stripeUrls);
 
     // Créer la session de paiement
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/checkout/cancel`,
+      success_url: stripeUrls.success_url,
+      cancel_url: stripeUrls.cancel_url,
       customer_email: customerEmail,
+      // Ne pas stocker cartItems dans metadata (limite 500 caractères)
+      // Utiliser uniquement des métadonnées essentielles avec l'adresse complète
       metadata: {
-        cartItems: JSON.stringify(cartItems),
+        order_id: `CMD-${Date.now()}`,
+        customer_email: customerEmail,
+        items_count: cartItems.length.toString(),
+        total_amount: total.toString(),
+        // Ajouter l'adresse de livraison dans les métadonnées
+        shipping_name: shippingAddress.name || customerEmail,
+        shipping_address: shippingAddress.address || '',
+        shipping_city: shippingAddress.city || '',
+        shipping_postal_code: shippingAddress.postalCode || '',
+        shipping_phone: shippingAddress.phone || '',
+        shipping_country: shippingAddress.country || 'FR',
+        ...metadata,
       },
       // Configuration minimale - aucune validation d'adresse
       // Pas de billing_address_collection ni shipping_address_collection
@@ -111,18 +150,37 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating checkout session:', error);
     
-    // Afficher plus de détails sur l'erreur
+    // Gestion détaillée des erreurs
+    let errorMessage = 'Erreur lors de la création de la session de paiement';
+    let statusCode = 500;
+    
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
+      
+      // Erreurs spécifiques à Stripe
+      if (error.message.includes('Not a valid URL')) {
+        errorMessage = 'URL de redirection invalide - vérifiez la configuration NEXT_PUBLIC_SITE_URL';
+        statusCode = 400;
+      } else if (error.message.includes('Invalid image URL')) {
+        errorMessage = 'URL d\'image invalide dans les produits du panier';
+        statusCode = 400;
+      } else if (error.message.includes('No such token')) {
+        errorMessage = 'Clé API Stripe invalide';
+        statusCode = 401;
+      } else if (error.message.includes('amount')) {
+        errorMessage = 'Montant invalide - vérifiez les prix des produits';
+        statusCode = 400;
+      }
     }
     
     const response = NextResponse.json(
       { 
-        error: 'Erreur lors de la création de la session de paiement',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: errorMessage,
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
       },
-      { status: 500 }
+      { status: statusCode }
     );
     
     return corsMiddleware(request, response);
