@@ -267,7 +267,7 @@ export default function Checkout() {
 
   // Nouvelle fonction pour paiement simulé (créer commande directement)
   const handleSimulatedPayment = async () => {
-    console.log('🔘 Bouton "Payer (Mode Test)" cliqué');
+    console.log('🔘 Bouton "Payer" cliqué');
     if (cartItems.length === 0) {
       console.log('❌ Panier vide');
       return;
@@ -916,6 +916,24 @@ export default function Checkout() {
                     ) : (
                       <>
                         <CreditCard className="w-6 h-6" />
+                        <span className="text-lg">PAYER</span>
+                      </>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={handleSimulatedPayment}
+                    disabled={isProcessing}
+                    className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Traitement en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-6 h-6" />
                         <span className="text-lg">PAYER</span>
                       </>
                     )}

@@ -180,7 +180,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setIsProcessing(true);
 
     try {
-      console.log('🛒 Début paiement test:', { userId: user.id, cartItems: cartItems.length, shippingAddress });
+      console.log('🛒 Début paiement:', { userId: user.id, cartItems: cartItems.length, shippingAddress });
       
       const result = await CheckoutService.processPayment(
         user.id,
@@ -189,7 +189,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         'card'
       );
 
-      console.log('💳 Résultat paiement:', result);
+      console.log('✅ Début du traitement paiement');
 
       if (result.success) {
         console.log('✅ Paiement réussi, vidage du panier...');
@@ -406,7 +406,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     ) : (
                       <>
                         <Check className="w-5 h-5" />
-                        Payer (Mode Test)
+                        Payer
                       </>
                     )}
                   </button>
