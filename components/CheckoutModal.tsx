@@ -159,14 +159,31 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   };
 
   const handleSimulatedPayment = async () => {
-    if (cartItems.length === 0) return;
+    console.log('🔍 Debug handleSimulatedPayment appelé');
+    console.log('📦 Panier:', cartItems.length, 'articles');
+    console.log('👤 Utilisateur:', user ? 'connecté' : 'non connecté');
+    console.log('📧 Email:', customerEmail);
+    console.log('🏠 Adresse:', shippingAddress);
+    
+    // Test simple pour vérifier que la fonction s'exécute
+    alert('Fonction handleSimulatedPayment appelée!');
+    
+    if (cartItems.length === 0) {
+      console.log('❌ Panier vide');
+      alert('Votre panier est vide');
+      return;
+    }
     
     // Validation stricte du formulaire
-    if (!validateForm()) {
+    const isValid = validateForm();
+    console.log('✅ Validation formulaire:', isValid);
+    if (!isValid) {
+      console.log('❌ Erreurs validation:', validationErrors);
       return;
     }
     
     if (!user) {
+      console.log('❌ Utilisateur non connecté');
       // Sauvegarder l'intention de checkout avec les données du formulaire
       RedirectManager.setCheckoutIntent({
         email: customerEmail,
@@ -177,6 +194,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       return;
     }
 
+    console.log('✅ Tous les contrôles passés, début du traitement...');
     setIsProcessing(true);
 
     try {
@@ -376,7 +394,10 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 {/* Actions */}
                 <div className="space-y-3">
                   <button
-                    onClick={handleSimulatedPayment}
+                    onClick={() => {
+                      console.log('🔘 Bouton cliqué!');
+                      handleSimulatedPayment();
+                    }}
                     disabled={isProcessing}
                     className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >

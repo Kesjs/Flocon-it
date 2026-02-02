@@ -232,6 +232,18 @@ export default function Checkout() {
         body: JSON.stringify({
           cartItems,
           customerEmail,
+          metadata: {
+            userId: user.id,
+            // Ajouter les métadonnées d'adresse
+            shippingName: shippingAddress.name || customerEmail,
+            shippingAddress: shippingAddress.address || 'Adresse non spécifiée',
+            shippingCity: shippingAddress.city || 'Paris',
+            shippingPostalCode: shippingAddress.postalCode || '75001',
+            shippingPhone: shippingAddress.phone || '+33 6 00 00 00 00',
+            shippingCountry: shippingAddress.country || 'FR',
+            // Sauvegarder les items du panier pour le reçu
+            cartItems: JSON.stringify(cartItems)
+          },
           shippingAddress
         }),
       });
@@ -346,11 +358,10 @@ export default function Checkout() {
       localStorage.setItem('checkout-shipping-address', JSON.stringify(shippingAddress));
     }
   }, [shippingAddress]);
+  // Forcer l'affichage du formulaire au démarrage
   useEffect(() => {
-    if (showSummary) {
-      setShowSummary(false);
-      console.log('🔄 Forcer affichage du formulaire au démarrage');
-    }
+    setShowSummary(false);
+    console.log('🔄 Forcer affichage du formulaire au démarrage');
   }, []);
 
   // Gérer la recherche de pays
@@ -511,6 +522,8 @@ export default function Checkout() {
             <ArrowLeft className="w-4 h-4" />
             Retour à la boutique
           </Link>
+
+          {/* Formulaire de paiement - maintenant visible par défaut */}
 
           {!showSummary ? (
           <motion.div
@@ -765,10 +778,10 @@ export default function Checkout() {
 
               <button
                 onClick={handleProceedToPayment}
-                className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2 text-base"
               >
-                <CreditCard className="w-5 h-5" />
-                Voir le résumé et payer
+                <CreditCard className="w-4 h-4" />
+                Commander
               </button>
               
               {customerEmail && (
@@ -904,19 +917,19 @@ export default function Checkout() {
 
                 <div className="space-y-3">
                   <button
-                    onClick={handleSimulatedPayment}
+                    onClick={handleCheckout}
                     disabled={isProcessing}
-                    className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                    className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
                   >
                     {isProcessing ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Traitement en cours...</span>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Traitement...</span>
                       </>
                     ) : (
                       <>
-                        <Check className="w-6 h-6" />
-                        <span className="text-lg">PAYER</span>
+                        <CreditCard className="w-4 h-4" />
+                        <span>Payer avec Stripe</span>
                       </>
                     )}
                   </button>
