@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST='{"app/confirm-email/page.tsx -> @/lib/supabase/client":{"id":8525,"files":[]},"app/pending-confirmation/page.tsx -> @/lib/supabase/client":{"id":8525,"files":["static/chunks/vendors-9e64bad4da7bc08d.js","static/chunks/8525.da90e9d9042f0796.js"]}}';
