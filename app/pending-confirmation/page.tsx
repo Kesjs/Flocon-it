@@ -222,10 +222,7 @@ export default function PendingConfirmation() {
               className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"
             >
               <p className="text-green-700 text-sm text-center font-medium">
-                ✅ Email renvoyé avec succès !
-              </p>
-              <p className="text-green-600 text-xs text-center mt-1">
-                Vérifiez votre boîte de réception et les spams (1-2 minutes)
+                Email renvoyé avec succès !
               </p>
             </motion.div>
           )}
