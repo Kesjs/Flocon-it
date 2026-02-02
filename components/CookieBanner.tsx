@@ -30,11 +30,11 @@ export default function CookieBanner() {
     const savedPrefs = localStorage.getItem('cookie-preferences');
     
     if (!consent) {
-      // Afficher la bannière après 2 secondes
+      // Afficher la bannière après 3 secondes
       const timer = setTimeout(() => {
         console.log('🍪 Affichage bannière cookies');
         setShowBanner(true);
-      }, 2000);
+      }, 3000);
       return () => clearTimeout(timer);
     } else {
       setHasConsented(true);
@@ -50,7 +50,10 @@ export default function CookieBanner() {
     localStorage.setItem('cookie-consent', 'true');
     setPreferences(prefs);
     setHasConsented(true);
+    
+    // La bannière disparaît après interaction utilisateur
     setShowBanner(false);
+    setShowSettings(false);
     
     // Appliquer les préférences
     applyCookiePreferences(prefs);
@@ -94,6 +97,7 @@ export default function CookieBanner() {
   };
 
   const acceptAll = () => {
+    console.log('🍪 Acceptation de tous les cookies');
     const allPrefs: CookiePreferences = {
       essential: true,
       functional: true,
@@ -104,6 +108,7 @@ export default function CookieBanner() {
   };
 
   const acceptEssential = () => {
+    console.log('🍪 Acceptation cookies essentiels seulement');
     const essentialPrefs: CookiePreferences = {
       essential: true,
       functional: false,
@@ -114,6 +119,7 @@ export default function CookieBanner() {
   };
 
   const handleSaveSettings = () => {
+    console.log('🍪 Sauvegarde des paramètres personnalisés');
     savePreferences(preferences);
   };
 
