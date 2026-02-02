@@ -24,9 +24,9 @@ export default function ChatbotModal({ isOpen, onClose }: { isOpen: boolean; onC
   const [isTyping, setIsTyping] = useState(false);
 
   const quickReplies = [
-    { text: "Idées cadeaux Saint-Valentin 💕", icon: Heart },
-    { text: "Cadeaux personnalisés 🎁", icon: Gift },
-    { text: "Voir la boutique 🛍️", icon: ShoppingBag }
+    { text: "Idées cadeaux Saint-Valentin", icon: Heart },
+    { text: "Cadeaux personnalisés", icon: Gift },
+    { text: "Voir la boutique", icon: ShoppingBag }
   ];
 
   const botResponses = {

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Home, ShoppingBag, Search, ArrowRight } from "lucide-react";
+import { Home, ShoppingBag, Search, ArrowRight, Sparkles } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -188,7 +188,17 @@ export default function NotFound() {
             delay: 2
           }}
         >
-          🎁
+          <motion.div
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            <Sparkles className="w-16 h-16 text-rose-custom" />
+          </motion.div>
         </motion.div>
       </div>
     </div>

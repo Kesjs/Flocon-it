@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Star, Heart, Cake, TreePine, Flower2, ChevronRight, ChevronLeft, ChevronRight as ArrowRight, Gift, Truck } from "lucide-react";
+import { Star, Heart, Cake, TreePine, Flower2, ChevronRight, ChevronLeft, ChevronRight as ArrowRight, Gift, Truck, Sparkles } from "lucide-react";
 import { useProductDisplay } from "@/hooks/useProductDisplay";
 import { ProductSection } from "@/components/ProductSection";
 import ChatbotModal from "@/components/ChatbotModal";
