@@ -36,7 +36,7 @@ export default function Contact() {
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Notre équipe est à votre disposition pour répondre à toutes vos questions 
-            et vous accompagner dans votre expérience Flocon.
+            sur nos cadeaux et accessoires. Service client 100% français basé en ligne.
           </p>
         </div>
 
@@ -54,9 +54,9 @@ export default function Contact() {
                     <Mail className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Email</p>
-                    <p className="text-gray-600">contact@flocon.fr</p>
-                    <p className="text-sm text-gray-500">Réponse sous 24h</p>
+                    <p className="font-medium text-textDark">Email principal</p>
+                    <p className="text-gray-600">contact@flocon-market.fr</p>
+                    <p className="text-sm text-gray-500">Réponse sous 24h ouvrées</p>
                   </div>
                 </div>
 
@@ -65,9 +65,9 @@ export default function Contact() {
                     <Phone className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Téléphone</p>
-                    <p className="text-gray-600">+33 (0)1 23 45 67 89</p>
-                    <p className="text-sm text-gray-500">Lun-Ven: 9h-18h</p>
+                    <p className="font-medium text-textDark">Service client</p>
+                    <p className="text-gray-600">Disponible par email prioritairement</p>
+                    <p className="text-sm text-gray-500">Lun-Ven: 9h-18h (réponse email)</p>
                   </div>
                 </div>
 
@@ -76,12 +76,12 @@ export default function Contact() {
                     <MapPin className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Boutique</p>
+                    <p className="font-medium text-textDark">Boutique en ligne</p>
                     <p className="text-gray-600">
-                      123 Rue de la Mode<br />
-                      75001 Paris, France
+                      www.flocon.fr<br />
+                      Livraison en France et à l'international
                     </p>
-                    <p className="text-sm text-gray-500">Ouvert tous les jours</p>
+                    <p className="text-sm text-gray-500">Ouvert 24/7 en ligne</p>
                   </div>
                 </div>
 
@@ -90,38 +90,13 @@ export default function Contact() {
                     <Clock className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Horaires</p>
+                    <p className="font-medium text-textDark">Disponibilité</p>
                     <p className="text-gray-600">
-                      Lundi-Vendredi: 9h-19h<br />
-                      Samedi: 10h-18h<br />
-                      Dimanche: 11h-17h
+                      Service client: Lun-Ven: 9h-18h<br />
+                      Commandes en ligne: 24/7
                     </p>
+                    <p className="text-sm text-gray-500">Réponse garantie sous 24h</p>
                   </div>
-                </div>
-              </div>
-
-              {/* Réseaux sociaux */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="font-medium text-textDark mb-4">Suivez-nous</h3>
-                <div className="flex gap-3">
-                  <a href="#" className="p-2 bg-gray-100 rounded-lg hover:bg-rose-custom hover:text-white transition-colors">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-5.373 12-12 12 5.373 12 12 12zm0-1.44c-5.864 0-10.56-4.676-10.56-10.236 0-5.56 4.696-10.56 10.236 0 5.56 4.696 10.56 10.236 0 5.56-4.696 10.56-10.236z"/>
-                      <path d="M12 16c-2.208 0-4-1.792-4-4s1.792-4 4-4 4 1.792 4 4-1.792 4-4 4-1.792-4-4z"/>
-                    </svg>
-                  </a>
-                  <a href="#" className="p-2 bg-gray-100 rounded-lg hover:bg-rose-custom hover:text-white transition-colors">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.12 4.85.367a9.595 9.595 0 0 1 6.29 2.214c.366.698.562 1.5.56 2.302.439.741.679 1.626.679 2.929 0 1.303-.56 2.302-.679.74-.44 1.604-.24 2.302-.439a9.595 9.595 0 0 1 6.29-2.214c1.266-.247 2.646-.367 4.85-.367 6.627 0 12 5.373 12 12s-5.373 12-12 12c-2.204 0-3.584-.12-4.85-.367a9.595 9.595 0 0 1-6.29-2.214c-.366-.698-.562-1.5-.56-2.302 0-.741.679-1.626.679-2.929 0-1.303.56-2.302.679-.74.44-1.604.24-2.302.439a9.595 9.595 0 0 1-6.29 2.214c-1.266.247-2.646.367-4.85.367-6.627 0-12-5.373-12-12s5.373-12 12-12z"/>
-                      <path d="M8.7 10.2c1.1 0 2-.9 2-2s-.9-2-2-2 .9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                      <path d="M15.3 10.2c1.1 0 2-.9 2-2s-.9-2-2-2 .9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                    </svg>
-                  </a>
-                  <a href="#" className="p-2 bg-gray-100 rounded-lg hover:bg-rose-custom hover:text-white transition-colors">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M23.953 4.57a10 10 0 01-2.825.727l-.248-.248a10 10 0 00-2.825-.727l-6.821 6.821a10 10 0 00-2.825-.727l-.248.248a10 10 0 00-2.825.727l6.821-6.821a10 10 0 002.825-.727l.248-.248a10 10 0 002.825.727l6.821 6.821a10 10 0 01-2.825.727l-.248-.248a10 10 0 00-2.825-.727l-6.821-6.821a10 10 0 00-2.825-.727l-.248.248a10 10 0 00-2.825.727l6.821 6.821a10 10 0 002.825.727l.248.248a10 10 0 012.825-.727l6.821-6.821a10 10 0 01-2.825-.727zM4.394 17.439l-2.424-2.424a1 1 0 00-1.415 1.414l2.424 2.424a1 1 0 001.415-1.414l-2.424-2.424a1 1 0 00-1.415 1.414zm14.142 0l2.424-2.424a1 1 0 011.415 1.415l-2.424 2.424a1 1 0 01-1.415-1.415l2.424-2.424a1 1 0 011.415 1.415z"/>
-                    </svg>
-                  </a>
                 </div>
               </div>
             </div>
@@ -242,29 +217,6 @@ export default function Contact() {
                   </button>
                 </form>
               )}
-
-              {/* Informations supplémentaires */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="font-medium text-textDark mb-4">Autres moyens de contact</h3>
-                <div className="grid md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="font-medium text-gray-700">Service client</p>
-                    <p className="text-gray-600">support@flocon.fr</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700">Réclamations</p>
-                    <p className="text-gray-600">reclamations@flocon.fr</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700">Presse</p>
-                    <p className="text-gray-600">presse@flocon.fr</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700">Partenariats</p>
-                    <p className="text-gray-600">partenariats@flocon.fr</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

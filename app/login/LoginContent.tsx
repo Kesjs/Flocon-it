@@ -22,9 +22,20 @@ export default function LoginContent() {
 
   useEffect(() => {
     const status = searchParams.get('status');
+    const confirmed = searchParams.get('confirmed');
+    const message = searchParams.get('message');
+    const error = searchParams.get('error');
+    const description = searchParams.get('description');
+    
     if (status === 'signup_success') {
       setSuccessMessage("Inscription réussie ! Un email de confirmation vous a été envoyé. Merci de vérifier votre boîte de réception.");
       // Nettoyer l'URL pour ne pas afficher le message à nouveau en cas de rafraîchissement
+      router.replace('/login', { scroll: false });
+    } else if (confirmed === 'true' && message) {
+      setSuccessMessage(message);
+      router.replace('/login', { scroll: false });
+    } else if (error) {
+      setError(`${error}: ${description || 'Erreur lors de la confirmation'}`);
       router.replace('/login', { scroll: false });
     }
     

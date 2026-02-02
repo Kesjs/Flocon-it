@@ -14,13 +14,12 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkingEmail, setCheckingEmail] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-  const { signUp, checkEmailExists } = useAuth();
+  const { signUp } = useAuth();
 
   // Pré-remplir l'email depuis l'intention de checkout si disponible
   useEffect(() => {
@@ -47,24 +46,7 @@ export default function Register() {
       return;
     }
 
-    // Vérifier si l'email existe déjà
-    setCheckingEmail(true);
-    const { exists, error: checkError } = await checkEmailExists(email);
-    setCheckingEmail(false);
-
-    if (checkError) {
-      setError("Erreur lors de la vérification de l'email. Veuillez réessayer.");
-      setLoading(false);
-      return;
-    }
-
-    if (exists) {
-      setError("Cet email est déjà utilisé. Veuillez vous connecter ou utiliser un autre email.");
-      setLoading(false);
-      return;
-    }
-
-    // Si l'email n'existe pas, procéder à l'inscription
+    // Procéder directement à l'inscription sans vérification préalable
     const { error } = await signUp(email, password, {
       full_name: fullName,
     });
@@ -222,15 +204,10 @@ export default function Register() {
 
           <button
             type="submit"
-            disabled={loading || checkingEmail}
+            disabled={loading}
             className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {checkingEmail ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Vérification de l'email...
-              </>
-            ) : loading ? (
+            {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 Inscription...
@@ -252,17 +229,6 @@ export default function Register() {
             </Link>
           </p>
         </div>
-
-        {checkingEmail && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3"
-          >
-            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-blue-700 text-sm">Vérification de la disponibilité de l'email...</p>
-          </motion.div>
-        )}
 
       </motion.div>
     </div>

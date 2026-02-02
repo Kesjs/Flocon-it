@@ -125,7 +125,7 @@ export default function HomePage() {
               <motion.a
                 whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(219, 39, 119, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
-                href="#onboarding-valentin"
+                href="#collections"
                 className="text-white px-8 py-3 rounded-sm font-semibold transition-all uppercase tracking-[0.2em] text-sm"
                 style={{ 
                   backgroundColor: 'var(--rose)',
@@ -146,7 +146,7 @@ export default function HomePage() {
               <motion.a
                 whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(219, 39, 119, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
-                href="#onboarding-valentin"
+                href="#collections"
                 className="text-white px-10 py-4 rounded-sm font-semibold transition-all uppercase tracking-[0.2em] text-sm"
                 style={{ 
                   backgroundColor: 'var(--rose)',
@@ -334,17 +334,19 @@ export default function HomePage() {
 </section>
 
       {/* Collections Section - Nouveau système de configuration */}
-      {sections.map((section: any, index: number) => (
-        <ProductSection
-          key={section.title}
-          title={section.title}
-          subtitle={section.subtitle}
-          products={section.products}
-          layout={section.layout}
-          columns={section.columns}
-          className={index > 0 ? 'border-t' : ''}
-        />
-      ))}
+      <section id="collections" className="scroll-mt-20">
+        {sections.map((section: any, index: number) => (
+          <ProductSection
+            key={section.title}
+            title={section.title}
+            subtitle={section.subtitle}
+            products={section.products}
+            layout={section.layout}
+            columns={section.columns}
+            className={index > 0 ? 'border-t' : ''}
+          />
+        ))}
+      </section>
 
       {/* Section Onboarding - Feuille bicolore */}
 <section className="py-24 bg-white">

@@ -1,13 +1,13 @@
-import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer className="bg-textDark text-white mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Newsletter */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-1">
             <h3 className="text-xl font-display font-bold mb-4">
               Newsletter
             </h3>
@@ -18,7 +18,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Votre email"
-                className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/40"
+                className="w-64 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/40"
               />
               <button
                 type="submit"
@@ -56,39 +56,18 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Réseaux sociaux */}
+          {/* Contact */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Suivez-nous</h3>
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-                aria-label="Email"
-              >
-                <Mail className="w-5 h-5" />
-              </a>
-            </div>
+            <h3 className="text-xl font-display font-bold mb-4">Contact</h3>
+            <a 
+              href="mailto:contact@flocon-market.fr" 
+              className="text-gray-300 mb-2 hover:text-white transition-colors inline-block"
+            >
+              contact@flocon-market.fr
+            </a>
+            <p className="text-sm text-gray-400">
+              Service client 100% français
+            </p>
           </div>
         </div>
 

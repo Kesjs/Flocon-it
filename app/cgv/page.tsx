@@ -15,10 +15,8 @@ export default function CGV() {
             </h2>
             <p>
               Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles 
-              entre la société Flocon, SAS avec capital de 10 000€, inscrite au RCS de Paris 
-              sous le numéro 123 456 789, ayant son siège social au 123 Rue de la Mode, 
-              75001 Paris, France, et toute personne physique ou morale achetant des produits 
-              sur le site internet www.flocon.fr.
+              entre la société Flocon, SAS au capital de 10 000€, et toute personne physique ou morale 
+              achetant des produits sur le site internet www.flocon.fr.
             </p>
           </section>
 
@@ -75,10 +73,11 @@ export default function CGV() {
               6. Livraison
             </h2>
             <p>
-              Les produits sont expédiés à l'adresse de livraison indiquée par le client. 
-              Les délais de livraison sont de 3-5 jours ouvrables pour la France métropolitaine. 
-              Les frais de livraison sont gratuits à partir de 50€ d'achat. En cas de retard de livraison 
-              supérieur à 30 jours, le client peut résoudre la vente.
+              Les produits sont expédiés à l'adresse indiquée lors de la commande. 
+              Délai de livraison : 3-5 jours ouvrables pour la France métropolitaine, 
+              7-14 jours pour l'international. 
+              Frais de livraison calculés selon destination et poids. 
+              En cas de retard supérieur à 30 jours, vous pouvez résoudre la vente.
             </p>
           </section>
 
@@ -87,10 +86,7 @@ export default function CGV() {
               7. Droit de rétractation
             </h2>
             <p>
-              Conformément aux dispositions de l'article L121-21 du Code de la consommation, 
-              le client dispose d'un délai de 14 jours à compter de la réception de sa commande 
-              pour exercer son droit de rétractation sans avoir à justifier de motifs ni à payer 
-              de pénalités. Les frais de retour sont à la charge du client.
+              <strong>Droit de rétractation :</strong> Conformément à la législation, vous disposez d'un délai de 14 jours à compter de la réception pour exercer votre droit de rétractation sans avoir à justifier de motifs. Les frais de retour sont à votre charge.
             </p>
           </section>
 
@@ -123,8 +119,8 @@ export default function CGV() {
             </h2>
             <p>
               Pour tout litige, le client peut contacter le service client à l'adresse 
-              contact@flocon.fr. En l'absence d'accord amiable, le litige sera soumis 
-              au tribunal de commerce de Paris.
+              contact@flocon-market.fr. En l'absence d'accord amiable, le litige pourra être soumis 
+              au tribunal compétent.
             </p>
           </section>
 
@@ -148,6 +144,15 @@ export default function CGV() {
               Flocon ne pourra être tenue responsable en cas d'inexécution ou de retard 
               dans l'exécution de ses obligations dû à un cas de force majeure, notamment 
               grève, panne, guerre, émeute, ou tout événement hors de son contrôle.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
+              13. Responsabilité du client
+            </h2>
+            <p>
+              Le client s'engage à ne pas utiliser les produits à des fins illégles ou contraires à l'ordre public. Le client est responsable de l'exactitude des informations fournies lors de la commande.
             </p>
           </section>
 

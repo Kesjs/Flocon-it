@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // Génère des fichiers HTML/CSS/JS statiques
   transpilePackages: ['framer-motion'],
   experimental: {
     optimizePackageImports: ['framer-motion', 'lucide-react'],

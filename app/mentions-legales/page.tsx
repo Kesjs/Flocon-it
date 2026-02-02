@@ -16,11 +16,10 @@ export default function MentionsLegales() {
             <div className="space-y-2">
               <p><strong>Flocon</strong></p>
               <p>Société par actions simplifiée (SAS) au capital de 10 000€</p>
-              <p>RCS Paris : 123 456 789</p>
-              <p>SIRET : 123 456 789 00012</p>
-              <p>Siège social : 123 Rue de la Mode, 75001 Paris, France</p>
-              <p>Téléphone : +33 (0)1 23 45 67 89</p>
-              <p>Email : contact@flocon.fr</p>
+              <p>Immatriculation : En cours d'immatriculation en France</p>
+              <p>Site internet : www.flocon.fr</p>
+              <p>Email : contact@flocon-market.fr</p>
+              <p><em>Boutique en ligne de cadeaux et accessoires</em></p>
             </div>
           </section>
 
@@ -29,9 +28,9 @@ export default function MentionsLegales() {
               2. Directeur de la publication
             </h2>
             <div className="space-y-2">
-              <p><strong>Jean Dupont</strong></p>
-              <p>Président-Directeur Général</p>
-              <p>Email : jean.dupont@flocon.fr</p>
+              <p><strong>Direction de Flocon</strong></p>
+              <p>Email : contact@flocon-market.fr</p>
+              <p><em>Responsable éditorial du site www.flocon.fr</em></p>
             </div>
           </section>
 
@@ -80,7 +79,7 @@ export default function MentionsLegales() {
               Conformément à la loi Informatique et Libertés du 6 janvier 1978 modifiée, 
               tout utilisateur dispose d'un droit d'accès, de rectification, de suppression 
               et d'opposition aux données personnelles le concernant. Pour exercer ce droit, 
-              il suffit de nous contacter à l'adresse email : contact@flocon.fr.
+              il suffit de nous contacter à l'adresse email : contact@flocon-market.fr.
             </p>
           </section>
 
@@ -90,8 +89,8 @@ export default function MentionsLegales() {
             </h2>
             <p>
               En cas de litige, et après avoir tenté une résolution amiable, le client peut 
-              saisir le médiateur de la consommation compétent ou le tribunal de commerce 
-              de Paris.
+              saisir le médiateur de la consommation compétent ou le tribunal compétent 
+              selon sa localisation en France.
             </p>
           </section>
 

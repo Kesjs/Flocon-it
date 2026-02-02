@@ -146,11 +146,9 @@ export default function PolitiqueConfidentialite() {
               10. Contact DPD
             </h2>
             <div className="space-y-2">
-              <p><strong>Délégué à la Protection des Données :</strong></p>
-              <p>Jean Dupont</p>
-              <p>Email : dpo@flocon.fr</p>
-              <p>Téléphone : +33 (0)1 23 45 67 89</p>
-              <p>Adresse : 123 Rue de la Mode, 75001 Paris</p>
+              <p><strong>Service client :</strong></p>
+              <p>Email : contact@flocon-market.fr</p>
+              <p><em>Délégation à la Protection des Données pour Flocon</em></p>
             </div>
           </section>
 

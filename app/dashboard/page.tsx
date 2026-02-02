@@ -26,19 +26,24 @@ export default function Dashboard() {
   const { user, loading: authLoading, signOut } = useAuth();
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-      return;
+    // Attendre que l'auth soit complètement chargée avant de vérifier
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ Dashboard: Utilisateur non connecté, redirection vers login');
+        router.push("/login");
+      } else {
+        console.log('✅ Dashboard: Utilisateur connecté:', user.email);
+      }
     }
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (user && !isLoadingOrders) {
+    if (user && !authLoading && !isLoadingOrders) {
       console.log('🔄 useEffect déclenché pour user:', user.id);
       setIsLoadingOrders(true);
       loadOrders();
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   useEffect(() => {
     // Filtrer les commandes
@@ -131,19 +136,31 @@ export default function Dashboard() {
     { id: "profil" as View, label: "Profil", icon: User },
   ];
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
       <div className="pt-28 min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement du dashboard...</p>
+          <p className="text-gray-600">Vérification de l'authentification...</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return null;
+    return (
+      <div className="pt-28 min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Vous devez être connecté pour accéder à cette page.</p>
+          <Link 
+            href="/login" 
+            className="px-6 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
+          >
+            Se connecter
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -175,24 +192,17 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <button
-                onClick={loadOrders}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Actualiser
-              </button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <Link
                 href="/boutique"
-                className="flex items-center gap-2 px-6 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors min-h-[44px]"
               >
                 <ShoppingBag className="w-4 h-4" />
                 Boutique
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg transition-colors min-h-[44px]"
               >
                 <LogOut className="w-4 h-4" />
                 Déconnexion
@@ -202,59 +212,6 @@ export default function Dashboard() {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <motion.aside
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className={`lg:w-64 bg-white rounded-xl shadow-sm border border-gray-200 p-6 ${
-              isMobileMenuOpen ? "block" : "hidden lg:block"
-            }`}
-          >
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Mon Espace</h2>
-            <nav className="space-y-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setCurrentView(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
-                      currentView === item.id
-                        ? "bg-rose-custom text-white"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
-                    </div>
-                    {item.count !== undefined && item.count > 0 && (
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        currentView === item.id
-                          ? "bg-white/20 text-white"
-                          : "bg-gray-100 text-gray-600"
-                      }`}>
-                        {item.count}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <button
-                onClick={handleClearOrders}
-                className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <X className="w-4 h-4" />
-                <span className="text-sm font-medium">Vider les commandes</span>
-              </button>
-            </div>
-          </motion.aside>
 
           {/* Main Content */}
           <motion.div
@@ -262,13 +219,113 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="flex-1"
           >
-            {/* Mobile Menu Button */}
+              {/* Mobile Menu Button - Sidebar */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden mb-4 p-2 bg-white rounded-lg shadow-sm border border-gray-200"
+              className="lg:hidden fixed bottom-4 right-4 z-50 p-3 bg-rose-custom text-white rounded-full shadow-lg hover:bg-rose-custom/90 transition-colors"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
+            {/* Mobile Sidebar Overlay */}
+            {isMobileMenuOpen && (
+              <div 
+                className="lg:hidden fixed inset-0 bg-black/50 z-40"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+            )}
+
+            {/* Mobile Sidebar */}
+            <motion.aside
+              initial={{ x: -300 }}
+              animate={{ x: isMobileMenuOpen ? 0 : -300 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="lg:hidden fixed left-0 top-0 h-full w-72 bg-white shadow-xl z-50 overflow-y-auto"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Mon Espace</h2>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <nav className="space-y-2">
+                  {menuItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setCurrentView(item.id);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                          currentView === item.id
+                            ? "bg-rose-custom text-white"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className="w-5 h-5" />
+                          <span className="font-medium">{item.label}</span>
+                        </div>
+                        {item.count !== undefined && item.count > 0 && (
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            currentView === item.id
+                              ? "bg-white/20 text-white"
+                              : "bg-gray-100 text-gray-600"
+                          }`}>
+                            {item.count}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+            </motion.aside>
+
+            {/* Desktop Sidebar */}
+            <motion.aside
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="hidden lg:block lg:w-64 bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+            >
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Mon Espace</h2>
+              <nav className="space-y-2">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setCurrentView(item.id)}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                        currentView === item.id
+                          ? "bg-rose-custom text-white"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5" />
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                      {item.count !== undefined && item.count > 0 && (
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          currentView === item.id
+                            ? "bg-white/20 text-white"
+                            : "bg-gray-100 text-gray-600"
+                        }`}>
+                          {item.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+            </motion.aside>
 
             {/* Content */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

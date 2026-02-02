@@ -28,14 +28,13 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
     });
   };
 
-
   const discount = product.oldPrice 
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
 
   return (
     <div
-      className={`group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden will-change-transform ${className}`}
+      className={`group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden will-change-transform flex flex-col ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ transform: 'translateZ(0)' }}
@@ -79,22 +78,21 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             onError={() => setImageError(true)}
           />
         </Link>
-        {/* Quick add to cart on hover */}
-        <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}>
+        {/* Quick add to cart on hover - Desktop only */}
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-all duration-300 opacity-0 pointer-events-none lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto">
           <button
             onClick={handleAddToCart}
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center space-x-2"
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center space-x-2 transform translate-y-4 lg:group-hover:translate-y-0 lg:transition-transform lg:duration-300"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Ajouter au panier</span>
+            <span className="hidden lg:inline">Ajouter au panier</span>
+            <span className="lg:hidden">Ajouter</span>
           </button>
         </div>
       </div>
 
       {/* Product Info */}
-      <div className="p-4 pt-6">
+      <div className="p-4 pt-6 flex flex-col flex-grow">
         <div className="mb-2">
           <Link href={`/boutique/${product.slug}`} className="block">
             <h3 className="font-semibold text-textDark hover:text-rose-custom transition-colors line-clamp-2 leading-tight">
@@ -137,7 +135,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
         </div>
 
         {/* Price */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 mb-4">
           <span className="text-lg font-bold text-textDark">
             {product.price.toFixed(2)} €
           </span>
@@ -146,6 +144,17 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
               {product.oldPrice.toFixed(2)} €
             </span>
           )}
+        </div>
+
+        {/* Mobile Add to Cart Button - Always visible on mobile */}
+        <div className="lg:hidden mt-auto">
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-rose-custom text-white px-4 py-3 rounded-lg font-medium hover:bg-rose-custom/90 transition-colors flex items-center justify-center space-x-2 min-h-[44px]"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>Ajouter</span>
+          </button>
         </div>
       </div>
     </div>

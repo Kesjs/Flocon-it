@@ -140,23 +140,11 @@ export function OrdersSection({
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleDebug}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
-          >
-            Debug
-          </button>
-          <button
-            onClick={handleCreateTestOrder}
-            className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
-          >
-            Test
-          </button>
+        <div className="hidden sm:flex items-center gap-2">
           <button
             onClick={handleSyncOrders}
             disabled={isSyncing}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm min-h-[44px]"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
             {isSyncing ? 'Synchronisation...' : 'Synchroniser'}
@@ -272,11 +260,11 @@ export function OrdersSection({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     {order.shippingAddress && (
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <MapPin className="w-4 h-4" />
-                        <span>
+                        <span className="line-clamp-1">
                           {order.shippingAddress.address}, {order.shippingAddress.city}
                         </span>
                       </div>
@@ -284,7 +272,7 @@ export function OrdersSection({
                     
                     <button
                       onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                      className="flex items-center gap-2 text-rose-custom hover:text-rose-custom/80 transition-colors"
+                      className="flex items-center justify-center gap-2 px-4 py-2 text-rose-custom hover:text-rose-custom/80 transition-colors bg-rose-custom/10 hover:bg-rose-custom/20 rounded-lg min-h-[44px] w-full sm:w-auto"
                     >
                       <Eye className="w-4 h-4" />
                       {isExpanded ? 'Masquer' : 'Détails'}
