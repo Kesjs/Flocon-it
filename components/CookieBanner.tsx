@@ -31,7 +31,10 @@ export default function CookieBanner() {
     
     if (!consent) {
       // Afficher la bannière après 2 secondes
-      const timer = setTimeout(() => setShowBanner(true), 2000);
+      const timer = setTimeout(() => {
+        console.log('🍪 Affichage bannière cookies');
+        setShowBanner(true);
+      }, 2000);
       return () => clearTimeout(timer);
     } else {
       setHasConsented(true);
@@ -42,6 +45,7 @@ export default function CookieBanner() {
   }, []);
 
   const savePreferences = (prefs: CookiePreferences) => {
+    console.log('🍪 Sauvegarde préférences cookies:', prefs);
     localStorage.setItem('cookie-preferences', JSON.stringify(prefs));
     localStorage.setItem('cookie-consent', 'true');
     setPreferences(prefs);

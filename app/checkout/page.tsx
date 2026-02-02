@@ -906,19 +906,13 @@ export default function Checkout() {
                   <button
                     onClick={handleCheckout}
                     disabled={isProcessing}
-                    className="w-full bg-black text-white py-4 rounded-xl font-black hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 border-2 border-black"
+                    className="w-full bg-gray-400 text-white py-4 rounded-xl font-black transition-all duration-200 shadow-lg flex items-center justify-center gap-3 border-2 border-gray-400 opacity-60 cursor-not-allowed"
+                    title="Indisponible - Utilisez le bouton vert ci-dessous"
                   >
-                    {isProcessing ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Traitement en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="w-6 h-6" />
-                        <span className="text-lg">PAYER</span>
-                      </>
-                    )}
+                    <>
+                      <CreditCard className="w-6 h-6" />
+                      <span className="text-lg">PAYER</span>
+                    </>
                   </button>
                   
                   <button
