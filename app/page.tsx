@@ -45,11 +45,25 @@ export default function HomePage() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // Gérer le scroll vers les ancres
+  // Gérer le scroll vers les ancres et les erreurs dans l'URL
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
-      if (hash) {
+      
+      // Vérifier si c'est une erreur OTP
+      if (hash && hash.includes('error=otp_expired')) {
+        // Rediriger vers la page de renvoi d'email
+        window.location.href = '/pending-confirmation';
+        return;
+      }
+      
+      if (hash && hash.includes('error=')) {
+        // Rediriger vers login pour autres erreurs
+        window.location.href = '/login?error=email_link_expired';
+        return;
+      }
+      
+      if (hash && !hash.includes('error=')) {
         requestAnimationFrame(() => {
           const element = document.querySelector(hash);
           if (element) {

@@ -27,6 +27,11 @@ export default function LoginContent() {
     const error = searchParams.get('error');
     const description = searchParams.get('description');
     
+    // Gérer l'erreur de lien expiré
+    if (error === 'email_link_expired') {
+      setError('Le lien de confirmation a expiré. Veuillez vous reconnecter pour recevoir un nouvel email.');
+    }
+    
     if (status === 'signup_success') {
       setSuccessMessage("Inscription réussie ! Un email de confirmation vous a été envoyé. Merci de vérifier votre boîte de réception.");
       // Nettoyer l'URL pour ne pas afficher le message à nouveau en cas de rafraîchissement
