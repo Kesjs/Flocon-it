@@ -6,6 +6,7 @@ import CartProviderWrapper from "@/components/CartProviderWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import AnnounceBar from "@/components/AnnounceBar";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
+import CookieBanner from "@/components/CookieBanner";
 
 // Try to load Inter font with fallback
 let inter: { className: string };
@@ -98,6 +99,7 @@ export default function RootLayout({
               <Header />
               <main className="min-h-screen">{children}</main>
               <Footer />
+              <CookieBanner />
             </CartProviderWrapper>
           </AuthProvider>
         </ClientLayoutWrapper>
