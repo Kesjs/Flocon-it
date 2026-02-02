@@ -376,6 +376,24 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 {/* Actions */}
                 <div className="space-y-3">
                   <button
+                    onClick={handleStripeCheckout}
+                    disabled={isProcessing}
+                    className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Traitement en cours...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        Payer avec Stripe
+                      </>
+                    )}
+                  </button>
+
+                  <button
                     onClick={handleSimulatedPayment}
                     disabled={isProcessing}
                     className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"

@@ -16,7 +16,7 @@ function CacheControl() {
   useEffect(() => {
     // Forcer le rechargement si c'est une version en cache
     if (typeof window !== 'undefined') {
-      const version = '2024-01-01-v2'; // Version pour forcer le rechargement
+      const version = '2025-01-01-v3'; // Version mise à jour pour Stripe
       const currentVersion = sessionStorage.getItem('checkout-success-version');
       
       if (currentVersion !== version) {
