@@ -904,24 +904,6 @@ export default function Checkout() {
 
                 <div className="space-y-3">
                   <button
-                    onClick={handleCheckout}
-                    disabled={isProcessing}
-                    className="w-full bg-black text-white py-4 rounded-xl font-black hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 border-2 border-black"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Traitement en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="w-6 h-6" />
-                        <span className="text-lg">PAYER</span>
-                      </>
-                    )}
-                  </button>
-                  
-                  <button
                     onClick={handleSimulatedPayment}
                     disabled={isProcessing}
                     className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
