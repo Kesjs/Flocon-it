@@ -53,15 +53,15 @@ export default function CookiesPage() {
     
     // Cookies analytiques
     if (prefs.analytics) {
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('consent', 'update', {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', {
           'analytics_storage': 'granted'
         });
       }
       document.cookie = "flocon_analytics=true; max-age=31536000; path=/; secure; samesite=strict";
     } else {
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('consent', 'update', {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', {
           'analytics_storage': 'denied'
         });
       }
