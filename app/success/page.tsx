@@ -47,27 +47,37 @@ export default function SuccessPage() {
         if (user && session.metadata?.userId) {
           await syncStripeOrder({
             sessionId,
-            userId: user.id,
-            amount: session.amount_total,
-            currency: session.currency,
-            metadata: session.metadata,
-            paymentStatus: session.payment_status,
-            customerEmail: session.customer_details?.email
-          });
+            customerEmail: session.customer_details?.email || '',
+            total: session.amount_total / 100,
+            items: parseInt(session.metadata?.itemCount || '1'),
+            shippingAddress: {
+              name: session.metadata?.shippingName || 'Client',
+              address: session.metadata?.shippingAddress || 'Adresse non spécifiée',
+              city: session.metadata?.shippingCity || 'Paris',
+              postalCode: session.metadata?.shippingPostalCode || '75001',
+              phone: session.metadata?.shippingPhone || '+33 6 00 00 00 00',
+              country: session.metadata?.shippingCountry || 'FR'
+            }
+          }, user.id);
         }
 
         // Vider le panier
         clearCart();
 
         // Sauvegarder dans OrderStorage
-        OrderStorage.saveOrder({
-          sessionId,
-          amount: session.amount_total,
-          currency: session.currency,
-          paymentStatus: session.payment_status,
-          customerEmail: session.customer_details?.email,
-          metadata: session.metadata,
-          createdAt: new Date().toISOString()
+        OrderStorage.addOrder({
+          userId: user?.id || 'guest',
+          status: 'En préparation',
+          total: session.amount_total / 100,
+          items: parseInt(session.metadata?.itemCount || '1'),
+          products: [], // Sera rempli depuis les métadonnées si nécessaire
+          shippingAddress: {
+            name: session.metadata?.shippingName || 'Client',
+            address: session.metadata?.shippingAddress || 'Adresse non spécifiée',
+            city: session.metadata?.shippingCity || 'Paris',
+            postalCode: session.metadata?.shippingPostalCode || '75001',
+            phone: session.metadata?.shippingPhone || '+33 6 00 00 00 00'
+          }
         });
 
         setOrderDetails(session);

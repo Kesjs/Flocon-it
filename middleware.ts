@@ -14,7 +14,9 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
   
   // Optimisation pour la France
-  const country = request.geo?.country || 'Unknown'
+  const country = request.nextUrl.searchParams.get('country') || 
+                  request.headers.get('x-vercel-ip-country') || 
+                  'Unknown';
   if (country === 'FR') {
     response.headers.set('X-France-Optimized', 'true')
     response.headers.set('Cache-Control', 'public, max-age=7200, must-revalidate')
