@@ -7,7 +7,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-01-28.clover',
 });
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY) 
+  : null;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -112,14 +114,24 @@ interface ReceiptData {
 }
 
 async function sendReceiptEmail(data: ReceiptData) {
+  if (!resend) {
+    console.log('⚠️ Resend non configuré, email non envoyé');
+    return;
+  }
+
   const emailHtml = generateReceiptHTML(data);
 
-  await resend.emails.send({
-    from: 'Flocon <noreply@flocon-boutique.com>',
-    to: [data.email],
-    subject: `🧾 Reçu de commande #${data.orderId.slice(-8)}`,
-    html: emailHtml,
-  });
+  try {
+    await resend.emails.send({
+      from: 'Flocon <noreply@flocon-boutique.com>',
+      to: [data.email],
+      subject: `🧾 Reçu de commande #${data.orderId.slice(-8)}`,
+      html: emailHtml,
+    });
+    console.log('✅ Email de reçu envoyé à:', data.email);
+  } catch (error) {
+    console.error('❌ Erreur envoi email:', error);
+  }
 }
 
 function generateReceiptHTML(data: ReceiptData): string {
