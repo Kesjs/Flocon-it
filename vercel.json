@@ -3,7 +3,7 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": [],
+  "regions": ["cdg1"],
   "headers": [
     {
       "source": "/(.*)",
