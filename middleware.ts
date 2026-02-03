@@ -8,6 +8,22 @@ export async function middleware(request: NextRequest) {
     },
   })
 
+  // Headers CORS et optimisation France
+  response.headers.set('Access-Control-Allow-Origin', '*')
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+  
+  // Optimisation pour la France
+  const country = request.geo?.country || 'Unknown'
+  if (country === 'FR') {
+    response.headers.set('X-France-Optimized', 'true')
+    response.headers.set('Cache-Control', 'public, max-age=7200, must-revalidate')
+  }
+  
+  // Headers SEO et sécurité
+  response.headers.set('X-Robots-Tag', 'index, follow')
+  response.headers.set('X-CDN-Cache', 'HIT')
+
   // Vérifier si les variables Supabase sont définies
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     // Continuer sans authentification Supabase si les variables ne sont pas définies
