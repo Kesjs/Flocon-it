@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Star, Heart, Cake, TreePine, Flower2, ChevronRight, ChevronLeft, ChevronRight as ArrowRight, Gift, Truck, Sparkles } from "lucide-react";
 import { useProductDisplay } from "@/hooks/useProductDisplay";
 import { ProductSection } from "@/components/ProductSection";
@@ -12,7 +13,7 @@ import FAQSection from "@/components/FAQSection";
 import PromoSection from "@/components/PromoSection";
 import CheckoutModal from "@/components/CheckoutModal";
 
-export default function HomePage() {
+function HomePageContent() {
   const { sections } = useProductDisplay('accueil');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [currentMomentIndex, setCurrentMomentIndex] = useState(0);
@@ -20,6 +21,54 @@ export default function HomePage() {
   const [shouldReduceMotion] = useState(false);
   const { scrollY } = useScrollOptimization();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Vérifier les paramètres d'URL pour les redirections d'authentification
+  useEffect(() => {
+    // Ne pas exécuter sur la page checkout
+    if (window.location.pathname === '/checkout') {
+      return;
+    }
+
+    const code = searchParams.get('code');
+    const accessToken = searchParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token');
+    const error = searchParams.get('error');
+    const errorDescription = searchParams.get('error_description');
+
+    // Debug: afficher les paramètres reçus
+    console.log('🔍 Paramètres URL reçus:', {
+      code: code ? 'présent' : 'absent',
+      accessToken: accessToken ? 'présent' : 'absent',
+      refreshToken: refreshToken ? 'présent' : 'absent',
+      error: error || 'aucun',
+      fullUrl: window.location.href
+    });
+
+    // Rediriger vers la page de réinitialisation si on a un code ou des tokens
+    if (code || (accessToken && refreshToken)) {
+      console.log('🔄 Redirection vers reset-password avec les paramètres');
+      router.push(`/reset-password?${searchParams.toString()}`);
+      return;
+    }
+
+    // Rediriger vers la page de confirmation email si besoin
+    if (accessToken && refreshToken && !code) {
+      console.log('🔄 Redirection vers confirm-email');
+      router.push(`/confirm-email?${searchParams.toString()}`);
+      return;
+    }
+
+    // Gérer les erreurs d'authentification
+    if (error) {
+      console.log('🔄 Redirection vers login avec erreur');
+      router.push(`/login?error=${error}&description=${errorDescription || 'Erreur d\'authentification'}`);
+      return;
+    }
+
+    console.log('✅ Aucune redirection nécessaire - affichage page d\'accueil');
+  }, [searchParams, router]);
 
   // Détecter si on est côté client et mobile
   useEffect(() => {
@@ -30,6 +79,37 @@ export default function HomePage() {
       checkMobile();
       window.addEventListener('resize', checkMobile);
       return () => window.removeEventListener('resize', checkMobile);
+    }
+  }, []);
+
+  // Ajuster le padding top pour tenir compte de l'AnnounceBar et du scroll
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const updateMainPadding = () => {
+        const scrollPosition = window.scrollY;
+        const announceBarHeight = scrollPosition > 20 ? 0 : 40; // Synchronisé avec le header
+        const mainElement = document.querySelector('main');
+        if (mainElement) {
+          mainElement.style.paddingTop = `${announceBarHeight}px`;
+          mainElement.style.transition = 'padding-top 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      };
+
+      // Throttling pour performance
+      let ticking = false;
+      const throttledUpdate = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateMainPadding();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      updateMainPadding();
+      window.addEventListener('scroll', throttledUpdate, { passive: true });
+      return () => window.removeEventListener('scroll', throttledUpdate);
     }
   }, []);
 
@@ -549,5 +629,13 @@ export default function HomePage() {
       <ChatbotModal isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-cream flex items-center justify-center">Chargement...</div>}>
+      <HomePageContent />
+    </Suspense>
   );
 }

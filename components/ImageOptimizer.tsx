@@ -36,7 +36,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({
   fill = false,
   className = '',
   priority = false,
-  quality = 80,
+  quality = 75,
   sizes,
   style = {},
   onError,

@@ -1,27 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['framer-motion'],
   experimental: {
-    optimizePackageImports: ['framer-motion', 'lucide-react'],
     scrollRestoration: true,
+    optimizePackageImports: ['lucide-react', 'framer-motion']
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    domains: ['localhost'],
-    minimumCacheTTL: 60 * 60 * 24 * 7,
-    disableStaticImages: process.env.NODE_ENV === 'development',
+    formats: ['image/webp', 'image/avif'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.leclapstore.com',
-        pathname: '/**',
+        hostname: '**',
       },
       {
         protocol: 'https',
@@ -134,9 +122,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    loader: 'custom',
-    loaderFile: './image-loader.js',
-    qualities: [75, 90, 95],
+    loader: 'default',
+    qualities: [75, 80, 90, 95],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
@@ -175,6 +162,15 @@ const nextConfig = {
       };
     }
     return config;
+  },
+  // Ajouter le middleware pour l'admin Flocon
+  async rewrites() {
+    return [
+      {
+        source: '/admin/:path*',
+        destination: '/Flocon/admin/:path*',
+      },
+    ];
   },
 }
 

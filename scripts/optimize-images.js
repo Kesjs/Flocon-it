@@ -7,7 +7,7 @@ const { execSync } = require('child_process');
 // Configuration
 const PUBLIC_DIR = path.join(__dirname, '../public');
 const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png'];
-const WEBP_QUALITY = 80;
+const WEBP_QUALITY = 75;
 const AVIF_QUALITY = 50;
 
 // Vérifier si cwebp est installé

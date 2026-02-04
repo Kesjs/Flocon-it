@@ -135,9 +135,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    loader: 'custom',
-    loaderFile: './image-loader.js',
-    qualities: [75, 90, 95],
+    loader: 'default',
+    qualities: [75, 80, 90, 95],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

@@ -1,7 +1,6 @@
 import Image, { StaticImageData } from 'next/image';
 import { useState, useEffect } from 'react';
 import ImagePlaceholder from './ImagePlaceholder';
-import { preloadImage } from '../image-loader';
 
 interface OptimizedImageProps {
   src: string | StaticImageData;
@@ -30,7 +29,7 @@ export default function OptimizedImage({
   fill = false,
   className = '',
   priority = false,
-  quality = 80,
+  quality = 75,
   sizes,
   style,
   onError,
@@ -74,11 +73,9 @@ export default function OptimizedImage({
   // Précharger l'image quand le composant est monté
   useEffect(() => {
     if (isMounted && originalSrc && !hasError) {
-      // Précharger l'image en arrière-plan avec gestion d'erreur silencieuse
-      preloadImage(originalSrc).catch((error) => {
-        // Ignorer silencieusement les erreurs de préchargement
-        // L'image sera toujours tentée de se charger via le composant Image
-      });
+      // L'image sera chargée par le composant Image de Next.js
+      // Pas besoin de préchargement manuel
+      setIsLoading(false);
     }
   }, [isMounted, originalSrc, hasError]);
 

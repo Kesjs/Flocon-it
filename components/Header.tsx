@@ -23,19 +23,44 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const shouldBeScrolled = scrollPosition > 10;
+      const shouldBeScrolled = scrollPosition > 20; // Seuil très bas pour réactivité maximale
       setIsScrolled(shouldBeScrolled);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Throttling pour performance
+    let ticking = false;
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", throttledHandleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", throttledHandleScroll);
   }, []);
 
   return (
     <>
       <motion.header
         suppressHydrationWarning
-        className={`fixed left-0 right-0 top-0 z-50 border-b border-gray-200/50 transition-all duration-300 bg-white shadow-lg`}
+        animate={{
+          top: isScrolled ? 0 : 32, // 32px = 8px * 4 (taille réelle de l'announce bar)
+          zIndex: isScrolled ? 50 : 40,
+        }}
+        transition={{
+          top: {
+            type: "spring",
+            stiffness: 200, // Plus rigide pour plus de réactivité
+            damping: 25,    // Plus d'amortissement pour moins de rebond
+            mass: 0.8,      // Plus léger
+          },
+          zIndex: { duration: 0 }
+        }}
+        className="fixed left-0 right-0 border-b border-gray-200/50 bg-white shadow-lg"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">

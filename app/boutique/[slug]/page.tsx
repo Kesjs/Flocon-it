@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProductBySlug, getProductsByCategory, Product, products } from "../../../data/products";
 import { getSimilarProducts } from "../../../data/similarity";
-import { preloadImages } from "../../../image-loader";
 import { useCart } from "@/context/CartContext";
 import { Star, ShoppingCart, Heart, Truck, Shield, RefreshCw, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
@@ -27,13 +26,6 @@ export default function ProductPage() {
   }
 
   const relatedProducts = getSimilarProducts(product, products, 3);
-
-  // Précharger les images du produit actuel (priorité haute)
-  preloadImages(product.images, 'high');
-  
-  // Précharger les images des produits similaires (priorité basse, en arrière-plan)
-  const similarImages = relatedProducts.flatMap(p => p.images);
-  preloadImages(similarImages, 'low');
 
   const discount = product.oldPrice 
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)

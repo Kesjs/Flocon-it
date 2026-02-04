@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowLeft, AlertCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { OrderStorage } from "@/lib/order-storage";
 import { syncStripeOrder } from "@/lib/order-sync";
 import { useCart } from "@/context/CartContext";
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useAuth();
@@ -236,5 +236,13 @@ export default function SuccessPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Chargement...</div>}>
+      <SuccessPageContent />
+    </Suspense>
   );
 }

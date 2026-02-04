@@ -93,6 +93,11 @@ export async function middleware(request: NextRequest) {
   const authRoutes = ['/login', '/register']
   const { pathname } = request.nextUrl
 
+  // EXCLURE les routes admin Flocon du middleware principal
+  if (pathname.startsWith('/Flocon/admin')) {
+    return response
+  }
+
   if (!user && protectedRoutes.some(route => pathname.startsWith(route))) {
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectTo', pathname)

@@ -72,7 +72,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
               isHovered ? 'scale-110' : 'scale-100'
             }`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            quality={80}
+            quality={75}
             loading="lazy"
             fallbackSrc="/placeholder-product.webp"
             onError={() => setImageError(true)}

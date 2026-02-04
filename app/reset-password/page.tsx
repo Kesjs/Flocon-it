@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,11 +25,22 @@ export default function ResetPassword() {
     const refreshToken = searchParams.get('refresh_token');
     const code = searchParams.get('code');
 
+    // Debug: afficher les paramètres reçus
+    console.log('🔍 Reset Password - Paramètres URL:', {
+      code: code ? 'présent' : 'absent',
+      accessToken: accessToken ? 'présent' : 'absent',
+      refreshToken: refreshToken ? 'présent' : 'absent',
+      fullUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
+    });
+
     if (!accessToken && !refreshToken && !code) {
+      console.log('❌ Aucun token ou code trouvé');
       setError("Lien de réinitialisation invalide ou expiré. Veuillez demander un nouveau lien.");
       setTimeout(() => {
         router.push('/forgot-password');
       }, 3000);
+    } else {
+      console.log('✅ Tokens/code valides - affichage formulaire');
     }
   }, [searchParams, router]);
 
@@ -260,5 +271,13 @@ export default function ResetPassword() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Chargement...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

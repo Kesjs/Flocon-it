@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-export default function ConfirmEmail() {
+function ConfirmEmailContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -100,7 +100,7 @@ export default function ConfirmEmail() {
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               className="w-16 h-16 mx-auto mb-6"
             >
-              <Loader2 className="w-full h-full text-rose-custom" />
+              <RefreshCw className="w-full h-full text-rose-custom animate-spin" />
             </motion.div>
             <h1 className="text-2xl font-display font-bold text-textDark mb-4">
               Confirmation en cours...
@@ -166,5 +166,13 @@ export default function ConfirmEmail() {
         )}
       </motion.div>
     </div>
+  );
+}
+
+export default function ConfirmEmail() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Chargement...</div>}>
+      <ConfirmEmailContent />
+    </Suspense>
   );
 }

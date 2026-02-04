@@ -16,7 +16,7 @@ import ImageOptimizer from '@/components/ImageOptimizer';
   alt="Description de l'image"
   width={800}
   height={600}
-  quality={80}
+  quality={75}
   loading="lazy"
   placeholder="blur"
   blurDataURL="data:image/jpeg;base64,..."
@@ -39,7 +39,7 @@ import OptimizedImage from '@/components/OptimizedImage';
   alt="Description"
   width={800}
   height={600}
-  quality={80}
+  quality={75}
   loading="lazy"
   fallbackSrc="/fallback.jpg"
   onError={(e) => console.error('Erreur de chargement', e)}

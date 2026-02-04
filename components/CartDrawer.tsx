@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNProgress } from "@/hooks/useNProgress";
 import { X, Plus, Minus, Trash2, ShoppingBag, Heart, CreditCard, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import OptimizedImage from "@/components/OptimizedImage";
-import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [isHydrated, setIsHydrated] = useState(false);
+  const { start: startProgress, done: doneProgress } = useNProgress();
 
   // Attendre l'hydratation du contexte
   useEffect(() => {
@@ -40,40 +42,28 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const handleCheckout = async () => {
     console.log('🔘 Bouton "COMMANDER" du CartDrawer cliqué');
     setIsLoading(true);
+    startProgress(); // Démarrer NProgress
     
     try {
-      // Simuler un traitement très court pour le feedback visuel
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
       // Vérifier si l'utilisateur est connecté
       console.log('🔍 Vérification authentification utilisateur:', user ? 'Connecté' : 'Non connecté');
       
       if (!user) {
         console.log('🚪 Utilisateur non connecté, redirection vers login');
-        // Fermer le drawer
-        onClose();
-        // Petite pause pour laisser le drawer se fermer
-        await new Promise(resolve => setTimeout(resolve, 300));
-        // Rediriger vers login avec intention de checkout
+        // Rediriger immédiatement vers login avec intention de checkout
         router.push('/login?redirect=checkout');
         return;
       }
       
-      // Fermer le drawer
-      console.log('🔄 Fermeture du drawer');
-      onClose();
-      
-      // Petite pause pour laisser le drawer se fermer
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Rediriger vers la page de checkout
-      console.log('🔄 Redirection vers /checkout');
+      // Rediriger vers la page de checkout avec router natif
+      console.log('🔄 Redirection vers /checkout (router natif)');
       router.push('/checkout');
+      
     } catch (error) {
       console.error('Erreur lors du traitement de la commande:', error);
       alert('Une erreur est survenue. Veuillez réessayer.');
-    } finally {
       setIsLoading(false);
+      doneProgress(); // Arrêter NProgress en cas d'erreur
     }
   };
 
@@ -208,24 +198,23 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   
                   <button
                     onClick={handleCheckout}
-                    disabled={isLoading}
-                    className="w-full bg-black text-white px-4 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border-2 border-black text-sm md:px-6 md:py-4 md:rounded-xl md:font-black md:text-base"
+                    disabled={isLoading || cartItems.length === 0}
+                    className={`w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all duration-200 flex items-center justify-center gap-3 shadow-lg ${
+                      isLoading || cartItems.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl'
+                    }`}
                   >
                     {isLoading ? (
-                      <div className="flex items-center justify-center gap-3">
+                      <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Traitement en cours...</span>
-                      </div>
+                        <span>Commande en cours...</span>
+                      </>
                     ) : (
-                      <div className="flex items-center justify-center gap-2">
-                        <ShoppingBag className="w-5 h-5" />
-                        <span className="md:text-lg">COMMANDER</span>
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </div>
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        <span>COMMANDER</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </>
                     )}
-                    
-                    {/* Effet de brillance */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                   </button>
                   
                   {/* Options supplémentaires */}

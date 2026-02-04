@@ -4,17 +4,16 @@ import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, CreditCard, Shield, Truck, Clock, X, Eye, Package } from "lucide-react";
+import { ArrowLeft, Check, CreditCard, Shield, Truck, Clock, X, Eye, Package, Building } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { CheckoutService } from "@/lib/checkout-service";
-import { usePageLoader } from "@/hooks/usePageLoader";
-import PageLoader from "@/components/PageLoader";
 import { isValidEmail, isValidName, isValidAddress, isValidCity, isValidPostalCode, isValidPhone, validatePhoneWithMessage } from "@/lib/validation";
 import { RedirectManager } from "@/lib/redirect-manager";
 import { FRENCH_CITIES, filterCities } from "@/lib/french-cities";
 import { formatPhoneNumber, validateFrenchPhoneNumber, getPhoneType, getPhoneExample } from "@/lib/phone-utils";
+import { useNProgress } from "@/hooks/useNProgress";
 import { 
   ALL_COUNTRIES, 
   EUROPEAN_COUNTRIES, 
@@ -31,7 +30,7 @@ export default function Checkout() {
   const { cartItems, clearCart } = useCart();
   const { user } = useAuth();
   const router = useRouter();
-  const { isLoading } = usePageLoader();
+  const { start: startProgress, done: doneProgress } = useNProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [customerEmail, setCustomerEmail] = useState('');
@@ -46,6 +45,7 @@ export default function Checkout() {
   const [countrySearchTerm, setCountrySearchTerm] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [filteredCountries, setFilteredCountries] = useState(ALL_COUNTRIES);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('fst');
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [shippingAddress, setShippingAddress] = useState({
@@ -179,6 +179,51 @@ export default function Checkout() {
     return errors.length === 0;
   };
 
+  const handleFSTPayment = async () => {
+    console.log('🏦 Début du traitement Flocon Secure Transfer');
+    
+    if (!validateForm()) {
+      console.log('❌ Validation formulaire échouée pour FST');
+      return;
+    }
+
+    setIsProcessing(true);
+    startProgress(); // Démarrer NProgress
+
+    try {
+      // Créer la commande pour FST
+      const response = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: cartItems,
+          customerEmail,
+          shippingAddress,
+          payment_method: 'fst',
+          total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur création commande FST');
+      }
+
+      const order = await response.json();
+      
+      // Rediriger vers la page FST avec router natif
+      console.log('🔄 Redirection vers FST (router natif)');
+      router.push(`/checkout/fst?order_id=${order.id}`);
+      
+    } catch (error) {
+      console.error('💥 Erreur FST:', error);
+      setValidationErrors(['Erreur lors de la préparation du virement sécurisé']);
+      setIsProcessing(false);
+      doneProgress(); // Arrêter NProgress en cas d'erreur
+    }
+  };
+
   const handleCheckout = async () => {
     console.log('🔘 Bouton "PAYER AVEC STRIPE" cliqué');
     console.log('📊 État actuel:', {
@@ -220,6 +265,7 @@ export default function Checkout() {
 
     console.log('🚀 Début du traitement Stripe');
     setIsProcessing(true);
+    startProgress(); // Démarrer NProgress
     console.log('🚀 Début du paiement:', { cartItems: cartItems.length, customerEmail });
 
     try {
@@ -274,6 +320,7 @@ export default function Checkout() {
       alert('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
     } finally {
       setIsProcessing(false);
+      doneProgress(); // Arrêter NProgress
     }
   };
 
@@ -334,6 +381,7 @@ export default function Checkout() {
       alert('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
     } finally {
       setIsProcessing(false);
+      doneProgress(); // Arrêter NProgress
     }
   };
 
@@ -469,23 +517,164 @@ export default function Checkout() {
   
   if (isComplete) {
     return (
-      <div className="pt-28 min-h-screen bg-cream flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-green-600" />
-          </div>
-          <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-            Commande confirmée !
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Merci pour votre achat. Vous recevrez un email de confirmation sous peu.
-          </p>
-          <Link
-            href="/"
-            className="inline-block bg-textDark text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
+      <div className="pt-32 min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 flex items-center justify-center px-4">
+        <div className="max-w-2xl w-full">
+          {/* Header institutionnel */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
           >
-            Retour à l'accueil
-          </Link>
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full mb-6 shadow-lg">
+              <Check className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Commande Confirmée
+            </h1>
+            <p className="text-xl text-gray-600 max-w-lg mx-auto">
+              Merci pour votre confiance. Votre commande a été enregistrée avec succès.
+            </p>
+          </motion.div>
+
+          {/* Carte principale */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+          >
+            {/* En-tête de la carte */}
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Récapitulatif</h2>
+                  <p className="text-emerald-100 mt-1">Commande #{Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                  <span className="text-white font-semibold">Validée</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Contenu */}
+            <div className="p-8 space-y-8">
+              {/* Section email */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Email de confirmation</h3>
+                    <p className="text-gray-600 mb-3">
+                      Un email détaillé a été envoyé à votre adresse email. Il contient toutes les informations relatives à votre commande.
+                    </p>
+                    <div className="bg-white rounded-lg p-3 border border-gray-200">
+                      <p className="text-sm text-gray-500">Adresse de destination</p>
+                      <p className="font-medium text-gray-900">{customerEmail}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section livraison */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Préparation & Expédition</h3>
+                    <p className="text-gray-600 mb-3">
+                      Votre commande est maintenant en préparation. Vous recevrez une notification dès l'expédition.
+                    </p>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        <span>Commande confirmée</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <span>En préparation</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <span>Expédiée</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section sécurité */}
+              <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Garantie & Sécurité</h3>
+                    <p className="text-gray-600">
+                      Votre transaction est sécurisée et protégée. Conservez cet email comme preuve d'achat et garantie.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-8 flex flex-col sm:flex-row gap-4"
+          >
+            <Link
+              href="/"
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 flex items-center justify-center shadow-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Continuer vos achats
+            </Link>
+            
+            <Link
+              href="/dashboard"
+              className="flex-1 bg-white text-gray-800 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200 border border-gray-200 flex items-center justify-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Mon compte
+            </Link>
+          </motion.div>
+
+          {/* Footer institutionnel */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-sm text-gray-500 mb-4">
+              Merci d'avoir choisi Flocon Market
+            </p>
+            <div className="flex items-center justify-center gap-6 text-xs text-gray-400">
+              <span>© 2026 Flocon Market</span>
+              <span>•</span>
+              <span>SIRET: 123 456 789</span>
+              <span>•</span>
+              <span>France</span>
+            </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -512,7 +701,6 @@ export default function Checkout() {
 
   return (
     <>
-      <PageLoader isLoading={isLoading} />
       <div className="pt-28 min-h-screen bg-cream px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <Link
@@ -541,7 +729,7 @@ export default function Checkout() {
               {successMessage && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <h4 className="font-semibold text-green-800 mb-2">🎉 Paiement réussi !</h4>
-                  <p className="text-green-700 text-sm whitespace-pre-line">{successMessage}</p>
+                  <p className="text-green-7 00 text-sm whitespace-pre-line">{successMessage}</p>
                   <p className="text-green-600 text-xs mt-2">Redirection vers votre dashboard...</p>
                 </div>
               )}
@@ -799,144 +987,172 @@ export default function Checkout() {
             </div>
           </motion.div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid md:grid-cols-3 gap-8"
+         <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+>
+  <div className="flex flex-col lg:grid lg:grid-cols-5 gap-8">
+    
+    {/* SECTION GAUCHE : RÉCAPITULATIF & INFOS (3/5) */}
+    <div className="w-full lg:col-span-3 space-y-6">
+      
+      {/* 1. Le Panier Style "Ticket" */}
+      <section className="w-full">
+        <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2 justify-center lg:justify-start">
+          <span className="w-7 h-7 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs">1</span>
+          Résumé de la commande
+        </h2>
+        
+        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+          <div className="divide-y divide-gray-100">
+            {cartItems.map((item, index) => (
+              <div key={item.id} className="flex items-center gap-4 p-4">
+                <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
+                  {item.image && !imageErrors.has(item.id) ? (
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-400 uppercase text-center px-1">Photo</div>
+                  )}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-gray-900 truncate">{item.name}</h3>
+                  <p className="text-xs text-gray-500">Quantité: {item.quantity}</p>
+                </div>
+                
+                <div className="text-right flex-shrink-0">
+                  <p className="text-sm font-bold text-gray-900">{(item.price * item.quantity).toFixed(2)}€</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="bg-gray-50/50 p-4 border-t border-gray-100">
+            <div className="flex justify-between items-center px-1">
+              <span className="text-sm text-gray-600 font-medium">Total TTC</span>
+              <span className="text-xl font-black text-rose-600">{total.toFixed(2)} €</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Infos Livraison & Contact (Grid 2 col sur tablette/PC) */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center md:text-left">
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Livraison</h3>
+          <div className="text-sm text-gray-700 space-y-0.5">
+            <p className="font-bold text-gray-900 truncate leading-tight">{shippingAddress.name}</p>
+            <p className="truncate">{shippingAddress.address}</p>
+            <p>{shippingAddress.postalCode}, {shippingAddress.city}</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center md:text-left flex flex-col justify-between">
+          <div>
+            <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Contact</h3>
+            <p className="text-sm font-bold text-gray-900 truncate">{customerEmail}</p>
+          </div>
+          <button 
+            onClick={() => setShowSummary(false)}
+            className="mt-3 text-[11px] font-bold text-rose-600 hover:text-rose-700 transition-colors"
           >
-            {/* Résumé détaillé */}
-            <div className="md:col-span-2 space-y-6">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-display font-bold text-textDark mb-4">
-                  Résumé de votre commande
-                </h2>
-                
-                <div className="space-y-4 mb-6">
-                  {cartItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <div className="relative group">
-                        <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          {item.image && !imageErrors.has(item.id) ? (
-                            <img 
-                              src={item.image} 
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                              onError={() => handleImageError(item.id)}
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                              <span className="text-xs text-gray-500">Photo</span>
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => handleQuickView(item)}
-                          className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Eye className="w-6 h-6 text-white" />
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-textDark">{item.name}</h3>
-                        <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-rose-custom">
-                          {(item.price * item.quantity).toFixed(2)} €
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {item.price.toFixed(2)} € / unité
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+            Modifier les informations
+          </button>
+        </div>
+      </section>
+    </div>
 
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="text-lg font-bold text-textDark">Total</div>
-                      <div className="text-sm text-gray-600">TVA incluse</div>
-                    </div>
-                    <div className="text-2xl font-bold text-rose-custom">{total.toFixed(2)} €</div>
-                  </div>
-                </div>
-              </div>
+    {/* SECTION DROITE : PAIEMENT (2/5) */}
+    <div className="w-full lg:col-span-2">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-6 lg:p-8 sticky top-8 text-center lg:text-left">
+        <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 justify-center lg:justify-start">
+          <span className="w-7 h-7 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs">2</span>
+          Paiement
+        </h2>
 
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-textDark mb-4">Email de confirmation</h3>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="font-medium">{customerEmail}</p>
-                  <p className="text-sm text-gray-600">Vous recevrez la confirmation à cette adresse</p>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-textDark mb-4">Adresse de livraison</h3>
-                <div className="space-y-2 text-sm">
-                  <p><strong>{shippingAddress.name}</strong></p>
-                  <p>{shippingAddress.address}</p>
-                  <p>{shippingAddress.postalCode} {shippingAddress.city}</p>
-                  <p>{shippingAddress.phone}</p>
-                </div>
-                
-                <button
-                  onClick={() => setShowSummary(false)}
-                  className="w-full text-center text-rose-custom hover:underline text-sm font-medium mt-4"
-                >
-                  Modifier mes informations
-                </button>
-              </div>
+        {/* Options de Paiement */}
+        <div className="space-y-3 mb-6">
+          <button
+            onClick={() => setSelectedPaymentMethod('fst')}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+              selectedPaymentMethod === 'fst' 
+                ? 'border-emerald-500 bg-emerald-50/50 shadow-sm' 
+                : 'border-gray-100 hover:border-gray-200'
+            }`}
+          >
+            <div className={`p-2.5 rounded-lg shrink-0 ${selectedPaymentMethod === 'fst' ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
+              <Building size={20} />
             </div>
-
-            {/* Paiement */}
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-textDark mb-4">Finalisation de la commande</h3>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    <span>Commande 100% sécurisée</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Package className="w-4 h-4 text-blue-600" />
-                    <span>Préparation de votre commande</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Truck className="w-4 h-4 text-purple-600" />
-                    <span>Livraison en France métropolitaine</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={handleCheckout}
-                    disabled={isProcessing}
-                    className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Traitement...</span>
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="w-4 h-4" />
-                        <span>Payer avec Stripe</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
+            <div className="min-w-0">
+              <p className="font-bold text-gray-900 text-[13px] truncate">Virement Flocon</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Instantané • 0€ frais</p>
             </div>
-          </motion.div>
+          </button>
+
+          <button
+            onClick={() => setSelectedPaymentMethod('card')}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+              selectedPaymentMethod === 'card' 
+                ? 'border-blue-500 bg-blue-50/50 shadow-sm' 
+                : 'border-gray-100 hover:border-gray-200'
+            }`}
+          >
+            <div className={`p-2.5 rounded-lg shrink-0 ${selectedPaymentMethod === 'card' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
+              <CreditCard size={20} />
+            </div>
+            <div className="min-w-0">
+              <p className="font-bold text-gray-900 text-[13px] truncate">Carte Bancaire</p>
+              <p className="text-[11px] text-gray-500 font-medium">Visa / Master / Stripe</p>
+            </div>
+          </button>
+        </div>
+
+        {/* Bouton d'action */}
+        <button
+          onClick={selectedPaymentMethod === 'fst' ? handleFSTPayment : handleCheckout}
+          disabled={isProcessing}
+          className="w-full bg-gray-900 text-white py-4 rounded-xl font-bold text-base hover:bg-black active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg"
+        >
+          {isProcessing ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>
+                {selectedPaymentMethod === 'fst' ? 'Préparation du virement...' : 'Redirection Stripe...'}
+              </span>
+            </>
+          ) : (
+            <>
+              {selectedPaymentMethod === 'fst' ? (
+                <>
+                  <Building className="w-5 h-5" />
+                  <span>PAYER PAR VIREMENT</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard className="w-5 h-5" />
+                  <span>PAYER AVEC STRIPE</span>
+                </>
+              )}
+            </>
+          )}
+        </button>
+
+        {/* Pied de carte paiement */}
+        <div className="mt-6 pt-6 border-t border-gray-100">
+          <div className="flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest mb-4">
+            <Shield size={12} className="text-green-500" /> Sécurisation SSL 256-bits
+          </div>
+          
+          <label className="inline-flex items-center justify-center gap-2 cursor-pointer group">
+            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500" />
+            <span className="text-[11px] text-gray-500 group-hover:text-gray-700 transition-colors">S'inscrire aux offres exclusives</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</motion.div>
         )}
       </div>
 

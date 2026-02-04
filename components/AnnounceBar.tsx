@@ -17,7 +17,7 @@ export default function AnnounceBar() {
     .join(" | ");
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 text-white py-2 overflow-hidden relative" style={{ backgroundColor: 'var(--rose)' }}>
+    <div className="fixed top-0 left-0 right-0 z-50 text-white py-2 overflow-hidden relative" style={{ backgroundColor: 'var(--rose)' }}>
       <div className="flex items-center gap-2 whitespace-nowrap">
         <motion.div
           className="flex items-center gap-8"
