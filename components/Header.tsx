@@ -63,21 +63,21 @@ export default function Header() {
         className="fixed left-0 right-0 border-b border-gray-200/50 bg-white shadow-lg"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3">
               <img
                 src="/logof.jpg?v=1"
                 alt="Flocon Logo"
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-8 h-8 sm:w-12 sm:h-12 rounded-full object-cover"
               />
-              <div className="text-2xl font-display font-bold" style={{ color: '#e72281' }}>
+              <div className="text-lg sm:text-2xl font-display font-bold" style={{ color: '#e72281' }}>
                 Flocon
               </div>
             </Link>
 
             {/* Navigation Desktop */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               <motion.div
                 whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                 whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
@@ -137,15 +137,10 @@ export default function Header() {
               </motion.div>
             </nav>
 
-            {/* Actions Right */}
-            <div className="flex items-center space-x-4">
-              {/* Search */}
-              <motion.div 
-                className="hidden sm:flex items-center bg-gray-100/50 rounded-full px-4 py-2 group"
-                whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
-                whileFocus={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
-                transition={{ duration: 0.2 }}
-              >
+            {/* Actions */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Search - Desktop only */}
+              <div className="hidden md:flex items-center bg-gray-100/50 rounded-full px-3 py-2 group">
                 <motion.div
                   animate={{ rotate: isScrolled ? 360 : 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -155,19 +150,19 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Rechercher..."
-                  className="ml-2 bg-transparent border-none outline-none text-sm w-32 group-hover:w-40 transition-all duration-300"
+                  className="ml-2 bg-transparent border-none outline-none text-sm w-24 sm:w-32 group-hover:w-32 sm:group-hover:w-40 transition-all duration-300"
                 />
-              </motion.div>
+              </div>
 
               {/* Profile */}
               <div className="relative">
                 {loading ? (
-                  <div className="w-9 h-9 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-200 rounded-full animate-pulse"></div>
                 ) : user ? (
                   <>
                     <motion.button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                      className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
+                      className="hidden sm:flex items-center space-x-2 px-3 sm:px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
                       whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                       whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                       transition={{ duration: 0.2 }}
@@ -176,13 +171,28 @@ export default function Header() {
                         animate={{ rotate: isProfileDropdownOpen ? 360 : 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                       >
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
                           <span className="text-white text-xs font-semibold">
                             {user.email?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                       </motion.div>
-                      <span className="text-sm font-medium text-black group-hover:text-rose-custom transition-colors duration-200">Mon compte</span>
+                      <span className="text-sm font-medium text-black group-hover:text-rose-custom transition-colors duration-200 hidden lg:block">Mon compte</span>
+                    </motion.button>
+
+                    {/* Mobile Profile Button */}
+                    <motion.button
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      className="sm:hidden p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200"
+                      whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                      whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
+                        <span className="text-white text-xs font-semibold">
+                          {user.email?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
                     </motion.button>
 
                     <AnimatePresence>
@@ -268,17 +278,32 @@ export default function Header() {
                     </AnimatePresence>
                   </>
                 ) : (
-                  <Link href="/login">
-                    <motion.button
-                      className="flex items-center space-x-2 px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
-                      whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
-                      whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <User className="w-4 h-4" />
-                      <span className="text-sm font-medium">Se connecter</span>
-                    </motion.button>
-                  </Link>
+                  <>
+                    {/* Desktop Login Button */}
+                    <Link href="/login" className="hidden sm:block">
+                      <motion.button
+                        className="flex items-center space-x-2 px-3 sm:px-4 py-2 text-rose-custom hover:bg-rose-custom/10 rounded-full transition-all duration-200 group"
+                        whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                        whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <User className="w-4 h-4" />
+                        <span className="text-sm font-medium hidden lg:block">Se connecter</span>
+                      </motion.button>
+                    </Link>
+                    
+                    {/* Mobile Login Button */}
+                    <Link href="/login" className="sm:hidden">
+                      <motion.button
+                        className="p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 group"
+                        whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
+                        whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <User className="w-5 h-5 text-textDark group-hover:text-rose-custom-custom transition-colors duration-200" />
+                      </motion.button>
+                    </Link>
+                  </>
                 )}
               </div>
 
@@ -311,7 +336,7 @@ export default function Header() {
               {/* Mobile Menu Button */}
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 group"
+                className="lg:hidden p-2 hover:bg-gray-100/50 rounded-full transition-all duration-200 group"
                 whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)', rotate: 90 }}
                 whileTap={{ backgroundColor: 'rgba(231, 34, 129, 0.15)' }}
                 transition={{ duration: 0.2 }}
@@ -339,7 +364,7 @@ export default function Header() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="md:hidden pb-4 border-t border-gray-200/50 mt-4 pt-4 overflow-hidden"
+                className="lg:hidden pb-4 border-t border-gray-200/50 mt-4 pt-4 overflow-hidden"
               >
                 <nav className="flex flex-col space-y-4">
                   {["L'Art du Cocooning", "Flocons de Tendresse", "Boutique"].map((item, index) => (
@@ -371,15 +396,42 @@ export default function Header() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2, delay: 0.3 }}
-                    className="flex items-center bg-gray-100/50 rounded-full px-4 py-2 mt-2 group"
+                    className="flex items-center bg-gray-100/50 rounded-full px-3 py-2 mt-2 group"
                     whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                   >
                     <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
                     <input
                       type="text"
                       placeholder="Rechercher..."
-                      className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-40 transition-all duration-300"
+                      className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-32 transition-all duration-300"
                     />
+                  </motion.div>
+
+                  {/* Mobile Profile/Login */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: 0.4 }}
+                  >
+                    {loading ? (
+                      <div className="w-9 h-9 bg-gray-200 rounded-full animate-pulse"></div>
+                    ) : user ? (
+                      <div className="flex items-center space-x-3 px-3 py-2 bg-rose-custom/10 rounded-full">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--rose)' }}>
+                          <span className="text-white text-xs font-semibold">
+                            {user.email?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-black">Mon compte</span>
+                      </div>
+                    ) : (
+                      <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                        <div className="flex items-center space-x-3 px-3 py-2 bg-rose-custom/10 rounded-full">
+                          <User className="w-4 h-4 text-rose-custom" />
+                          <span className="text-sm font-medium text-rose-custom">Se connecter</span>
+                        </div>
+                      </Link>
+                    )}
                   </motion.div>
                 </nav>
               </motion.div>
