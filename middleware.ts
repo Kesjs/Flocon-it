@@ -95,13 +95,58 @@ export async function middleware(request: NextRequest) {
     user = null;
   }
 
+  // PRIORITÉ ABSOLUE : Routes Admin - Traitement isolé
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    console.log('🔐 Route admin détectée:', request.nextUrl.pathname)
+    
+    // 🚨 EXCEPTION : /admin/login est accessible sans session
+    if (request.nextUrl.pathname === '/admin/login') {
+      console.log('🔓 Accès à /admin/login autorisé sans session')
+      return response
+    }
+    
+    // Vérifier la session admin sécurisée
+    const sessionToken = request.cookies.get('admin_session')?.value;
+    
+    if (!sessionToken) {
+      console.log('❌ Session admin manquante')
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+
+    // Vérifier si la session est valide (base64)
+    try {
+      const sessionData = JSON.parse(Buffer.from(sessionToken, 'base64').toString());
+      
+      // Vérifier si la session n'est pas expirée (8 heures)
+      const isExpired = Date.now() - sessionData.timestamp > 8 * 60 * 60 * 1000;
+      
+      if (isExpired) {
+        console.log('❌ Session admin expirée')
+        return NextResponse.redirect(new URL('/admin/login', request.url))
+      }
+      
+      console.log('✅ Session admin valide - Accès autorisé')
+      return response // Autoriser l'accès admin sans aucune autre règle
+      
+    } catch (decodeError) {
+      console.log('❌ Session admin invalide')
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+  }
+
+  // EXCLURE les routes admin Flocon du middleware principal
+  if (request.nextUrl.pathname.startsWith('/Flocon/admin')) {
+    return response
+  }
+
   // Routes protégées - uniquement celles qui nécessitent une auth stricte
   const protectedRoutes = ['/checkout'] // /dashboard géré côté client
   const authRoutes = ['/login', '/register']
   const { pathname } = request.nextUrl
 
-  // EXCLURE les routes admin Flocon du middleware principal
-  if (pathname.startsWith('/Flocon/admin')) {
+  // 🎯 EXCEPTION : Page de succès FST accessible sans authentification
+  if (pathname.startsWith('/checkout/success-fst')) {
+    console.log('🔓 Accès à la page de succès FST autorisé sans session')
     return response
   }
 
@@ -111,7 +156,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  if (user && authRoutes.some(route => pathname.startsWith(route))) {
+  if (user && authRoutes.some(route => pathname.startsWith(route)) && !pathname.startsWith('/admin')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

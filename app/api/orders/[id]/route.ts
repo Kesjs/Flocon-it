@@ -1,61 +1,59 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-// Stockage partagé - utiliser le même que l'API de création
-// On va utiliser un fichier temporaire pour partager entre les deux API
-import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-
-const ORDERS_FILE = join(process.cwd(), 'temp-orders.json');
-
-// Fonction pour lire les commandes
-function getOrders(): Map<string, any> {
-  try {
-    if (existsSync(ORDERS_FILE)) {
-      const data = readFileSync(ORDERS_FILE, 'utf-8');
-      const ordersData = JSON.parse(data);
-      return new Map(Object.entries(ordersData));
-    }
-  } catch (error) {
-    console.warn('Erreur lecture commandes:', error);
-  }
-  return new Map();
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: orderId } = await context.params;
-    
-    console.log('🔍 Récupération commande:', orderId);
+    const { id } = await params;
 
-    // Récupérer les commandes depuis le fichier partagé
-    const orders = getOrders();
-    const order = orders.get(orderId);
-
-    if (!order) {
-      console.log('❌ Commande non trouvée:', orderId);
-      console.log('📋 Commandes disponibles:', Array.from(orders.keys()));
+    if (!id) {
       return NextResponse.json(
-        { error: 'Commande non trouvée' },
+        { error: 'ID de commande requis' },
+        { status: 400 }
+      );
+    }
+
+    // Récupérer la commande avec l'ID
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !order) {
+      console.error('❌ Commande non trouvée:', id);
+      
+      // Récupérer les commandes disponibles pour le debugging
+      const { data: availableOrders } = await supabase
+        .from('orders')
+        .select('id, user_email, total, created_at')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      return NextResponse.json(
+        { 
+          error: 'Commande non trouvée',
+          requestedId: id,
+          availableOrders: availableOrders || []
+        },
         { status: 404 }
       );
     }
 
     console.log('✅ Commande trouvée:', order.id);
-    console.log('📦 Produits récupérés:', order.products.map((p: { name: string }) => p.name));
-
-    return NextResponse.json(order);
+    return NextResponse.json({ order });
 
   } catch (error) {
-    console.error('❌ Erreur récupération commande:', error);
-    
+    console.error('💥 Erreur serveur:', error);
     return NextResponse.json(
-      { 
-        error: 'Erreur lors de la récupération de la commande',
-        details: error instanceof Error ? error.message : 'Erreur inconnue'
-      },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }

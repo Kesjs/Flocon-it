@@ -1,10 +1,18 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Building, Check, Copy, Shield, ArrowLeft, Info, Lock, Globe, Zap, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { createBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from "@/lib/supabase";
+
+// Créer une instance unique pour éviter les multiples instances
+const supabaseClient = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 function FSTPageContent() {
   const searchParams = useSearchParams();
@@ -12,6 +20,49 @@ function FSTPageContent() {
   const [copied, setCopied] = useState('');
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // États pour la déclaration de paiement
+  const [isDeclaring, setIsDeclaring] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+  
+  const router = useRouter();
+
+  // Fonctions utilitaires pour la synchronisation
+  const getLocalStorageOrder = (orderId: string) => {
+    if (typeof window === 'undefined') return null;
+    
+    const storedOrders = localStorage.getItem('flocon_orders');
+    if (!storedOrders) return null;
+    
+    const orders = JSON.parse(storedOrders);
+    return orders.find((o: any) => o.id === orderId);
+  };
+
+  const syncOrderToSupabase = async (order: any) => {
+    console.log('🔄 Synchronisation commande vers Supabase:', order.id);
+    
+    try {
+      const response = await fetch('/api/orders/sync-from-localstorage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          orderId: order.id,
+          orderData: order
+        }),
+      });
+
+      if (response.ok) {
+        console.log('✅ Commande synchronisée avec Supabase');
+      } else {
+        console.log('⚠️ Échec synchronisation Supabase');
+      }
+    } catch (error) {
+      console.error('❌ Erreur synchronisation:', error);
+    }
+  };
 
   const bankDetails = {
     beneficiary: "GIULIO SALVADORI",
@@ -33,23 +84,307 @@ function FSTPageContent() {
   };
 
   useEffect(() => {
-    if (orderId) fetchOrderDetails();
+    if (orderId) {
+      fetchOrderDetails();
+      return;
+    }
+
+    setIsLoading(false);
+    setError('ID de commande manquant');
+    setOrder(null);
   }, [orderId]);
 
   const fetchOrderDetails = async () => {
     setIsLoading(true);
+    setError('');
+    setOrder(null);
+    console.log('🔍 Récupération commande pour ID:', orderId);
+
+    if (!orderId) {
+      setError('ID de commande manquant');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/orders/${orderId}`);
-      if (response.ok) {
-        const orderData = await response.json();
-        setOrder(orderData);
+      let apiResponse: Response | null = null;
+
+      // 🗄️ Essayer Supabase d'abord
+      try {
+        apiResponse = await fetch(`/api/orders/${orderId}`);
+        console.log('📡 Response status Supabase:', apiResponse.status);
+
+        if (apiResponse.ok) {
+          const orderData = await apiResponse.json();
+          console.log('✅ Commande trouvée dans Supabase:', orderData.order);
+          
+          // Si la commande Supabase n'a pas d'adresse, essayer de la compléter depuis localStorage
+          let finalOrder = orderData.order;
+          if (!finalOrder.shipping_address || !finalOrder.shipping_address.address_line1) {
+            console.log('🔄 Adresse manquante dans Supabase, recherche localStorage...');
+            const localStorageOrder = getLocalStorageOrder(orderId);
+            if (localStorageOrder && localStorageOrder.shippingAddress) {
+              finalOrder = {
+                ...finalOrder,
+                shipping_address: {
+                  full_name: localStorageOrder.shippingAddress.name,
+                  address_line1: localStorageOrder.shippingAddress.address,
+                  city: localStorageOrder.shippingAddress.city,
+                  postal_code: localStorageOrder.shippingAddress.postalCode,
+                  country: 'FR',
+                  phone: localStorageOrder.shippingAddress.phone
+                },
+                customer_name: localStorageOrder.shippingAddress.name,
+                customer_phone: localStorageOrder.shippingAddress.phone
+              };
+              console.log('✅ Adresse complétée depuis localStorage');
+            }
+          }
+          
+          setOrder(finalOrder);
+          return;
+        }
+      } catch (supabaseError) {
+        console.log('⚠️ Supabase indisponible, fallback localStorage');
       }
-    } catch (error) { 
-      console.error('Erreur:', error); 
-    } finally { 
-      setIsLoading(false); 
+
+      // 🔄 Fallback : localStorage
+      console.log('🔄 Tentative récupération depuis localStorage...');
+      const storedOrders = localStorage.getItem('flocon_orders');
+      console.log('📦 Orders dans localStorage:', storedOrders);
+
+      if (storedOrders) {
+        const orders = JSON.parse(storedOrders);
+        const storedOrder = orders.find((o: any) => o.id === orderId);
+
+        if (storedOrder) {
+          console.log('✅ Commande trouvée dans localStorage:', storedOrder);
+          
+          // Convertir le format localStorage vers le format Supabase
+          const convertedOrder = {
+            ...storedOrder,
+            user_email: user?.email || 'client@flocon-boutique.com',
+            shipping_address: {
+              full_name: storedOrder.shippingAddress.name,
+              address_line1: storedOrder.shippingAddress.address,
+              city: storedOrder.shippingAddress.city,
+              postal_code: storedOrder.shippingAddress.postalCode,
+              country: 'FR',
+              phone: storedOrder.shippingAddress.phone
+            },
+            customer_name: storedOrder.shippingAddress.name,
+            customer_phone: storedOrder.shippingAddress.phone,
+            fst_status: storedOrder.fst_status || 'pending',
+            payment_declared_at: storedOrder.payment_declared_at
+          };
+          
+          setOrder(convertedOrder);
+          
+          // Tenter de synchroniser avec Supabase
+          try {
+            await syncOrderToSupabase(convertedOrder);
+          } catch (syncError) {
+            console.log('⚠️ Synchronisation Supabase échouée:', syncError);
+          }
+          
+          return;
+        }
+      }
+
+      if (apiResponse?.status === 404) {
+        setError('Commande introuvable');
+        return;
+      }
+
+      setError('Impossible de récupérer la commande. Veuillez réessayer.');
+    } catch (error) {
+      console.error('💥 Erreur fetchOrderDetails:', error);
+      setError('Impossible de récupérer la commande. Veuillez réessayer.');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleDeclarePayment = async () => {
+    console.log('🔍 Début handleDeclarePayment avec supabaseClient unique');
+    console.log('📋 OrderID:', orderId);
+    
+    if (!orderId) {
+      setError('ID de commande manquant');
+      return;
+    }
+
+    setIsDeclaring(true);
+    setError('');
+
+    try {
+      // Utiliser l'instance unique supabaseClient
+      console.log('🔍 Utilisation de supabaseClient:', supabaseClient);
+      
+      // Utiliser getUser() (force vérification serveur)
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+      
+      console.log('👤 User from getUser():', user);
+      console.log('❌ User error from getUser():', userError);
+      
+      if (userError || !user || !user.email) {
+        console.log('🚫 getUser() a échoué - tentative refreshSession()');
+        
+        // Vérifier si un cookie sb-access-token existe
+        const cookies = document.cookie.split(';');
+        const hasSbCookie = cookies.some(cookie => cookie.trim().startsWith('sb-access-token'));
+        console.log('🍪 Cookie sb-access-token trouvé:', hasSbCookie);
+        
+        if (hasSbCookie) {
+          console.log('🔄 Tentative refreshSession()...');
+          const { data: { session }, error: refreshError } = await supabaseClient.auth.refreshSession();
+          
+          console.log('🔄 Refresh session result:', session);
+          console.log('❌ Refresh session error:', refreshError);
+          
+          if (refreshError || !session || !session.user) {
+            console.log('🚫 refreshSession() a échoué - redirection vers login');
+            setError('Session expirée. Redirection...');
+            setTimeout(() => {
+              router.push('/login');
+            }, 2000);
+            return;
+          }
+          
+          // Utiliser la session rafraîchie
+          const token = session.access_token;
+          console.log('🎫 Token après refresh:', token ? 'présent' : 'manquant');
+          
+          if (!token) {
+            setError('Session sans token. Veuillez vous reconnecter.');
+            return;
+          }
+
+          // Continuer avec le token rafraîchi
+          await callDeclareAPI(orderId, token, setError, setIsSuccess, router);
+          return;
+        }
+        
+        console.log('🚫 Pas de cookie - redirection vers login');
+        setError('Vous devez être connecté. Redirection...');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+        return;
+      }
+
+      // Utiliser la session de getUser()
+      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+      const token = session?.access_token;
+      
+      console.log('📧 Session from getSession():', session);
+      console.log('🎫 Token:', token ? 'présent' : 'manquant');
+
+      if (!token) {
+        console.log('🚫 Pas de token dans la session');
+        setError('Session sans token. Veuillez vous reconnecter.');
+        return;
+      }
+
+      // Continuer avec le token
+      await callDeclareAPI(orderId, token, setError, setIsSuccess, router);
+      
+    } catch (error) {
+      console.error('💥 Erreur catch:', error);
+      setError('Erreur de connexion. Veuillez réessayer.');
+    } finally {
+      setIsDeclaring(false);
+    }
+  };
+
+  // Fonction séparée pour l'appel API
+  const callDeclareAPI = async (orderId: string, token: string, setError: Function, setIsSuccess: Function, router: any) => {
+    console.log('📡 Appel API /api/declare-payment');
+    
+    const response = await fetch('/api/declare-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ orderId })
+    });
+
+    console.log('📡 Response status:', response.status);
+    
+    const data = await response.json();
+    console.log('📦 Response data:', data);
+
+    if (response.ok && data.success) {
+      console.log('✅ Succès - redirection vers page succès FST');
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push(`/checkout/success-fst?order_id=${orderId}`);
+      }, 3000);
+    } else {
+      console.log('❌ Erreur API:', data.error);
+      setError(data.error || 'Erreur lors de la déclaration du paiement');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-slate-300 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FDFCFB] text-slate-900 font-sans antialiased pb-20">
+        <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <Link href="/checkout" className="group flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-slate-900 transition-colors">
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              RETOUR
+            </Link>
+            <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black text-slate-500 tracking-widest">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              CONNEXION BANCAIRE SÉCURISÉE
+            </div>
+          </div>
+        </nav>
+
+        <div className="max-w-2xl mx-auto px-6 py-16">
+          <div className="bg-white border border-slate-200 rounded-[40px] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-red-50 border border-red-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Info size={18} className="text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-slate-900 mb-2">
+                  Impossible d'afficher la commande
+                </h1>
+                <p className="text-slate-600 leading-relaxed font-medium">
+                  {error}
+                </p>
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={fetchOrderDetails}
+                    className="px-6 py-3 rounded-2xl bg-slate-900 text-white font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors"
+                  >
+                    Réessayer
+                  </button>
+                  <button
+                    onClick={() => router.push('/checkout')}
+                    className="px-6 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
+                  >
+                    Retour au checkout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-slate-900 font-sans antialiased pb-20">
@@ -153,7 +488,9 @@ function FSTPageContent() {
                <div className="relative z-10">
                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Montant de la transaction</p>
                   <div className="text-6xl font-medium tracking-tighter mb-10">
-                    {order?.total ? order.total.toFixed(2) : "0.00"}€
+                    {typeof order?.total !== 'undefined' && Number.isFinite(Number(order?.total))
+                      ? `${Number(order?.total).toFixed(2)}€`
+                      : '—'}
                   </div>
                   
                   <div className="space-y-4 mb-10">
@@ -167,10 +504,61 @@ function FSTPageContent() {
                     </div>
                   </div>
 
-                  <button className="w-full bg-white text-slate-900 py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-100 transition-all active:scale-95 shadow-lg">
-                    J'ai effectué le virement
-                    <ArrowRight size={18} />
-                  </button>
+                  {/* Bouton de déclaration */}
+                  {isSuccess ? (
+                    <button 
+                      disabled
+                      className="w-full bg-emerald-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 cursor-not-allowed"
+                    >
+                      <Check size={20} />
+                      Paiement déclaré avec succès
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={handleDeclarePayment}
+                      disabled={isDeclaring || !order}
+                      className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg ${
+                        isDeclaring || !order
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                          : 'bg-white text-slate-900 hover:bg-slate-100'
+                      }`}
+                    >
+                      {isDeclaring ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                          Traitement en cours...
+                        </>
+                      ) : (
+                        <>
+                          PAIEMENT EFFECTUÉ
+                          <ArrowRight size={18} />
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Message d'erreur */}
+                  {error && (
+                    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3">
+                      <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center">
+                        <Info size={12} className="text-red-600" />
+                      </div>
+                      <p className="text-sm text-red-700 font-medium">{error}</p>
+                    </div>
+                  )}
+
+                  {/* Message de succès */}
+                  {isSuccess && (
+                    <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
+                      <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <Check size={12} className="text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-emerald-700 font-medium">Transfert déclaré avec succès</p>
+                        <p className="text-xs text-emerald-600">Redirection vers la page de confirmation...</p>
+                      </div>
+                    </div>
+                  )}
                </div>
             </div>
 

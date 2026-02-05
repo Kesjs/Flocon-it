@@ -17,13 +17,13 @@ interface LayoutWrapperProps {
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith('/Flocon/admin');
+  const isAdminRoute = pathname?.startsWith('/Flocon/admin') || pathname?.startsWith('/admin');
 
   return (
     <NProgressProvider>
       {isAdminRoute ? (
         // Layout admin - pas de header/footer
-        <div className="min-h-screen bg-slate-900">
+        <div className="min-h-screen bg-[#F9FAFB]">
           {children}
         </div>
       ) : (

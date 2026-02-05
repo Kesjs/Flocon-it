@@ -162,8 +162,8 @@ function HomePageContent() {
           {/* Desktop Image */}
           <div className="hidden md:block absolute inset-0">
             <img
-              src="/My-project-1-57.webp"
-              alt="Hero background desktop - Cadeau Saint-Valentin pour Flocon"
+              src="https://m.media-amazon.com/images/I/71GAnkdgVfL._AC_SL1500_.jpg"
+              alt="Hero background desktop - Gants Tactiles Laine Touchscreen pour Flocon"
               className="w-full h-full object-cover"
               loading="eager"
             />
@@ -172,8 +172,8 @@ function HomePageContent() {
           {/* Mobile Image */}
           <div className="md:hidden absolute inset-0">
             <img
-              src="/My-project-1-57.webp"
-              alt="Hero background mobile - Cadeau Saint-Valentin pour Flocon"
+              src="https://m.media-amazon.com/images/I/71GAnkdgVfL._AC_SL1500_.jpg"
+              alt="Hero background mobile - Gants Tactiles Laine Touchscreen pour Flocon"
               className="w-full h-full object-cover"
               loading="eager"
             />

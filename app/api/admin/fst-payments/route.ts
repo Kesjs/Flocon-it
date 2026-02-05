@@ -6,19 +6,19 @@ export async function GET() {
     const { data, error } = await supabaseAdmin
       .from('orders')
       .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
+      .in('fst_status', ['pending', 'declared', 'processing'])
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Erreur récupération commandes:', error);
+      console.error('Erreur récupération paiements FST:', error);
       return NextResponse.json(
-        { error: 'Erreur récupération commandes' },
+        { error: 'Erreur récupération paiements' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
-      orders: data || [],
+      payments: data || [],
       count: data?.length || 0
     });
 

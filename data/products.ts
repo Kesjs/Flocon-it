@@ -50,7 +50,7 @@ const realImages = {
   'serviette-plage': 'https://images.unsplash.com/photo-1524028606242-bb7039232e1e?w=400',
   'pochette-etchape': 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
   'sac-paille': 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400',
-  'lampe-jardin-led': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
+  'lampe-jardin-led': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd8?w=400',
   'bureau-jardin': 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=400',
   'chaise-pliable': 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400',
   // Anniversaire
@@ -67,18 +67,18 @@ const realImages = {
   'parfum-femme': 'https://images.unsplash.com/photo-1541643600914-78b08468e60a?w=400',
   'montre-homme': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
   // Maison & Décoration
-  'vase-geometrique': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-  'coussin-texture': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-  'miroir-design': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
+  'vase-geometrique': 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=400',
+  'coussin-texture': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd9?w=400',
+  'miroir-design': 'https://images.unsplash.com/photo-1519710164239-da297b98d2e6?w=400',
   'planche-decoupe': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-  'boite-conservation': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-  'carafe-eau': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-  'vide-poche': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-  'cadre-photo': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-  'diffuseur-maison': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-  'suspension-design': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-  'tapis-modulable': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-  'etagere-murale': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400'
+  'boite-conservation': 'https://images.unsplash.com/photo-1594498227157-726f3b68d07b?w=400',
+  'carafe-eau': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
+  'vide-poche': 'https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400',
+  'cadre-photo': 'https://images.unsplash.com/photo-1588421357574-87938a86fa28?w=400',
+  'diffuseur-maison': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+  'suspension-design': 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400',
+  'tapis-modulable': 'https://images.unsplash.com/photo-1586023492125-27b2c045efda?w=400',
+  'etagere-murale': 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400'
 };
 
 // Fonction pour obtenir une image locale aléatoire

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Affichage Adresse</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .address-box { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            background: #f9f9f9; 
+        }
+        .name { font-weight: bold; font-size: 16px; }
+        .address { margin: 5px 0; }
+        .phone { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Test Affichage Adresse - FST Success</h1>
+    
+    <div class="address-box">
+        <div class="name">Marie Laurent</div>
+        <div class="address">15 Avenue des Champs-Élysées</div>
+        <div class="address">75008 Paris, France</div>
+        <div class="phone">+33 6 23 45 67 89</div>
+    </div>
+    
+    <h2>Test avec les données de la commande CMD-1770331693574</h2>
+    <div id="order-data"></div>
+    
+    <script>
+        // Simuler les données de la commande
+        const orderData = {
+            id: 'CMD-1770331693574',
+            user_email: 'floconnew@gmail.com',
+            shipping_address: {
+                full_name: 'Marie Laurent',
+                address_line1: '15 Avenue des Champs-Élysées',
+                city: 'Paris',
+                postal_code: '75008',
+                country: 'FR',
+                phone: '+33 6 23 45 67 89'
+            },
+            customer_name: 'Marie Laurent',
+            customer_phone: '+33 6 23 45 67 89'
+        };
+        
+        // Afficher les données
+        const container = document.getElementById('order-data');
+        container.innerHTML = `
+            <div class="address-box">
+                <h3>Commande #${orderData.id.slice(0, 8)}</h3>
+                <div class="name">${orderData.shipping_address.full_name}</div>
+                <div class="address">${orderData.shipping_address.address_line1}</div>
+                <div class="address">${orderData.shipping_address.postal_code} ${orderData.shipping_address.city}, ${orderData.shipping_address.country}</div>
+                <div class="phone">${orderData.shipping_address.phone}</div>
+            </div>
+        `;
+        
+        console.log('✅ Données de test chargées:', orderData);
+    </script>
+    
+    <p>
+        <a href="http://localhost:3000/checkout/success-fst?order_id=CMD-1770331693574" target="_blank">
+            Voir la page réelle →
+        </a>
+    </p>
+</body>
+</html>

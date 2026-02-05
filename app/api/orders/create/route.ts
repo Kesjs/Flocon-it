@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 // Stockage partagé - utiliser un fichier temporaire pour partager entre les deux API
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 const ORDERS_FILE = join(process.cwd(), 'temp-orders.json');
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // Fonction pour lire les commandes existantes
 function getOrders(): Map<string, any> {
@@ -74,6 +79,42 @@ export async function POST(request: NextRequest) {
     
     // Sauvegarder dans le fichier partagé
     saveOrders(orders);
+
+    // 🗄️ Sauvegarder aussi dans Supabase pour le système FST
+    try {
+      const { data: supabaseOrder, error: supabaseError } = await supabase
+        .from('orders')
+        .insert({
+          id: orderId,
+          user_email: customerEmail,
+          total: total,
+          status: 'pending',
+          payment_status: 'pending',
+          fst_status: 'pending',
+          items: items.reduce((sum: number, item: any) => sum + item.quantity, 0),
+          products: items.map((item: any) => item.name),
+          shipping_address: {
+            full_name: shippingAddress.name,
+            address_line1: shippingAddress.address,
+            city: shippingAddress.city,
+            postal_code: shippingAddress.postalCode,
+            phone: shippingAddress.phone,
+            country: shippingAddress.country || 'FR'
+          },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (supabaseError) {
+        console.warn('⚠️ Erreur sauvegarde Supabase:', supabaseError);
+      } else {
+        console.log('✅ Commande sauvegardée dans Supabase:', supabaseOrder.id);
+      }
+    } catch (error) {
+      console.warn('⚠️ Erreur connexion Supabase:', error);
+    }
 
     console.log('✅ Commande FST créée et stockée:', order.id);
     console.log('📦 Produits stockés:', order.products.map((p: { name: string }) => p.name));
