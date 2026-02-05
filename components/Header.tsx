@@ -8,6 +8,7 @@ import { Search, User, ShoppingCart, Menu, X, Package, Heart, Settings, LogOut, 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,8 +18,17 @@ export default function Header() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { cartItems } = useCart();
   const { user, signOut, loading } = useAuth();
+  const router = useRouter();
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  // Prefetch stratégique pour les pages critiques
+  useEffect(() => {
+    // Précharger les pages stratégiques au montage du composant
+    router.prefetch('/checkout');
+    router.prefetch('/dashboard');
+    router.prefetch('/login');
+  }, [router]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,7 +94,7 @@ export default function Header() {
                 transition={{ duration: 0.2 }}
                 className="px-3 py-2 rounded-lg transition-all duration-200"
               >
-                <Link href="/#collection-hiver" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
+                <Link href="/#collection-hiver" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group" prefetch={false}>
                   <span className="relative">
                     L'Art du Cocooning
                     <motion.div 
@@ -103,7 +113,7 @@ export default function Header() {
                 transition={{ duration: 0.2 }}
                 className="px-3 py-2 rounded-lg transition-all duration-200"
               >
-                <Link href="/#collection-valentin" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
+                <Link href="/#collection-valentin" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group" prefetch={false}>
                   <span className="relative">
                     Flocons de Tendresse
                     <motion.div 
@@ -378,6 +388,7 @@ export default function Header() {
                         href={item === "L'Art du Cocooning" ? "/#collection-hiver" : item === "Flocons de Tendresse" ? "/#collection-valentin" : "/boutique"}
                         onClick={() => setIsMenuOpen(false)}
                         className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group block py-2"
+                        prefetch={false}
                       >
                         <span className="relative">
                           {item}

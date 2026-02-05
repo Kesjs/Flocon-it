@@ -10,6 +10,7 @@ import { OrderStorage, Order } from "@/lib/order-storage";
 import { OrdersSection } from "./components/OrdersSection";
 import { ProfileSection } from "./components/ProfileSection";
 import { StatsSection } from "./components/StatsSection";
+import { DashboardSkeleton } from "@/components/ui/skeleton";
 
 type View = "commandes" | "profil" | "statistiques";
 
@@ -137,14 +138,7 @@ export default function Dashboard() {
   ];
 
   if (authLoading) {
-    return (
-      <div className="pt-28 min-h-screen bg-cream flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Vérification de l'authentification...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (!user) {

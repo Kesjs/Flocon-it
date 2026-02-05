@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isRedirecting: boolean;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
@@ -23,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
 
   const supabase = createClient();
@@ -77,11 +79,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!supabase) {
       return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
     }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    router.refresh();
+    
+    if (!error) {
+      // Vérifier si un callbackUrl est présent dans les paramètres d'URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const callbackUrl = urlParams.get('callbackUrl');
+      
+      if (callbackUrl) {
+        setIsRedirecting(true);
+        setTimeout(() => {
+          router.push(callbackUrl);
+          setIsRedirecting(false);
+        }, 800); // Délai pour montrer le feedback
+      } else {
+        router.refresh();
+      }
+    } else {
+      router.refresh();
+    }
+    
     return { error };
   };
 
@@ -158,6 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     loading,
+    isRedirecting,
     signUp,
     signIn,
     signOut,

@@ -9,6 +9,7 @@ import AnnounceBar from "@/components/AnnounceBar";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 import CookieBanner from "@/components/CookieBanner";
 import NProgressProvider from "@/components/NProgressProvider";
+import { RedirectLoader } from "@/components/ui/RedirectLoader";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -35,6 +36,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
               <main className="min-h-screen">{children}</main>
               <Footer />
               <CookieBanner />
+              <RedirectLoader />
             </CartProviderWrapper>
           </AuthProvider>
         </ClientLayoutWrapper>

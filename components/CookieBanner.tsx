@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Cookie, Shield, BarChart3, Target } from "lucide-react";
+import { X, Cookie, Shield, BarChart3, Target, Settings2, Check } from "lucide-react";
 
 interface CookiePreferences {
   essential: boolean;
@@ -12,337 +12,196 @@ interface CookiePreferences {
 }
 
 const defaultPreferences: CookiePreferences = {
-  essential: true, // Toujours obligatoire
+  essential: true,
   functional: false,
   analytics: false,
   marketing: false,
 };
 
 export default function CookieBanner() {
+  const [mounted, setMounted] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
-  const [hasConsented, setHasConsented] = useState(false);
 
-  // Vérifier si l'utilisateur a déjà donné son consentement
+  // 1. Gestion de l'hydratation et récupération des préférences
   useEffect(() => {
+    setMounted(true);
     const consent = localStorage.getItem('cookie-consent');
     const savedPrefs = localStorage.getItem('cookie-preferences');
     
     if (!consent) {
-      // Afficher la bannière après 3 secondes
-      const timer = setTimeout(() => {
-        console.log('🍪 Affichage bannière cookies');
-        setShowBanner(true);
-      }, 3000);
+      // Délai subtil pour laisser le LCP (Largest Contentful Paint) se charger
+      const timer = setTimeout(() => setShowBanner(true), 2000);
       return () => clearTimeout(timer);
-    } else {
-      setHasConsented(true);
-      if (savedPrefs) {
-        setPreferences(JSON.parse(savedPrefs));
-      }
+    } else if (savedPrefs) {
+      const parsed = JSON.parse(savedPrefs);
+      setPreferences(parsed);
+      applyCookiePreferences(parsed);
     }
   }, []);
 
-  const savePreferences = (prefs: CookiePreferences) => {
-    console.log('🍪 Sauvegarde préférences cookies:', prefs);
+  const applyCookiePreferences = (prefs: CookiePreferences) => {
+    if (typeof window === 'undefined') return;
+
+    // Helper pour set les cookies proprement
+    const setCookie = (name: string, val: string) => {
+      const date = new Date();
+      date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000));
+      document.cookie = `${name}=${val};expires=${date.toUTCString()};path=/;SameSite=Lax;Secure`;
+    };
+
+    setCookie("flocon_consent", "true");
+    setCookie("flocon_analytics", prefs.analytics.toString());
+    setCookie("flocon_marketing", prefs.marketing.toString());
+
+    // Google Consent Mode v2 (Standard SaaS/E-com)
+    if ((window as any).gtag) {
+      (window as any).gtag('consent', 'update', {
+        'analytics_storage': prefs.analytics ? 'granted' : 'denied',
+        'ad_storage': prefs.marketing ? 'granted' : 'denied',
+        'personalization_storage': prefs.marketing ? 'granted' : 'denied',
+      });
+    }
+  };
+
+  const handleSave = (prefs: CookiePreferences) => {
     localStorage.setItem('cookie-preferences', JSON.stringify(prefs));
     localStorage.setItem('cookie-consent', 'true');
     setPreferences(prefs);
-    setHasConsented(true);
-    
-    // La bannière disparaît après interaction utilisateur
+    applyCookiePreferences(prefs);
     setShowBanner(false);
     setShowSettings(false);
-    
-    // Appliquer les préférences
-    applyCookiePreferences(prefs);
-  };
-
-  const applyCookiePreferences = (prefs: CookiePreferences) => {
-    // Cookies essentiels (toujours activés)
-    document.cookie = "flocon_essential=true; max-age=31536000; path=/; secure; samesite=strict";
-    
-    // Cookies fonctionnels
-    if (prefs.functional) {
-      document.cookie = "flocon_functional=true; max-age=31536000; path=/; secure; samesite=strict";
-    } else {
-      document.cookie = "flocon_functional=; max-age=0; path=/";
-    }
-    
-    // Cookies analytiques
-    if (prefs.analytics) {
-      // Activer Google Analytics si disponible
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('consent', 'update', {
-          'analytics_storage': 'granted'
-        });
-      }
-      document.cookie = "flocon_analytics=true; max-age=31536000; path=/; secure; samesite=strict";
-    } else {
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('consent', 'update', {
-          'analytics_storage': 'denied'
-        });
-      }
-      document.cookie = "flocon_analytics=; max-age=0; path=/";
-    }
-    
-    // Cookies marketing
-    if (prefs.marketing) {
-      document.cookie = "flocon_marketing=true; max-age=31536000; path=/; secure; samesite=strict";
-    } else {
-      document.cookie = "flocon_marketing=; max-age=0; path=/";
-    }
   };
 
   const acceptAll = () => {
-    console.log('🍪 Acceptation de tous les cookies');
-    const allPrefs: CookiePreferences = {
-      essential: true,
-      functional: true,
-      analytics: true,
-      marketing: true,
-    };
-    savePreferences(allPrefs);
+    const allIn: CookiePreferences = { essential: true, functional: true, analytics: true, marketing: true };
+    handleSave(allIn);
   };
 
   const acceptEssential = () => {
-    console.log('🍪 Acceptation cookies essentiels seulement');
-    const essentialPrefs: CookiePreferences = {
-      essential: true,
-      functional: false,
-      analytics: false,
-      marketing: false,
-    };
-    savePreferences(essentialPrefs);
+    handleSave(defaultPreferences);
   };
 
-  const handleSaveSettings = () => {
-    console.log('🍪 Sauvegarde des paramètres personnalisés');
-    savePreferences(preferences);
-  };
-
-  const togglePreference = (key: keyof CookiePreferences) => {
-    if (key === 'essential') return; // Les essentiels ne peuvent pas être désactivés
-    setPreferences(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
+  // Empêcher le flash au rendu serveur
+  if (!mounted) return null;
 
   return (
     <>
       <AnimatePresence>
         {showBanner && !showSettings && (
           <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 p-4"
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
+            className="fixed bottom-6 left-6 z-[60] max-w-sm w-[calc(100vw-3rem)]"
           >
-            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-1">
-                <Cookie className="w-6 h-6 text-rose-custom flex-shrink-0" />
-                <div className="text-sm text-gray-700">
-                  <span className="font-medium">Flocon utilise des cookies</span> pour améliorer votre expérience, analyser le trafic et personnaliser les publicités.
-                  <button 
-                    onClick={() => setShowSettings(true)}
-                    className="text-rose-custom hover:underline ml-1 font-medium"
-                  >
-                    En savoir plus
-                  </button>
+            <div className="bg-white/90 backdrop-blur-xl border border-gray-200/50 p-6 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+              <button 
+                onClick={acceptEssential}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-rose-500 p-2.5 rounded-2xl shadow-lg shadow-rose-200">
+                    <Cookie className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 tracking-tight">Expérience Flocon</h3>
+                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wider">Confidentialité</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <button
-                  onClick={acceptEssential}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors"
-                >
-                  Essentiels seulement
-                </button>
-                <button
-                  onClick={acceptAll}
-                  className="px-6 py-2 bg-rose-custom text-white text-sm font-medium rounded-lg hover:bg-rose-custom/90 transition-colors"
-                >
-                  Tout accepter
-                </button>
-                <button
-                  onClick={() => setShowSettings(true)}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors"
-                >
-                  ⚙️
-                </button>
+
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Nous utilisons des cookies pour optimiser votre shopping et sécuriser vos transactions.
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={acceptAll}
+                    className="w-full py-3 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98]"
+                  >
+                    Tout accepter
+                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setShowSettings(true)}
+                      className="py-2.5 bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Settings2 className="w-3.5 h-3.5" />
+                      Réglages
+                    </button>
+                    <button
+                      onClick={acceptEssential}
+                      className="py-2.5 text-gray-500 text-xs font-medium hover:text-gray-900 transition-all"
+                    >
+                      Refuser tout
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Modal de réglages (Glassmorphism Overlay) */}
       <AnimatePresence>
         {showSettings && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-gray-900/20 backdrop-blur-md z-[70] flex items-center justify-center p-4"
             onClick={() => setShowSettings(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="bg-white rounded-[32px] shadow-2xl max-w-lg w-full overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Cookie className="w-6 h-6 text-rose-custom" />
-                  <h2 className="text-2xl font-bold text-gray-900">Préférences cookies</h2>
-                </div>
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 space-y-6">
-                <p className="text-gray-600">
-                  Nous utilisons des cookies pour améliorer votre expérience sur notre site. 
-                  Vous pouvez choisir ci-dessous les types de cookies que vous souhaitez autoriser.
-                </p>
-
-                {/* Cookie Options */}
-                <div className="space-y-4">
-                  {/* Essential */}
-                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="pt-1">
-                      <input
-                        type="checkbox"
-                        id="essential"
-                        checked={preferences.essential}
-                        disabled
-                        className="w-4 h-4 text-rose-custom rounded focus:ring-rose-custom"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Shield className="w-4 h-4 text-green-600" />
-                        <label htmlFor="essential" className="font-medium text-gray-900">
-                          Cookies essentiels
-                        </label>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Nécessaires au fonctionnement du site (authentification, panier, sécurité). 
-                        Toujours activés.
-                      </p>
-                    </div>
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900">Préférences</h2>
+                    <p className="text-sm text-gray-500">Contrôlez vos données personnelles</p>
                   </div>
-
-                  {/* Functional */}
-                  <div className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div className="pt-1">
-                      <input
-                        type="checkbox"
-                        id="functional"
-                        checked={preferences.functional}
-                        onChange={() => togglePreference('functional')}
-                        className="w-4 h-4 text-rose-custom rounded focus:ring-rose-custom"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Cookie className="w-4 h-4 text-blue-600" />
-                        <label htmlFor="functional" className="font-medium text-gray-900">
-                          Cookies fonctionnels
-                        </label>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Améliorent l'expérience (panier persistant, préférences, personnalisation).
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Analytics */}
-                  <div className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div className="pt-1">
-                      <input
-                        type="checkbox"
-                        id="analytics"
-                        checked={preferences.analytics}
-                        onChange={() => togglePreference('analytics')}
-                        className="w-4 h-4 text-rose-custom rounded focus:ring-rose-custom"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <BarChart3 className="w-4 h-4 text-purple-600" />
-                        <label htmlFor="analytics" className="font-medium text-gray-900">
-                          Cookies analytiques
-                        </label>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Nous aident à comprendre comment vous utilisez le site (Google Analytics).
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Marketing */}
-                  <div className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div className="pt-1">
-                      <input
-                        type="checkbox"
-                        id="marketing"
-                        checked={preferences.marketing}
-                        onChange={() => togglePreference('marketing')}
-                        className="w-4 h-4 text-rose-custom rounded focus:ring-rose-custom"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Target className="w-4 h-4 text-orange-600" />
-                        <label htmlFor="marketing" className="font-medium text-gray-900">
-                          Cookies marketing
-                        </label>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Utilisés pour les publicités personnalisées et le retargeting.
-                      </p>
-                    </div>
-                  </div>
+                  <button onClick={() => setShowSettings(false)} className="p-2 bg-gray-50 rounded-full"><X className="w-5 h-5" /></button>
                 </div>
 
-                {/* Links */}
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>
-                    Pour en savoir plus, consultez notre{' '}
-                    <a href="/politique-confidentialite" className="text-rose-custom hover:underline">
-                      politique de confidentialité
-                    </a>
-                  </p>
+                <div className="space-y-3">
+                  {[
+                    { id: 'essential', label: 'Essentiels', icon: Shield, color: 'text-blue-500', desc: 'Sécurité et paiement.', disabled: true },
+                    { id: 'functional', label: 'Confort', icon: Cookie, color: 'text-orange-500', desc: 'Se souvenir de votre panier.' },
+                    { id: 'analytics', label: 'Analyses', icon: BarChart3, color: 'text-purple-500', desc: 'Améliorer nos services.' },
+                    { id: 'marketing', label: 'Publicité', icon: Target, color: 'text-rose-500', desc: 'Offres personnalisées.' },
+                  ].map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => item.id !== 'essential' && setPreferences({...preferences, [item.id]: !preferences[item.id as keyof CookiePreferences]})}
+                      className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${preferences[item.id as keyof CookiePreferences] ? 'border-gray-900 bg-gray-50' : 'border-gray-100 opacity-60'}`}
+                    >
+                      <item.icon className={`w-5 h-5 ${item.color}`} />
+                      <div className="flex-1">
+                        <p className="font-bold text-gray-900 text-sm">{item.label}</p>
+                        <p className="text-xs text-gray-500">{item.desc}</p>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${preferences[item.id as keyof CookiePreferences] ? 'bg-gray-900 border-gray-900' : 'border-gray-300'}`}>
+                        {preferences[item.id as keyof CookiePreferences] && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
 
-              {/* Footer */}
-              <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end gap-3">
                 <button
-                  onClick={() => setShowSettings(false)}
-                  className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                  onClick={() => handleSave(preferences)}
+                  className="w-full mt-8 py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200"
                 >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleSaveSettings}
-                  className="px-6 py-2 bg-rose-custom text-white font-medium rounded-lg hover:bg-rose-custom/90 transition-colors"
-                >
-                  Enregistrer mes préférences
+                  Enregistrer mes choix
                 </button>
               </div>
             </motion.div>
@@ -350,14 +209,13 @@ export default function CookieBanner() {
         )}
       </AnimatePresence>
 
-      {/* Bouton de gestion des cookies (visible après consentement) */}
-      {hasConsented && (
+      {/* Trigger flottant après consentement */}
+      {!showBanner && mounted && (
         <button
           onClick={() => setShowSettings(true)}
-          className="fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-40"
-          title="Gérer les cookies"
+          className="fixed bottom-6 left-6 p-3 bg-white border border-gray-200 rounded-full shadow-lg hover:scale-110 transition-all z-50 text-gray-400 hover:text-rose-500"
         >
-          <Cookie className="w-4 h-4" />
+          <Shield className="w-5 h-5" />
         </button>
       )}
     </>

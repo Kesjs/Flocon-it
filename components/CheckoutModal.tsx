@@ -6,7 +6,6 @@ import { X, ArrowLeft, Check, CreditCard, Shield, Truck, Clock } from "lucide-re
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { CheckoutService } from "@/lib/checkout-service";
-import { loadStripe } from "@stripe/stripe-js";
 import { isValidEmail, isValidName, isValidAddress, isValidCity, isValidPostalCode, isValidPhone } from "@/lib/validation";
 import { RedirectManager } from "@/lib/redirect-manager";
 
@@ -15,7 +14,6 @@ interface CheckoutModalProps {
   onClose: () => void;
 }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { cartItems, clearCart } = useCart();
@@ -92,72 +90,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   }, [isOpen, user, customerEmail]);
 
   
-  const handleStripeCheckout = async () => {
-    if (cartItems.length === 0) return;
-    
-    // Validation stricte du formulaire
-    if (!validateForm()) {
-      return;
-    }
-
-    if (!user) {
-      // Sauvegarder l'intention de checkout avec les données du formulaire
-      RedirectManager.setCheckoutIntent({
-        email: customerEmail,
-        shippingAddress: shippingAddress
-      });
-      
-      alert('Veuillez vous connecter pour finaliser votre commande');
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      // Créer la session Stripe avec les métadonnées pour le webhook
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cartItems,
-          customerEmail,
-          metadata: {
-            userId: user.id,
-            // Ajouter les métadonnées d'adresse si disponibles
-            shippingName: shippingAddress.name || customerEmail,
-            shippingAddress: shippingAddress.address || 'Adresse non spécifiée',
-            shippingCity: shippingAddress.city || 'Paris',
-            shippingPostalCode: shippingAddress.postalCode || '75001',
-            shippingPhone: shippingAddress.phone || '+33 6 00 00 00 00'
-          },
-          shippingAddress
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Erreur API: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      const { url } = data;
-
-      if (url) {
-        // Fermer le modal et ouvrir Stripe dans la même fenêtre
-        onClose();
-        window.location.href = url;
-      } else {
-        throw new Error('URL de paiement non reçue');
-      }
-    } catch (error) {
-      console.error('Erreur lors du paiement Stripe:', error);
-      alert('Une erreur est survenue lors du paiement. Veuillez réessayer.');
-      setIsProcessing(false);
-    }
-  };
-
+  
   const handleSimulatedPayment = async () => {
     console.log('🔍 Debug handleSimulatedPayment appelé');
     console.log('📦 Panier:', cartItems.length, 'articles');

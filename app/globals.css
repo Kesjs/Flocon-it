@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importer NProgress styles */
+@import '../styles/nprogress.css';
+
 :root {
   --cream: #f9f7f2;
   --ice-blue: #93adb8;

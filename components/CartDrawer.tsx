@@ -18,7 +18,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { cartItems, removeFromCart, updateQuantity, clearCart, addToCart } = useCart();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
@@ -29,6 +29,14 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Prefetch stratégique pour le checkout
+  useEffect(() => {
+    if (isOpen) {
+      // Précharger checkout dès l'ouverture du panier
+      router.prefetch('/checkout');
+    }
+  }, [isOpen, router]);
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -41,29 +49,72 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const handleCheckout = async () => {
     console.log('🔘 Bouton "COMMANDER" du CartDrawer cliqué');
+    console.log('🔍 État auth détaillé:', {
+      user: user ? `Connecté (${user.email})` : 'Non connecté',
+      loading: loading,
+      session: !!user?.session
+    });
+    
+    // Loader immédiat et fermeture du panier
     setIsLoading(true);
-    startProgress(); // Démarrer NProgress
+    startProgress();
+    
+    // Fermer le panier immédiatement pour feedback visuel
+    onClose();
+    
+    // Petite pause pour l'effet visuel
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     try {
-      // Vérifier si l'utilisateur est connecté
-      console.log('🔍 Vérification authentification utilisateur:', user ? 'Connecté' : 'Non connecté');
+      // Vérification améliorée avec attente si nécessaire
+      if (loading) {
+        console.log('⏳ Authentification en cours, attente...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       
+      // Vérification finale avec double check
       if (!user) {
         console.log('🚪 Utilisateur non connecté, redirection vers login');
-        // Rediriger immédiatement vers login avec intention de checkout
+        console.log('📋 Debug - User object:', user);
+        console.log('📋 Debug - Loading state:', loading);
+        
+        // Rediriger vers login avec intention de checkout
         router.push('/login?redirect=checkout');
+        setIsLoading(false);
+        doneProgress();
         return;
       }
       
-      // Rediriger vers la page de checkout avec router natif
+      // Vérification Supabase directe pour être sûr
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log('⚠️ Session Supabase invalide, redirection vers login');
+        router.push('/login?redirect=checkout');
+        setIsLoading(false);
+        doneProgress();
+        return;
+      }
+      
+      // Redirection vers checkout avec router natif (pas de rechargement)
       console.log('🔄 Redirection vers /checkout (router natif)');
+      console.log('✅ Utilisateur authentifié:', user.email);
+      console.log('✅ Session Supabase valide:', !!session);
       router.push('/checkout');
+      
+      // Arrêter le loader après un court délai pour laisser le temps à la transition
+      setTimeout(() => {
+        setIsLoading(false);
+        doneProgress();
+      }, 500);
       
     } catch (error) {
       console.error('Erreur lors du traitement de la commande:', error);
       alert('Une erreur est survenue. Veuillez réessayer.');
       setIsLoading(false);
-      doneProgress(); // Arrêter NProgress en cas d'erreur
+      doneProgress();
     }
   };
 
@@ -206,7 +257,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     {isLoading ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Commande en cours...</span>
+                        <span>Préparation...</span>
                       </>
                     ) : (
                       <>

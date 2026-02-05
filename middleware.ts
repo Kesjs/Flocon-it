@@ -32,64 +32,71 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    }
-  )
+  // Timeout protection pour éviter les latences 7s
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Supabase timeout')), 2000);
+  });
 
-  // Rafraîchit la session si elle a expiré.
   let user = null;
   try {
-    const { data } = await supabase.auth.getUser();
-    user = data.user;
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            request.cookies.set({
+              name,
+              value,
+              ...options,
+            })
+            response = NextResponse.next({
+              request: {
+                headers: request.headers,
+              },
+            })
+            response.cookies.set({
+              name,
+              value,
+              ...options,
+            })
+          },
+          remove(name: string, options: CookieOptions) {
+            request.cookies.set({
+              name,
+              value: '',
+              ...options,
+            })
+            response = NextResponse.next({
+              request: {
+                headers: request.headers,
+              },
+            })
+            response.cookies.set({
+              name,
+              value: '',
+              ...options,
+            })
+          },
+        },
+      }
+    )
+
+    // Vérification avec timeout et fail-safe
+    const sessionPromise = supabase.auth.getSession();
+    const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+    user = session?.user || null;
   } catch (error) {
-    // En cas d'erreur Supabase, continuer sans utilisateur
+    // En cas d'erreur ou timeout, continuer sans utilisateur (fail-safe)
     console.warn('Supabase auth error in middleware:', error);
+    user = null;
   }
 
-  // Routes protégées
-  const protectedRoutes = ['/dashboard', '/checkout']
+  // Routes protégées - uniquement celles qui nécessitent une auth stricte
+  const protectedRoutes = ['/checkout'] // /dashboard géré côté client
   const authRoutes = ['/login', '/register']
   const { pathname } = request.nextUrl
 

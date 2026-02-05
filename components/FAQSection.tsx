@@ -37,7 +37,7 @@ const faqData: FAQItem[] = [
   {
     id: "4",
     question: "Quels moyens de paiement acceptez-vous ?",
-    answer: "Nous acceptons les cartes bancaires, PayPal, Apple Pay et Google Pay. Tous les paiements sont sécurisés via Stripe.",
+    answer: "Nous acceptons les virements sécurisés Flocon Secure Transfer. Tous les paiements sont instantanés et sans frais.",
     icon: CreditCard,
     category: "paiement"
   },

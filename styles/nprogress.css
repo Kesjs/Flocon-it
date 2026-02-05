@@ -1,16 +1,17 @@
 /* NProgress Custom Styles */
 #nprogress {
   pointer-events: none;
-  z-index: 9999; /* Au-dessus de l'AnnounceBar (z-50) et Header (z-40) */
+  z-index: 9999; /* Au-dessus de tout */
 }
 
 #nprogress .bar {
-  background: #e72281; /* Couleur rose du site */
+  background: linear-gradient(90deg, #f52f71 0%, #e72281 100%); /* Dégradé rose Flocon */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 4px; /* Plus épais pour être visible */
+  box-shadow: 0 0 10px rgba(245, 47, 113, 0.3);
 }
 
 #nprogress .peg {
@@ -19,7 +20,7 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #e72281, 0 0 5px #e72281;
+  box-shadow: 0 0 10px #f52f71, 0 0 5px #e72281;
   opacity: 1.0;
   transform: rotate(3deg) translate(0px, -4px);
 }
@@ -32,4 +33,12 @@
 /* Cache le spinner par défaut */
 #nprogress .spinner {
   display: none;
+}
+
+/* Personnalisation pour les thèmes clairs/foncés */
+@media (prefers-color-scheme: dark) {
+  #nprogress .bar {
+    background: linear-gradient(90deg, #ff6b9d 0%, #f52f71 100%);
+    box-shadow: 0 0 15px rgba(245, 47, 113, 0.5);
+  }
 }
