@@ -5,13 +5,14 @@ import 'nprogress/nprogress.css';
 import '../styles/nprogress.css'; // Styles personnalisés
 import { useEffect } from 'react';
 
-// Configuration NProgress
+// Configuration NProgress optimisée
 NProgress.configure({
-  minimum: 0.1,
-  easing: 'ease',
-  speed: 300,
+  minimum: 0.08,
+  easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  speed: 250,
   showSpinner: false,
-  trickleSpeed: 200,
+  trickleSpeed: 150,
+  trickle: true,
 });
 
 interface NProgressProviderProps {
@@ -54,13 +55,13 @@ export default function NProgressProvider({ children }: NProgressProviderProps) 
 
     window.history.pushState = function(...args) {
       startProgress();
-      setTimeout(stopProgress, 500); // Arrêter après un court délai
+      setTimeout(stopProgress, 300); // Plus rapide pour plus de réactivité
       return originalPush.apply(window.history, args);
     };
 
     window.history.replaceState = function(...args) {
       startProgress();
-      setTimeout(stopProgress, 500);
+      setTimeout(stopProgress, 300);
       return originalReplace.apply(window.history, args);
     };
 

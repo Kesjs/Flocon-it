@@ -80,12 +80,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: { message: 'Service d\'authentification non disponible' } as AuthError };
     }
     
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
-    if (!error) {
+    if (!error && data.user) {
+      // Vérifier si l'email a été confirmé
+      if (!data.user.email_confirmed_at) {
+        await supabase.auth.signOut(); // Déconnecter immédiatement
+        return { error: { message: 'Veuillez confirmer votre email avant de vous connecter. Un email de confirmation vous a été envoyé.' } as AuthError };
+      }
+      
       // Vérifier si un callbackUrl est présent dans les paramètres d'URL
       const urlParams = new URLSearchParams(window.location.search);
       const callbackUrl = urlParams.get('callbackUrl');

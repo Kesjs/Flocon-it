@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 export interface CartItem {
   id: string;
@@ -27,9 +28,16 @@ const CART_STORAGE_KEY = "flocon-cart";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { user } = useAuth(); // Récupérer le statut de connexion
 
-  // Charger le panier depuis localStorage au montage
+  // Charger le panier depuis localStorage au montage (SEULEMENT si utilisateur connecté)
   useEffect(() => {
+    // Ne charger le panier que si l'utilisateur est connecté
+    if (!user) {
+      setIsHydrated(true);
+      return;
+    }
+
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
@@ -42,18 +50,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsHydrated(true);
     }
-  }, []);
+  }, [user]); // Dépend de l'utilisateur
 
-  // Sauvegarder le panier dans localStorage à chaque changement
+  // Vider le panier si l'utilisateur se déconnecte
   useEffect(() => {
-    if (isHydrated) {
+    if (!user && isHydrated) {
+      clearCart();
+    }
+  }, [user, isHydrated]);
+
+  // Sauvegarder le panier dans localStorage à chaque changement (SEULEMENT si connecté)
+  useEffect(() => {
+    if (isHydrated && user) {
       try {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
       } catch (error) {
         console.error("Erreur lors de la sauvegarde du panier:", error);
       }
     }
-  }, [cartItems, isHydrated]);
+  }, [cartItems, isHydrated, user]);
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCartItems((prev) => {

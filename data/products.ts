@@ -172,7 +172,7 @@ export const products: Product[] = [
     promoPercentage: 10,
     description: 'Bonnet laine mérinos douce et thermorégulatrice, style oversize tendance 2026. Tons neutres, made in Europe. Confort absolu contre le froid.',
     category: 'Hiver',
-    subCategory: 'Chambre',
+    subCategory: 'Accessoires',
     rating: 4.8,
     reviewsCount: 210,
     images: ['https://static.cimalp.fr/44411-large_default/bonnet-100-merinos.jpg'],

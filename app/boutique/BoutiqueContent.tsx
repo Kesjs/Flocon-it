@@ -122,7 +122,7 @@ export default function BoutiqueContent({ onViewModeChange }: { onViewModeChange
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Amélioré et Responsive */}
-      <section className="relative h-[50vh] md:h-[70vh] flex items-center overflow-hidden min-h-[400px] will-change-transform" style={{ transform: 'translateZ(0)' }}>
+      <section className="relative h-[50vh] md:h-[70vh] flex items-center overflow-hidden min-h-[400px] will-change-transform pt-32 sm:pt-36" style={{ transform: 'translateZ(0)' }}>
         <div className="absolute inset-0">
           <img
             src="/cadeau-saint-valentin-couple.webp"
@@ -138,19 +138,15 @@ export default function BoutiqueContent({ onViewModeChange }: { onViewModeChange
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-2xl md:max-w-3xl"
+            className="max-w-2xl md:max-w-3xl text-center"
           >
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 md:mb-6 leading-tight">
               Boutique Flocon
             </h1>
-            <p className="text-base md:text-lg text-white/90 mb-6 md:mb-8 leading-relaxed">
-              Découvrez nos collections uniques pour l'hiver et la Saint-Valentin.
-              Des cadeaux qui marquent les esprits.
-            </p>
             
             {/* Boutons de changement de vue */}
             {onViewModeChange && (
-              <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-lg p-1">
+              <div className="flex items-center justify-center space-x-2 bg-white/20 backdrop-blur-sm rounded-lg p-1">
                 <button
                   onClick={() => onViewModeChange('classic')}
                   className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors bg-white text-rose-custom shadow-sm"
@@ -167,24 +163,6 @@ export default function BoutiqueContent({ onViewModeChange }: { onViewModeChange
                 </button>
               </div>
             )}
-            
-            <div className="flex flex-wrap gap-3 mt-6">
-              <a
-                href="#produits"
-                className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-rose-custom text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all duration-300 shadow-xl text-sm md:text-base"
-              >
-                Explorer la Collection
-                <svg className="w-4 h-4 md:w-5 md:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </a>
-              <a
-                href="#occasions"
-                className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 transition-all duration-300 border border-white/30 text-sm md:text-base"
-              >
-                Idées Cadeaux
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>

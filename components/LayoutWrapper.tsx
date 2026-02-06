@@ -18,6 +18,17 @@ interface LayoutWrapperProps {
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/Flocon/admin') || pathname?.startsWith('/admin');
+  
+  // Pages qui nécessitent le panier (boutique, collections, accueil, etc.)
+  const needsCart = [
+    '/',
+    '/boutique',
+    '/checkout',
+    '/cart',
+    '/hiver',
+    '/occasions',
+    '/saint-valentin'
+  ].some(path => pathname?.includes(path) || pathname === path);
 
   return (
     <NProgressProvider>
@@ -30,14 +41,25 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         // Layout normal du site
         <ClientLayoutWrapper>
           <AuthProvider>
-            <CartProviderWrapper>
-              <AnnounceBar />
-              <Header />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-              <CookieBanner />
-              <RedirectLoader />
-            </CartProviderWrapper>
+            {needsCart ? (
+              <CartProviderWrapper>
+                <AnnounceBar />
+                <Header />
+                <main className="min-h-screen">{children}</main>
+                <Footer />
+                <CookieBanner />
+                <RedirectLoader />
+              </CartProviderWrapper>
+            ) : (
+              <>
+                <AnnounceBar />
+                <Header />
+                <main className="min-h-screen">{children}</main>
+                <Footer />
+                <CookieBanner />
+                <RedirectLoader />
+              </>
+            )}
           </AuthProvider>
         </ClientLayoutWrapper>
       )}

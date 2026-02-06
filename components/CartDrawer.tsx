@@ -35,6 +35,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     if (isOpen) router.prefetch('/checkout');
   }, [isOpen, router]);
 
+  // Reset isRedirecting state after timeout to prevent stuck button
+  useEffect(() => {
+    if (isRedirecting && !authLoading) {
+      const timer = setTimeout(() => {
+        setIsRedirecting(false);
+        doneProgress();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isRedirecting, authLoading, doneProgress]);
+
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
@@ -74,6 +85,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       }
       
       // 4. Redirection finale
+      setIsRedirecting(false);
+      doneProgress();
       onClose();
       router.push('/checkout');
       
@@ -215,7 +228,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         className="flex items-center justify-center gap-3"
                       >
                         <Loader2 className="animate-spin" size={18} />
-                        <span className="text-xs uppercase tracking-widest">Sécurisation...</span>
+                        <span className="text-xs uppercase tracking-widest">Commande en cours...</span>
                       </motion.div>
                     ) : (
                       <motion.div 

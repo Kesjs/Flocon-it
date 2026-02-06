@@ -1,20 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Package, MapPin, User, Settings, ShoppingBag, TrendingUp, Calendar, CreditCard, RefreshCw, Filter, Search, X, Menu, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { OrderStorage, Order } from "@/lib/order-storage";
+import { UnifiedOrderManager } from "@/lib/unified-order-manager";
 import { OrdersSection } from "./components/OrdersSection";
 import { ProfileSection } from "./components/ProfileSection";
 import { StatsSection } from "./components/StatsSection";
 import { DashboardSkeleton } from "@/components/ui/skeleton";
+import { UserNotificationProvider, UserNotificationPanel, useUserNotifications } from "@/components/user/UserNotificationSystem";
 
 type View = "commandes" | "profil" | "statistiques";
 
-export default function Dashboard() {
+// Composant interne pour utiliser le contexte de notifications utilisateur
+function DashboardWithNotifications() {
+  const { addNotification } = useUserNotifications();
   const [currentView, setCurrentView] = useState<View>("commandes");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -22,9 +26,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<"all" | "stripe" | "test">("all");
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false); // Éviter les appels multiples
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isRealtimeActive, setIsRealtimeActive] = useState(false);
   const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
+  const orderManagerRef = useRef<UnifiedOrderManager | null>(null);
 
   useEffect(() => {
     // Attendre que l'auth soit complètement chargée avant de vérifier
@@ -34,17 +40,91 @@ export default function Dashboard() {
         router.push("/login");
       } else {
         console.log('✅ Dashboard: Utilisateur connecté:', user.email);
+        
+        // Initialiser le gestionnaire unifié
+        initializeOrderManager();
       }
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading]);
+
+  // Initialiser le gestionnaire de commandes unifié
+  const initializeOrderManager = async () => {
+    if (!user?.email || !user?.id) return;
+
+    try {
+      // Créer et initialiser le gestionnaire unifié
+      const orderManager = new UnifiedOrderManager(user.id, user.email);
+      orderManagerRef.current = orderManager;
+
+      // Demander la permission pour les notifications
+      await orderManager.requestNotificationPermission();
+
+      // Initialiser la synchronisation temps réel
+      await orderManager.initialize();
+      setIsRealtimeActive(true);
+
+      // Configurer les écouteurs d'événements
+      setupEventListeners();
+
+      // Charger les commandes initiales
+      loadOrders();
+
+    } catch (error) {
+      console.error('❌ Erreur initialisation order manager:', error);
+      // Fallback: charger les commandes locales uniquement
+      loadOrders();
+    }
+  };
+
+  // Configurer les écouteurs d'événements personnalisés
+  const setupEventListeners = () => {
+    // Écouter les mises à jour de commandes
+    const handleOrderUpdate = (event: CustomEvent) => {
+      console.log('🔄 Order update event received:', event.detail);
+      loadOrders(); // Recharger les commandes
+    };
+
+    // Écouter les notifications
+    const handleNotification = (event: CustomEvent) => {
+      const { title, body } = event.detail;
+      addNotification({ title, message: body, type: 'info' });
+    };
+
+    window.addEventListener('orderUpdated', handleOrderUpdate as EventListener);
+    window.addEventListener('ordersSynced', handleOrderUpdate as EventListener);
+    window.addEventListener('showNotification', handleNotification as EventListener);
+
+    // Nettoyer les écouteurs au démontage
+    return () => {
+      window.removeEventListener('orderUpdated', handleOrderUpdate as EventListener);
+      window.removeEventListener('ordersSynced', handleOrderUpdate as EventListener);
+      window.removeEventListener('showNotification', handleNotification as EventListener);
+    };
+  };
 
   useEffect(() => {
     if (user && !authLoading && !isLoadingOrders) {
       console.log('🔄 useEffect déclenché pour user:', user.id);
       setIsLoadingOrders(true);
-      loadOrders();
+      
+      // Si le gestionnaire unifié est initialisé, il gère le chargement
+      if (orderManagerRef.current) {
+        loadOrders();
+      } else {
+        // Sinon, charger localement
+        loadOrders();
+      }
     }
   }, [user, authLoading]);
+
+  // Nettoyer au démontage
+  useEffect(() => {
+    return () => {
+      if (orderManagerRef.current) {
+        orderManagerRef.current.cleanup();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Filtrer les commandes
@@ -69,7 +149,7 @@ export default function Dashboard() {
     setFilteredOrders(filtered);
   }, [orders, searchTerm, filterType]);
 
-  const loadOrders = () => {
+  const loadOrders = async () => {
     console.log('🔄 loadOrders appelé - Début');
     setLoading(true);
     try {
@@ -88,8 +168,13 @@ export default function Dashboard() {
         console.log(`🧹 ${duplicatesRemoved} commandes en double supprimées`);
       }
 
+      // Si le gestionnaire unifié est disponible, utiliser la synchronisation complète
+      if (orderManagerRef.current) {
+        await orderManagerRef.current.fullSync();
+      }
+
       const userOrders = OrderStorage.getUserOrders(user.id);
-      console.log('📦 Commandes chargées:', userOrders.length, userOrders.map(o => ({ id: o.id, total: o.total, items: o.items })));
+      console.log('📦 Commandes chargées:', userOrders.length, userOrders.map(o => ({ id: o.id, total: o.total, items: o.items, status: o.status })));
       
       setOrders(userOrders);
       setFilteredOrders(userOrders);
@@ -99,7 +184,7 @@ export default function Dashboard() {
       setFilteredOrders([]);
     } finally {
       setLoading(false);
-      setIsLoadingOrders(false); // Réinitialiser le flag
+      setIsLoadingOrders(false);
       console.log('✅ loadOrders terminé');
     }
   };
@@ -136,6 +221,23 @@ export default function Dashboard() {
     { id: "statistiques" as View, label: "Statistiques", icon: TrendingUp },
     { id: "profil" as View, label: "Profil", icon: User },
   ];
+
+  // Synchronisation manuelle
+  const handleManualSync = async () => {
+    if (orderManagerRef.current) {
+      const success = await orderManagerRef.current.fullSync();
+      if (success) {
+        loadOrders();
+        addNotification({
+          type: 'success',
+          title: 'Synchronisation réussie',
+          message: 'Vos commandes ont été synchronisées avec succès'
+        });
+      }
+    } else {
+      loadOrders();
+    }
+  };
 
   if (authLoading) {
     return <DashboardSkeleton />;
@@ -187,6 +289,14 @@ export default function Dashboard() {
             </div>
             
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              {/* Indicateur de synchronisation temps réel */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm">
+                <div className={`w-2 h-2 rounded-full ${isRealtimeActive ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
+                <span className="text-xs font-medium">
+                  {isRealtimeActive ? 'Temps réel' : 'Hors ligne'}
+                </span>
+              </div>
+              
               <Link
                 href="/boutique"
                 className="flex items-center justify-center gap-2 px-6 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors min-h-[44px]"
@@ -194,6 +304,10 @@ export default function Dashboard() {
                 <ShoppingBag className="w-4 h-4" />
                 Boutique
               </Link>
+              
+              {/* Notifications utilisateur */}
+              <UserNotificationPanel />
+              
               <button
                 onClick={handleLogout}
                 className="flex items-center justify-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg transition-colors min-h-[44px]"
@@ -333,11 +447,17 @@ export default function Dashboard() {
                   onFilterChange={setFilterType}
                   onOrdersChange={loadOrders}
                   userId={user?.id || ''}
+                  isRealtimeActive={isRealtimeActive}
+                  onManualSync={handleManualSync}
                 />
               )}
 
               {currentView === "statistiques" && (
-                <StatsSection orders={orders} user={user} />
+                <StatsSection 
+                  orders={orders} 
+                  user={user} 
+                  orderManager={orderManagerRef.current}
+                />
               )}
 
               {currentView === "profil" && (
@@ -348,5 +468,14 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Composant principal avec le provider
+export default function Dashboard() {
+  return (
+    <UserNotificationProvider>
+      <DashboardWithNotifications />
+    </UserNotificationProvider>
   );
 }

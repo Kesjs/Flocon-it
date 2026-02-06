@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { TrendingUp, Package, CreditCard, Calendar, ArrowUpRight, ArrowDownRight, Users, ShoppingCart } from "lucide-react";
 import { Order } from "@/lib/order-storage";
 import { User } from "@supabase/supabase-js";
+import { UnifiedOrderManager } from "@/lib/unified-order-manager";
 
 interface StatsSectionProps {
   orders: Order[];
   user: User | null;
+  orderManager?: UnifiedOrderManager | null;
 }
 
 export function StatsSection({ orders, user }: StatsSectionProps) {

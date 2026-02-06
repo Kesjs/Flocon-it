@@ -11,13 +11,23 @@ function AuthCallbackContent() {
     const code = searchParams.get('code');
     const error = searchParams.get('error');
     const errorDescription = searchParams.get('error_description');
+    const type = searchParams.get('type'); // 'signup' ou 'recovery'
 
     if (error) {
-      // Rediriger vers la page de login avec l'erreur
-      router.push(`/login?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || 'Erreur de confirmation')}`);
+      // Rediriger vers la page appropriée selon le type
+      if (type === 'recovery') {
+        router.push(`/reset-password?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || 'Erreur de réinitialisation')}`);
+      } else {
+        router.push(`/login?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || 'Erreur de confirmation')}`);
+      }
     } else if (code) {
-      // Traiter le code de confirmation
-      router.push('/login?confirmed=true&message=Email confirmé avec succès');
+      if (type === 'recovery') {
+        // Rediriger vers reset-password avec le code
+        router.push(`/reset-password?code=${encodeURIComponent(code)}`);
+      } else {
+        // Traitement normal de confirmation d'inscription
+        router.push('/login?confirmed=true&message=Email confirmé avec succès');
+      }
     } else {
       // Pas de code ni d'erreur
       router.push('/login?error=invalid_code&description=Aucun code de confirmation trouvé');
@@ -32,7 +42,7 @@ function AuthCallbackContent() {
           Confirmation en cours...
         </h2>
         <p className="text-gray-600">
-          Veuillez patienter pendant que nous confirmons votre email.
+          Veuillez patienter pendant que nous traitons votre demande.
         </p>
         <p className="text-sm text-gray-500 mt-2">
           Vous serez redirigé automatiquement.

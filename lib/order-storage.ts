@@ -4,9 +4,10 @@ export interface Order {
   id: string;
   userId: string;
   date: string; // Format ISO string
-  status: "Livré" | "En cours" | "En préparation" | "En attente";
+  status: "Livré" | "En cours" | "En préparation" | "En attente" | "Rejetée";
   total: number;
   items: number;
+  trackingNumber?: string; // Numéro de suivi du colis
   products: {
     id: string;
     name: string;

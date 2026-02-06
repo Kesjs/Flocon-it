@@ -5,11 +5,12 @@ import { useCallback, useEffect } from 'react';
 
 // Configuration optimisée de NProgress
 NProgress.configure({
-  minimum: 0.1,
-  easing: 'ease',
-  speed: 300,
+  minimum: 0.08,
+  easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  speed: 250,
   showSpinner: false,
-  trickleSpeed: 200,
+  trickleSpeed: 150,
+  trickle: true,
 });
 
 // Hook pour contrôler NProgress manuellement

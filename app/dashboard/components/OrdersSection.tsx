@@ -4,6 +4,8 @@ import { Package, Search, Filter, CreditCard, Check, Clock, Truck, MapPin, Calen
 import { Order } from "@/lib/order-storage";
 import { syncPendingOrders, forceUpdateOrder } from "@/lib/order-sync";
 import { debugOrders, createTestOrder } from "@/lib/debug-orders";
+import { useUserNotifications } from "@/components/user/UserNotificationSystem";
+import { OrderConfirmationCard } from "@/components/dashboard/OrderConfirmationCard";
 
 interface OrdersSectionProps {
   orders: Order[];
@@ -12,8 +14,10 @@ interface OrdersSectionProps {
   filterType: "all" | "stripe" | "test";
   onSearchChange: (term: string) => void;
   onFilterChange: (type: "all" | "stripe" | "test") => void;
-  onOrdersChange: () => void;
-  userId: string; // Ajouter userId pour la synchronisation
+  onOrdersChange: () => Promise<void>;
+  userId: string;
+  isRealtimeActive?: boolean;
+  onManualSync?: () => Promise<void>;
 }
 
 export function OrdersSection({
@@ -24,10 +28,22 @@ export function OrdersSection({
   onSearchChange,
   onFilterChange,
   onOrdersChange,
-  userId
+  userId,
+  isRealtimeActive = false,
+  onManualSync
 }: OrdersSectionProps) {
+  const { addNotification } = useUserNotifications();
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [expandedConfirmation, setExpandedConfirmation] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+
+  // Separate confirmed orders from others
+  const confirmedOrders = orders.filter(order => 
+    order.status === 'En préparation' || order.status === 'En cours' || order.status === 'Livré'
+  );
+  const otherOrders = orders.filter(order => 
+    !confirmedOrders.find(confirmed => confirmed.id === order.id)
+  );
 
   // Fonction de synchronisation manuelle
   const handleSyncOrders = async () => {
@@ -38,24 +54,39 @@ export function OrdersSection({
       // Vérifier que userId est disponible
       if (!userId) {
         console.error('❌ userId non disponible pour la synchronisation');
-        alert('Erreur: utilisateur non identifié');
+        addNotification({
+          type: 'error',
+          title: 'Erreur de synchronisation',
+          message: 'Utilisateur non identifié'
+        });
         return;
       }
       
       console.log('📦 Lancement synchronisation...');
       const syncedCount = syncPendingOrders(userId);
       
-      console.log(`🎯 Résultat synchronisation: ${syncedCount} commandes mises à jour`);
-      
       if (syncedCount > 0) {
-        alert(`✅ ${syncedCount} commande(s) synchronisée(s) avec succès!`);
-        onOrdersChange(); // Recharger les commandes
+        addNotification({
+          type: 'success',
+          title: 'Synchronisation réussie',
+          message: `${syncedCount} commande(s) synchronisée(s) avec succès`
+        });
       } else {
-        alert('ℹ️ Aucune commande en attente de synchronisation trouvée');
+        addNotification({
+          type: 'info',
+          title: 'Synchronisation',
+          message: 'Aucune nouvelle commande à synchroniser'
+        });
       }
+      
+      await onOrdersChange();
     } catch (error) {
       console.error('❌ Erreur synchronisation:', error);
-      alert('❌ Erreur lors de la synchronisation: ' + (error as Error).message);
+      addNotification({
+        type: 'error',
+        title: 'Erreur de synchronisation',
+        message: 'Impossible de synchroniser les commandes'
+      });
     } finally {
       setIsSyncing(false);
     }
@@ -72,6 +103,11 @@ export function OrdersSection({
     };
     
     if (forceUpdateOrder(orderId, defaultAddress)) {
+      addNotification({
+        type: 'success',
+        title: 'Adresse mise à jour',
+        message: 'L\'adresse de livraison a été mise à jour avec succès'
+      });
       onOrdersChange(); // Recharger les commandes
     }
   };
@@ -86,6 +122,11 @@ export function OrdersSection({
   const handleCreateTestOrder = () => {
     const testOrder = createTestOrder(userId);
     if (testOrder) {
+      addNotification({
+        type: 'success',
+        title: 'Commande de test créée',
+        message: 'Une commande de test a été ajoutée à votre historique'
+      });
       onOrdersChange(); // Recharger les commandes
     }
   };
@@ -137,17 +178,25 @@ export function OrdersSection({
             {orders.length} commande{orders.length > 1 ? 's' : ''}
             {orders.filter(o => o.status === 'En préparation').length > 0 && 
               ` • ${orders.filter(o => o.status === 'En préparation').length} en attente de synchronisation`}
+            {isRealtimeActive && ' • Synchronisation temps réel active'}
           </p>
         </div>
         
         <div className="hidden sm:flex items-center gap-2">
+          {isRealtimeActive && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-xs font-medium">Temps réel</span>
+            </div>
+          )}
+          
           <button
-            onClick={handleSyncOrders}
+            onClick={onManualSync || handleSyncOrders}
             disabled={isSyncing}
             className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm min-h-[44px]"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Synchronisation...' : 'Synchroniser'}
+            {isSyncing ? 'Synchronisation...' : (isRealtimeActive ? 'Forcer Sync' : 'Synchroniser')}
           </button>
         </div>
       </div>
@@ -199,7 +248,20 @@ export function OrdersSection({
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order, index) => {
+          {/* Confirmed Orders - Confirmation Cards First */}
+          {confirmedOrders.map((order, index) => (
+            <OrderConfirmationCard
+              key={order.id}
+              order={order}
+              isExpanded={expandedConfirmation === order.id}
+              onToggle={() => setExpandedConfirmation(
+                expandedConfirmation === order.id ? null : order.id
+              )}
+            />
+          ))}
+          
+          {/* Other Orders - Regular Display */}
+          {otherOrders.map((order, index) => {
             const orderType = getOrderType(order.id);
             const isExpanded = expandedOrder === order.id;
             
@@ -208,7 +270,7 @@ export function OrdersSection({
                 key={order.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: (confirmedOrders.length + index) * 0.1 }}
                 className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
               >
                 {/* Order Header */}
@@ -326,6 +388,59 @@ export function OrdersSection({
                           </div>
                         </div>
                       )}
+
+                      {/* Tracking Section */}
+                      <div className="bg-white rounded-lg p-4">
+                        <h5 className="font-medium text-gray-900 mb-2">Suivi de colis</h5>
+                        {order.trackingNumber ? (
+                          <div className="space-y-3">
+                            {order.trackingNumber.startsWith('EN_PREPARATION_') ? (
+                              <div className="text-center py-4">
+                                <Truck className="w-12 h-12 text-orange-500 mx-auto mb-3" />
+                                <p className="text-sm text-gray-600 mb-1">
+                                  Votre commande est en préparation
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Le numéro de suivi sera disponible dès l'expédition
+                                </p>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm text-gray-600">Numéro de suivi :</span>
+                                  <span className="font-mono text-sm font-semibold text-rose-custom bg-rose-custom/10 px-2 py-1 rounded">
+                                    {order.trackingNumber}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => window.open(`https://www.laposte.fr/particulier/suivre-vos-envois?code=${order.trackingNumber}`, '_blank')}
+                                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
+                                >
+                                  <Truck className="w-4 h-4" />
+                                  Suivre mon colis
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-center py-4">
+                            <Truck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-sm text-gray-600 mb-1">
+                              {order.status === 'En préparation' || order.status === 'En cours' 
+                                ? 'Votre colis est en préparation'
+                                : order.status === 'Livré'
+                                ? 'Le numéro de suivi sera bientôt disponible'
+                                : 'Le suivi sera disponible dès expédition'
+                              }
+                            </p>
+                            {order.status === 'En préparation' && (
+                              <p className="text-xs text-gray-500">
+                                Vous recevrez un email avec le numéro de suivi dès que votre commande sera expédiée
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 )}

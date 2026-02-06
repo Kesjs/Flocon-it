@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, LogOut, User, Bell, Settings } from "lucide-react";
+import { Shield, LogOut, User, Settings } from "lucide-react";
 import { motion } from "framer-motion";
+import { NotificationPanel } from "@/components/admin/NotificationSystem";
 
 interface AdminUser {
   id: string;
@@ -66,11 +67,8 @@ export default function AdminHeader() {
 
           {/* Actions à droite */}
           <div className="flex items-center gap-4">
-            {/* Notifications */}
-            <button className="relative p-2 hover:bg-slate-100 rounded-xl transition-colors">
-              <Bell size={18} className="text-slate-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
+            {/* Système de notifications intégré */}
+            <NotificationPanel />
 
             {/* Paramètres */}
             <button className="p-2 hover:bg-slate-100 rounded-xl transition-colors">

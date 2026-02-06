@@ -173,7 +173,7 @@ export default function OccasionsPage() {
               <div className="relative rounded-3xl shadow-2xl overflow-hidden transform rotate-2 hover:rotate-0 transition-transform duration-500">
                 <div className="aspect-square relative">
                   <img
-                    src="https://img.freepik.com/photos-premium/heureuse-jeune-femme-noire-afro-tient-cadeau-vacances-dans-ses-mains-sourit-cadeaux-concept-magasinage-noel-vendredi-noir_121946-3747.jpg"
+                    src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600"
                     alt="Jeune femme heureuse tenant un cadeau pour les occasions spéciales"
                     className="w-full h-full object-cover"
                     loading="eager"

@@ -20,6 +20,7 @@ export async function processFSTValidation(orderId: string) {
         status: 'paid',
         payment_status: 'confirmed',
         payment_confirmed_at: new Date().toISOString(),
+        tracking_number: `EN_PREPARATION_${orderId}_${Date.now()}`,
         updated_at: new Date().toISOString()
       })
       .eq('id', orderId)
@@ -36,6 +37,50 @@ export async function processFSTValidation(orderId: string) {
     }
 
     console.log('✅ FST validé avec succès:', order.id);
+
+    // Créer la commande dans le localStorage du client
+    try {
+      const clientOrder = {
+        id: order.id,
+        userId: order.user_id || order.user_email, // Adapter selon la structure
+        date: order.created_at,
+        status: 'En préparation', // Statut client après validation
+        total: order.total,
+        items: order.items,
+        products: order.products || [],
+        trackingNumber: order.tracking_number,
+        shippingAddress: order.shipping_address || {
+          name: order.customer_name || 'Client',
+          address: order.shipping_address?.address || 'Adresse confirmée',
+          city: order.shipping_address?.city || 'Ville',
+          postalCode: order.shipping_address?.postal_code || '00000',
+          phone: order.shipping_address?.phone || 'Téléphone'
+        }
+      };
+
+      // Ajouter au localStorage du client (via un endpoint ou broadcast)
+      console.log('📱 Création commande client:', clientOrder);
+      
+      // Ici on pourrait utiliser un système de broadcast temps réel
+      // ou créer un endpoint pour que le client synchronise
+      
+    } catch (localError) {
+      console.warn('⚠️ Erreur création commande locale:', localError);
+      // Ne pas bloquer la validation
+    }
+
+    // Vider le panier de l'utilisateur pour cette commande
+    try {
+      await supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', order.user_id);
+      
+      console.log('🗑️ Panier vidé pour utilisateur:', order.user_id);
+    } catch (cartError) {
+      console.warn('⚠️ Erreur vidage panier:', cartError);
+      // Ne pas bloquer la validation si le vidage du panier échoue
+    }
 
     // Forcer un broadcast temps réel en faisant une mise à jour "dummy"
     await supabase

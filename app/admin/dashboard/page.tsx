@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Users, ShoppingBag, BarChart, Check, X, Clock, TrendingUp, Activity, RefreshCw } from "lucide-react";
+import { Shield, Users, ShoppingBag, BarChart, Check, X, Clock, TrendingUp, Activity, RefreshCw, Menu, ShoppingCart, DollarSign, AlertCircle, Mail, Copy, Send } from "lucide-react";
 import { supabaseAdminClient } from '@/lib/supabase-admin-client';
 import { processFSTValidation, processFSTRejection } from './actions';
 import AdminHeader from '../components/AdminHeader';
+import { NotificationProvider, NotificationPanel, useNotifications } from '@/components/admin/NotificationSystem';
 
 // Types
 interface FSTPayment {
@@ -18,6 +19,7 @@ interface FSTPayment {
   items: number;
   products: string[];
   email_sent?: boolean;
+  tracking_number?: string; // Numéro de suivi du colis
   email_sent_at?: string;
 }
 
@@ -40,20 +42,22 @@ interface Order {
 
 // Types
 
-export default function CommandCenter() {
+// Composant interne pour utiliser le contexte de notifications
+function CommandCenterWithNotifications() {
+  const { addNotification } = useNotifications();
   const [activeTab, setActiveTab] = useState<'virements' | 'users' | 'orders'>('virements');
   const [fstPayments, setFstPayments] = useState<FSTPayment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [newDeclarationAlert, setNewDeclarationAlert] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [liveSync, setLiveSync] = useState(true);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<FSTPayment | null>(null);
   const [emailContent, setEmailContent] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState({
     totalRevenue: 0,
     activeUsers: 0,
@@ -110,15 +114,19 @@ export default function CommandCenter() {
           const isDeclared = updated?.fst_status === 'declared';
 
           if (!wasDeclared && isDeclared) {
-            setNewDeclarationAlert(updated.id);
-            // L'alerte reste indéfiniment jusqu'à ce que l'admin la ferme
-
-            try {
-              const audio = new Audio('/notification.mp3');
-              audio.volume = 0.3;
-              audio.play().catch(() => {});
-            } catch (e) {
-            }
+            addNotification({
+              type: 'new_order',
+              title: 'Nouvelle Déclaration FST',
+              message: `Un client vient de déclarer un virement de ${updated.total}€`,
+              action: {
+                label: 'Voir la commande',
+                onClick: () => {
+                  setActiveTab('virements');
+                  setMobileMenuOpen(false);
+                }
+              },
+              data: { orderId: updated.id, userEmail: updated.user_email, total: updated.total }
+            });
           }
 
           setFstPayments(prev => {
@@ -168,7 +176,16 @@ export default function CommandCenter() {
         },
         (payload) => {
           console.log(' Nouvel utilisateur:', payload.new);
-          setUsers(prev => [payload.new as User, ...prev.slice(0, 9)]); // Garder les 10 derniers
+          const newUser = payload.new as User;
+          
+          addNotification({
+            type: 'new_user',
+            title: 'Nouvel utilisateur inscrit',
+            message: `${newUser.email} vient de s'inscrire sur la plateforme`,
+            data: { userEmail: newUser.email, userId: newUser.id }
+          });
+          
+          setUsers(prev => [newUser, ...prev.slice(0, 9)]); // Garder les 10 derniers
           setStats(prev => ({ ...prev, newUsersToday: prev.newUsersToday + 1 }));
         }
       )
@@ -177,7 +194,7 @@ export default function CommandCenter() {
     return () => {
       supabaseAdminClient.removeChannel(channel);
     };
-  }, []);
+  }, [addNotification]);
 
   useEffect(() => {
     fetchData();
@@ -312,6 +329,13 @@ export default function CommandCenter() {
           pendingTransfers: Math.max(0, prev.pendingTransfers - 1),
           totalRevenue: prev.totalRevenue + (result.order?.total || 0)
         }));
+
+        // Notification de confirmation
+        addNotification({
+          type: 'payment_confirmed',
+          title: 'Paiement Confirmé',
+          message: `Le paiement de ${result.order?.total || 0}€ pour la commande ${orderId} a été validé avec succès`,
+        });
         
         // Animation de succès
         const element = document.getElementById(`payment-${orderId}`);
@@ -324,25 +348,43 @@ export default function CommandCenter() {
 
         await refreshData();
       } else {
-        alert(`Erreur: ${result.error}`);
+        addNotification({
+          type: 'error',
+          title: 'Erreur de Validation',
+          message: `Impossible de valider le paiement pour la commande ${orderId}: ${result.error}`
+        });
       }
     } catch (error) {
       console.error('Erreur confirmation FST:', error);
-      alert('Erreur lors de la validation du paiement');
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors de la validation du paiement'
+      });
     } finally {
       setConfirmingId(null);
     }
   };
 
   const handleRejectFST = async (orderId: string) => {
-    const reason = prompt('Raison du rejet (optionnel):');
+    const reason = prompt('⚠️ Raison du rejet du paiement FST pour ' + orderId + ' ?\n\nCette action est irréversible.');
     
+    if (reason === null) {
+      return; // L'utilisateur a annulé
+    }
+
+    if (!reason || reason.trim() === '') {
+      alert('⚠️ Veuillez spécifier une raison pour le rejet.');
+      return;
+    }
+
     setConfirmingId(orderId);
     
     try {
-      const result = await processFSTRejection(orderId, reason || undefined);
+      const result = await processFSTRejection(orderId, reason.trim());
       
       if (result.success) {
+        // Mettre à jour l'état local
         setFstPayments(prev => 
           prev.map(p => p.id === orderId 
             ? { ...p, fst_status: 'rejected' as const }
@@ -355,19 +397,103 @@ export default function CommandCenter() {
           pendingTransfers: Math.max(0, prev.pendingTransfers - 1)
         }));
 
+        // Notification de rejet
+        addNotification({
+          type: 'payment_rejected',
+          title: 'Paiement Rejeté',
+          message: `Le paiement pour la commande ${orderId} a été rejeté. Raison: ${reason.trim()}`,
+        });
+        
+        // Animation de rejet
+        const element = document.getElementById(`payment-${orderId}`);
+        if (element) {
+          element.classList.add('bg-red-50', 'border-red-200');
+          setTimeout(() => {
+            element.classList.remove('bg-red-50', 'border-red-200');
+          }, 2000);
+        }
+
         await refreshData();
       } else {
-        alert(`Erreur: ${result.error}`);
+        addNotification({
+          type: 'error',
+          title: 'Erreur de Rejet',
+          message: `Impossible de rejeter le paiement pour la commande ${orderId}: ${result.error}`
+        });
       }
     } catch (error) {
       console.error('Erreur rejet FST:', error);
-      alert('Erreur lors du rejet du paiement');
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors du rejet du paiement'
+      });
     } finally {
       setConfirmingId(null);
     }
   };
 
-  const handleSendEmail = (payment: FSTPayment) => {
+  const handleAddTracking = async (orderId: string) => {
+    const trackingNumber = prompt(`📦 Numéro de suivi pour la commande ${orderId} ?\n\nExemple: 6A123456789`);
+    
+    if (trackingNumber === null) {
+      return; // L'utilisateur a annulé
+    }
+
+    if (trackingNumber.trim() === '') {
+      alert('Le numéro de suivi ne peut pas être vide');
+      return;
+    }
+
+    setConfirmingId(orderId);
+    
+    try {
+      const response = await fetch('/api/admin/add-tracking', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: JSON.stringify({ orderId, trackingNumber: trackingNumber.trim() })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Mettre à jour l'état local
+        setFstPayments(prev => 
+          prev.map(p => p.id === orderId 
+            ? { ...p, tracking_number: trackingNumber.trim() }
+            : p
+          )
+        );
+        
+        addNotification({
+          type: 'success',
+          title: 'Numéro de suivi ajouté',
+          message: `Le numéro de suivi ${trackingNumber.trim()} a été ajouté à la commande ${orderId}`
+        });
+
+        // Animation de succès
+        const element = document.getElementById(`payment-${orderId}`);
+        if (element) {
+          element.classList.add('bg-purple-50', 'border-purple-200');
+          setTimeout(() => {
+            element.classList.remove('bg-purple-50', 'border-purple-200');
+          }, 2000);
+        }
+      } else {
+        alert(`Erreur: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur ajout suivi:', error);
+      alert('Erreur lors de l\'ajout du numéro de suivi');
+    } finally {
+      setConfirmingId(null);
+    }
+  };
+
+  const handleShowEmail = (payment: FSTPayment) => {
     setSelectedPayment(payment);
     
     // Générer le template d'email
@@ -379,7 +505,11 @@ Cher ${payment.user_email.split('@')[0]},
 
 Nous avons le plaisir de vous informer que votre commande ${payment.id} d'un montant de ${payment.total.toFixed(2)}€ a été validée.
 
-[Ajoutez ici vos informations personnalisées]
+Votre commande est maintenant en préparation et vous sera expédiée dans les plus brefs délais.
+
+Vous pouvez suivre l'état de votre commande directement sur votre espace client.
+
+Merci pour votre confiance !
 
 Cordialement,
 L'équipe Flocon`
@@ -387,9 +517,13 @@ L'équipe Flocon`
 
 Cher ${payment.user_email.split('@')[0]},
 
-Suite à l'examen de votre commande ${payment.id} d'un montant de ${payment.total.toFixed(2)}€, nous devons vous informer que...
+Suite à l'examen de votre commande ${payment.id} d'un montant de ${payment.total.toFixed(2)}€, nous devons vous informer que le paiement n'a pas pu être validé.
 
-[Ajoutez ici les raisons du rejet et les prochaines étapes]
+Raison : [Préciser la raison du rejet]
+
+Si vous pensez qu'il s'agit d'une erreur, merci de nous contacter à contact@flocon.paris en indiquant votre numéro de commande.
+
+Nous restons à votre disposition pour toute information complémentaire.
 
 Cordialement,
 L'équipe Flocon`;
@@ -398,47 +532,100 @@ L'équipe Flocon`;
     setEmailModalOpen(true);
   };
 
-  const handleSendEmailSubmit = async () => {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(emailContent);
+    alert('📋 Email copié dans le presse-papiers !');
+  };
+
+  const markEmailAsSent = () => {
     if (!selectedPayment) return;
     
-    setSendingEmail(true);
+    setFstPayments(prev => 
+      prev.map(p => p.id === selectedPayment.id 
+        ? { ...p, email_sent: true, email_sent_at: new Date().toISOString() }
+        : p
+      )
+    );
+    
+    setEmailModalOpen(false);
+    setSelectedPayment(null);
+    setEmailContent('');
+    alert('✅ Email marqué comme envoyé !');
+  };
+
+  const handleResetRevenue = async () => {
+    if (!confirm('⚠️ Réinitialiser le compteur de revenus ?\n\nCette action va archiver toutes les commandes confirmées et remettre le compteur de revenus à 0.\n\nCette action est irréversible.')) {
+      return;
+    }
+
     try {
-      const response = await fetch('/api/admin/send-confirmation-email', {
+      const response = await fetch('/api/admin/reset-revenue', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: selectedPayment.id,
-          email: selectedPayment.user_email,
-          content: emailContent,
-          subject: selectedPayment.fst_status === 'confirmed' 
-            ? `✅ Votre commande ${selectedPayment.id} a été validée`
-            : `❌ Information concernant votre commande ${selectedPayment.id}`
-        })
+        headers: { 'Content-Type': 'application/json' }
       });
       
       const result = await response.json();
       
       if (result.success) {
-        // Mettre à jour l'état local
-        setFstPayments(prev => 
-          prev.map(p => p.id === selectedPayment.id 
-            ? { ...p, email_sent: true, email_sent_at: new Date().toISOString() }
-            : p
-          )
-        );
-        
-        setEmailModalOpen(false);
-        setSelectedPayment(null);
-        setEmailContent('');
-        alert('✅ Email envoyé avec succès !');
+        addNotification({
+          type: 'success',
+          title: 'Revenus Réinitialisés',
+          message: result.message,
+          data: { archivedCount: result.archivedCount }
+        });
+        await refreshData();
       } else {
-        alert(`Erreur: ${result.error}`);
+        addNotification({
+          type: 'error',
+          title: 'Erreur de Réinitialisation',
+          message: result.error || 'Impossible de réinitialiser les revenus'
+        });
       }
     } catch (error) {
-      console.error('Erreur envoi email:', error);
-      alert('Erreur lors de l envoi de l email');
-    } finally {
-      setSendingEmail(false);
+      console.error('Erreur réinitialisation revenus:', error);
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors de la réinitialisation des revenus'
+      });
+    }
+  };
+
+  const handleResetOrders = async () => {
+    if (!confirm('⚠️ Réinitialiser toutes les commandes ?\n\nCette action va supprimer TOUTES les commandes (confirmées, rejetées, en attente).\n\nCette action est IRRÉVERSIBLE et affectera tous les utilisateurs.\n\nÊtes-vous absolument certain ?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/reset-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        addNotification({
+          type: 'success',
+          title: 'Commandes Réinitialisées',
+          message: result.message,
+          data: { deletedCount: result.deletedCount }
+        });
+        await refreshData();
+      } else {
+        addNotification({
+          type: 'error',
+          title: 'Erreur de Réinitialisation',
+          message: result.error || 'Impossible de réinitialiser les commandes'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur réinitialisation commandes:', error);
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors de la réinitialisation des commandes'
+      });
     }
   };
 
@@ -455,31 +642,46 @@ L'équipe Flocon`;
       {/* Header Admin */}
       <AdminHeader />
 
-      {/* Alert visuelle pour nouvelle déclaration */}
-      {newDeclarationAlert && (
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
-          className="fixed top-20 right-6 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-lg flex items-center gap-3"
-        >
-          <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-          <span className="font-black text-sm uppercase tracking-wider">
-            NOUVELLE DÉCLARATION
-          </span>
-          <button
-            onClick={() => setNewDeclarationAlert(null)}
-            className="ml-2 p-1 hover:bg-emerald-600 rounded-lg transition-colors"
-          >
-            <X size={16} />
-          </button>
-        </motion.div>
-      )}
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Mobile Header */}
+        <div className="lg:hidden bg-white border-b border-slate-200/60 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+                <Shield size={18} className="text-white" />
+              </div>
+              <h1 className="text-lg font-black text-slate-900">Admin</h1>
+            </div>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              {mobileMenuOpen ? (
+                <>
+                  <X size={20} className="text-slate-900" />
+                </>
+              ) : (
+                <>
+                  <Menu size={20} className="text-slate-900" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-20 bg-white border-r border-slate-200/60 min-h-screen p-4">
-          <div className="space-y-8">
+        {/* Sidebar - Desktop (fixed) + Mobile (overlay) */}
+        <div className={`${mobileMenuOpen ? 'block' : 'hidden'} lg:block lg:w-20 bg-white border-r border-slate-200/60 lg:min-h-screen p-4 fixed lg:relative inset-0 z-50 lg:inset-auto`}>
+          {/* Close button for mobile */}
+          <div className="lg:hidden absolute top-4 right-4">
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <X size={20} className="text-slate-900" />
+            </button>
+          </div>
+          
+          <div className="space-y-8 h-full flex flex-col">
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <Shield size={20} className="text-white" />
@@ -489,9 +691,9 @@ L'équipe Flocon`;
               </div>
             </div>
             
-            <nav className="space-y-6">
+            <nav className="space-y-6 flex-1">
               <button
-                onClick={() => setActiveTab('virements')}
+                onClick={() => { setActiveTab('virements'); setMobileMenuOpen(false); }}
                 className={`w-full p-3 rounded-xl transition-all ${
                   activeTab === 'virements' 
                     ? 'bg-slate-900 text-white' 
@@ -502,7 +704,7 @@ L'équipe Flocon`;
               </button>
               
               <button
-                onClick={() => setActiveTab('users')}
+                onClick={() => { setActiveTab('users'); setMobileMenuOpen(false); }}
                 className={`w-full p-3 rounded-xl transition-all ${
                   activeTab === 'users' 
                     ? 'bg-slate-900 text-white' 
@@ -513,7 +715,7 @@ L'équipe Flocon`;
               </button>
               
               <button
-                onClick={() => setActiveTab('orders')}
+                onClick={() => { setActiveTab('orders'); setMobileMenuOpen(false); }}
                 className={`w-full p-3 rounded-xl transition-all ${
                   activeTab === 'orders' 
                     ? 'bg-slate-900 text-white' 
@@ -526,10 +728,29 @@ L'équipe Flocon`;
           </div>
         </div>
 
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Main Content */}
         <div className="flex-1 p-4 sm:p-6 overflow-x-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 lg:mb-8">
+            {/* Bouton Réinitialiser Commandes - conteneur séparé pour mobile */}
+            <div className="order-first sm:order-auto w-full sm:w-auto mb-4 sm:mb-0">
+              <button
+                onClick={handleResetOrders}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-all active:scale-95"
+              >
+                <AlertCircle className="w-3 h-3" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Réinitialiser Commandes</span>
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3 flex-shrink-0 min-w-0">
               <button
                 onClick={refreshData}
                 disabled={isRefreshing}
@@ -554,72 +775,87 @@ L'équipe Flocon`;
                 <div className={`w-2 h-2 rounded-full ${liveSync ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
                 <span className="text-[10px] font-black uppercase tracking-[0.15em]">Live</span>
               </button>
+
+              <button
+                onClick={handleResetRevenue}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-all active:scale-95"
+              >
+                <div className="w-3 h-3 bg-red-500 rounded-full" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Réinitialiser Revenus</span>
+              </button>
+
+              <button
+                onClick={handleResetOrders}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-all active:scale-95"
+              >
+                <AlertCircle className="w-3 h-3" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Réinitialiser Commandes</span>
+              </button>
             </div>
           </div>
 
           {/* Header Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 shadow-sm">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
+            <div className="bg-white rounded-xl lg:rounded-2xl border border-slate-200/60 p-3 lg:p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
-                    Revenus Confirmés
+                  <div className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
+                    Revenus
                   </div>
-                  <div className="text-2xl font-black text-slate-900">
+                  <div className="text-lg lg:text-2xl font-black text-slate-900">
                     {stats.totalRevenue.toFixed(2)}€
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
-                  <TrendingUp size={20} className="text-green-600" />
+                <div className="w-8 h-8 lg:w-12 lg:h-12 bg-green-50 rounded-lg lg:rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-3 h-3 lg:w-5 lg:h-5 text-green-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 shadow-sm">
+            <div className="bg-white rounded-xl lg:rounded-2xl border border-slate-200/60 p-3 lg:p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
-                    Utilisateurs Actifs
+                  <div className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
+                    Actifs
                   </div>
-                  <div className="text-2xl font-black text-slate-900">
+                  <div className="text-lg lg:text-2xl font-black text-slate-900">
                     {stats.activeUsers}
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                  <Activity size={20} className="text-blue-600" />
+                <div className="w-8 h-8 lg:w-12 lg:h-12 bg-blue-50 rounded-lg lg:rounded-xl flex items-center justify-center">
+                  <Activity className="w-3 h-3 lg:w-5 lg:h-5 text-blue-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 shadow-sm">
+            <div className="bg-white rounded-xl lg:rounded-2xl border border-slate-200/60 p-3 lg:p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
-                    Virements En Attente
+                  <div className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
+                    En Attente
                   </div>
-                  <div className="text-2xl font-black text-slate-900">
+                  <div className="text-lg lg:text-2xl font-black text-slate-900">
                     {stats.pendingTransfers}
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
-                  <Clock size={20} className="text-orange-600" />
+                <div className="w-8 h-8 lg:w-12 lg:h-12 bg-orange-50 rounded-lg lg:rounded-xl flex items-center justify-center">
+                  <Clock className="w-3 h-3 lg:w-5 lg:h-5 text-orange-600" />
                 </div>
               </div>
             </div>
 
-            {/* NOUVEAU: Derniers Inscrits */}
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 shadow-sm">
+            <div className="bg-white rounded-xl lg:rounded-2xl border border-slate-200/60 p-3 lg:p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
-                    Nouveaux Inscrits
+                  <div className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
+                    Nouveaux
                   </div>
-                  <div className="text-2xl font-black text-slate-900">
+                  <div className="text-lg lg:text-2xl font-black text-slate-900">
                     {stats.newUsersToday}
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                  <Users size={20} className="text-purple-600" />
+                <div className="w-8 h-8 lg:w-12 lg:h-12 bg-purple-50 rounded-lg lg:rounded-xl flex items-center justify-center">
+                  <Users className="w-3 h-3 lg:w-5 lg:h-5 text-purple-600" />
                 </div>
               </div>
             </div>
@@ -710,7 +946,7 @@ L'équipe Flocon`;
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -100 }}
-                        className="bg-slate-50 rounded-2xl p-4 sm:p-6 border border-slate-200/60"
+                        className="bg-slate-50 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 border border-slate-200/60"
                       >
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                           <div className="flex-1">
@@ -763,68 +999,63 @@ L'équipe Flocon`;
                                'EN ATTENTE'}
                             </div>
                             
+                            {/* Debug - Afficher le statut pour vérification */}
+                            <div className="text-xs text-gray-500 mb-2">
+                              Debug: fst_status = "{payment.fst_status}"
+                            </div>
+
+                            {/* Boutons d'action pour les statuts déclarés */}
+                            {payment.fst_status === 'declared' && (
+                              <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 sm:ml-4">
+                                <button
+                                  onClick={() => handleConfirmFST(payment.id)}
+                                  disabled={confirmingId === payment.id}
+                                  className="px-3 py-1 bg-green-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  {confirmingId === payment.id ? '...' : 'VALIDER'}
+                                </button>
+                                <button
+                                  onClick={() => handleRejectFST(payment.id)}
+                                  disabled={confirmingId === payment.id}
+                                  className="px-3 py-1 bg-red-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  {confirmingId === payment.id ? '...' : 'REJETER'}
+                                </button>
+                                <button
+                                  onClick={() => handleShowEmail(payment)}
+                                  className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-blue-600 transition-colors"
+                                >
+                                  EMAIL
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Boutons d'action pour les commandes confirmées */}
+                            {payment.fst_status === 'confirmed' && (
+                              <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 sm:ml-4">
+                                <button
+                                  onClick={() => handleAddTracking(payment.id)}
+                                  disabled={confirmingId === payment.id}
+                                  className="px-3 py-1 bg-purple-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  {confirmingId === payment.id ? '...' : 'SUIVI'}
+                                </button>
+                                <button
+                                  onClick={() => handleShowEmail(payment)}
+                                  className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-blue-600 transition-colors"
+                                >
+                                  EMAIL
+                                </button>
+                              </div>
+                            )}
+                            
                             {confirmingId === payment.id ? (
-                              <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-xl">
-                                <div className="w-4 h-4 border-2 border-slate-400 border-t-slate-600 rounded-full animate-spin" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-600">
-                                  TRAITEMENT...
-                                </span>
+                              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-purple-600">
+                                {new Date(payment.created_at).toLocaleDateString('fr-FR')}
                               </div>
                             ) : (
-                              <div className="flex gap-2">
-                                {/* Bouton pour marquer comme déclaré (si en attente) */}
-                                {payment.fst_status === 'pending' && (
-                                  <button
-                                    onClick={() => handleMarkAsDeclared(payment.id)}
-                                    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all active:scale-95"
-                                    title="Marquer comme déclaré"
-                                  >
-                                    <Clock size={16} />
-                                  </button>
-                                )}
-                                
-                                {/* Boutons confirmer/rejeter (si déclaré) */}
-                                {payment.fst_status === 'declared' && (
-                                  <>
-                                    <button
-                                      onClick={() => handleConfirmFST(payment.id)}
-                                      className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all active:scale-95"
-                                      title="Confirmer le paiement"
-                                    >
-                                      <Check size={16} />
-                                    </button>
-                                    <button
-                                      onClick={() => handleRejectFST(payment.id)}
-                                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all active:scale-95"
-                                      title="Rejeter le paiement"
-                                    >
-                                      <X size={16} />
-                                    </button>
-                                  </>
-                                )}
-                                
-                                {/* Bouton d'envoi d'email (si confirmé ou rejeté) */}
-                                {(payment.fst_status === 'confirmed' || payment.fst_status === 'rejected') && (
-                                  !payment.email_sent ? (
-                                    <button
-                                      onClick={() => handleSendEmail(payment)}
-                                      className="px-3 py-2 bg-rose-custom hover:bg-rose-custom/90 text-white rounded-xl transition-all active:scale-95 flex items-center gap-2"
-                                      title="Envoyer l'email de confirmation"
-                                    >
-                                      <span>📧</span>
-                                      <span className="text-[10px] font-black uppercase tracking-[0.15em]">
-                                        {payment.fst_status === 'confirmed' ? 'Envoyer Mail' : 'Envoyer Mail Rejet'}
-                                      </span>
-                                    </button>
-                                  ) : (
-                                    <div className="px-3 py-2 bg-gray-100 text-gray-500 rounded-xl flex items-center gap-2">
-                                      <span>✅</span>
-                                      <span className="text-[10px] font-black uppercase tracking-[0.15em]">
-                                        {payment.fst_status === 'confirmed' ? 'Mail Envoyé' : 'Mail Rejet Envoyé'}
-                                      </span>
-                                    </div>
-                                  )
-                                )}
+                              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-purple-600">
+                                {new Date(payment.created_at).toLocaleDateString('fr-FR')}
                               </div>
                             )}
                           </div>
@@ -921,7 +1152,19 @@ L'équipe Flocon`;
             <div className="p-6">
               <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Sujet de l'email
+                  📧 Destinataire
+                </label>
+                <input
+                  type="text"
+                  value={selectedPayment.user_email}
+                  readOnly
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50"
+                />
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  📋 Sujet de l'email
                 </label>
                 <input
                   type="text"
@@ -936,43 +1179,46 @@ L'équipe Flocon`;
               
               <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Contenu de l'email
+                  ✏️ Contenu de l'email (modifiable)
                 </label>
                 <textarea
                   value={emailContent}
                   onChange={(e) => setEmailContent(e.target.value)}
                   rows={12}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-custom focus:border-transparent"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Personnalisez le contenu de l'email..."
                 />
               </div>
               
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <div className="text-sm text-blue-800">
+                  💡 <strong>Instructions :</strong> Copiez ce contenu et envoyez-le manuellement depuis votre boîte mail.
+                  Vous pouvez modifier le contenu avant de le copier.
+                </div>
+              </div>
+              
               <div className="flex items-center justify-between">
                 <div className="text-sm text-slate-500">
-                  💡 Les sections entre crochets [] sont à personnaliser
+                  📋 Prêt à copier-coller dans votre email
                 </div>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setEmailModalOpen(false)}
                     className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
                   >
-                    Annuler
+                    Fermer
                   </button>
                   <button
-                    onClick={handleSendEmailSubmit}
-                    disabled={sendingEmail}
-                    className="px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    onClick={copyToClipboard}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
-                    {sendingEmail ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Envoi...
-                      </>
-                    ) : (
-                      <>
-                        📧 Envoyer l'email
-                      </>
-                    )}
+                    📋 Copier l'email
+                  </button>
+                  <button
+                    onClick={markEmailAsSent}
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+                  >
+                    ✅ Marquer comme envoyé
                   </button>
                 </div>
               </div>
@@ -981,5 +1227,14 @@ L'équipe Flocon`;
         </div>
       )}
     </div>
+  );
+}
+
+// Composant principal avec le provider
+export default function CommandCenter() {
+  return (
+    <NotificationProvider>
+      <CommandCenterWithNotifications />
+    </NotificationProvider>
   );
 }

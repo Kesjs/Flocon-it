@@ -118,7 +118,157 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'amazon.com',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ma.jumia.is',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.nouvojour.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ae01.alicdn.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.etsystatic.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.shopify.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.truffaut.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.hamac.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.gowood.ca',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'semarome.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'creationsettradition.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placeducouple.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lemondedescadeaux.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.maisonfans.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cadeau-couple.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.brut-de-champ.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mongraindesucre.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lespetitsimprimes.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.cdiscount.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mycrazystuff.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.emmafashionstyle.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.fruugo.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.yslbeauty.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.maisondpm.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'boutique-rose-eternelle.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.manomano.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.cimalp.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.objetrama.fr',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.made-in-china.com',
         pathname: '/**',
       },
     ],

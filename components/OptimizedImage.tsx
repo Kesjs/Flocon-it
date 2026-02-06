@@ -37,7 +37,7 @@ export default function OptimizedImage({
   blurDataURL,
   loading = 'lazy',
   unoptimized = false,
-  fallbackSrc = '/placeholder-product.webp',
+  fallbackSrc = '/placeholder.webp',
 }: OptimizedImageProps) {
   const [imgSrc, setImgSrc] = useState(originalSrc);
   const [isLoading, setIsLoading] = useState(true);

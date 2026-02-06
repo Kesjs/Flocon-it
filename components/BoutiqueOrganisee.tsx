@@ -120,7 +120,7 @@ export default function BoutiqueOrganisee({ onViewModeChange }: { onViewModeChan
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[40vh] md:h-[50vh] flex items-center overflow-hidden">
+      <section className="relative h-[40vh] md:h-[50vh] flex items-center overflow-hidden pt-32 sm:pt-36">
         <div className="absolute inset-0">
           <img
             src="/cadeau-saint-valentin-couple.webp"
@@ -135,18 +135,15 @@ export default function BoutiqueOrganisee({ onViewModeChange }: { onViewModeChan
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl"
+            className="max-w-3xl text-center"
           >
             <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">
               Toutes nos Collections
             </h1>
-            <p className="text-xl text-white/90 mb-8">
-              {products.length} produits organisés par catégories et sous-catégories pour trouver facilement votre bonheur
-            </p>
             
             {/* Boutons de changement de vue */}
             {onViewModeChange && (
-              <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-lg p-1">
+              <div className="flex items-center justify-center space-x-2 bg-white/20 backdrop-blur-sm rounded-lg p-1">
                 <button
                   onClick={() => onViewModeChange('organized')}
                   className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors bg-white text-rose-custom shadow-sm"
@@ -163,15 +160,6 @@ export default function BoutiqueOrganisee({ onViewModeChange }: { onViewModeChan
                 </button>
               </div>
             )}
-            
-            <div className="flex flex-wrap gap-4 mt-6">
-              {organizedCategories.map((cat) => (
-                <div key={cat.category} className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                  <cat.icon className="w-4 h-4 text-white" />
-                  <span className="text-white font-medium">{cat.totalProducts} {cat.title}</span>
-                </div>
-              ))}
-            </div>
           </motion.div>
         </div>
       </section>
