@@ -35,7 +35,7 @@ interface Order {
   user_email: string;
   total: number;
   status: string;
-  fst_status?: 'pending' | 'declared' | 'confirmed' | 'rejected' | 'processing';
+  fst_status?: 'pending' | 'declared' | 'confirmed' | 'rejected' | 'processing' | 'archived';
   created_at: string;
   items: number;
 }
@@ -232,9 +232,7 @@ function CommandCenterWithNotifications() {
       // Exclure les commandes archivées du calcul du revenu
       const confirmedRevenue = ordersData ? 
         ordersData.orders?.filter((order: Order) => 
-          order.fst_status === 'confirmed' && 
-          order.fst_status !== 'archived' &&
-          order.fst_status !== 'rejected'
+          order.fst_status === 'confirmed'
         )
           .reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
       
@@ -294,8 +292,7 @@ function CommandCenterWithNotifications() {
         
         // Recalculer les stats avec les nouvelles données
         const confirmedRevenue = ordersData.orders?.filter((order: Order) => 
-          order.fst_status === 'confirmed' && 
-          order.fst_status !== 'archived'
+          order.fst_status === 'confirmed'
         ).reduce((sum: number, order: Order) => sum + order.total, 0) || 0;
         
         setStats(prev => ({ ...prev, totalRevenue: confirmedRevenue }));
