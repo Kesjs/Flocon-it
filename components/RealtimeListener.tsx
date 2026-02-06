@@ -15,6 +15,11 @@ export default function RealtimeListener({ onNewPayment, onPaymentConfirmed, use
 
   useEffect(() => {
     // Écouter les nouvelles déclarations FST
+    if (!supabase) {
+      console.log('❌ Supabase non disponible pour RealtimeListener');
+      return;
+    }
+    
     const fstChannel = supabase
       .channel('fst-declarations')
       .on(
@@ -54,8 +59,10 @@ export default function RealtimeListener({ onNewPayment, onPaymentConfirmed, use
       .subscribe();
 
     return () => {
-      supabase.removeChannel(fstChannel);
-      supabase.removeChannel(confirmationChannel);
+      if (supabase) {
+        supabase.removeChannel(fstChannel);
+        supabase.removeChannel(confirmationChannel);
+      }
     };
   }, [onNewPayment, onPaymentConfirmed, userId, router]);
 

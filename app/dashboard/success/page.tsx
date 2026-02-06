@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Clock, Mail, Shield } from "lucide-react";
 import Link from "next/link";
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [orderInfo, setOrderInfo] = useState<any>(null);
@@ -172,5 +172,13 @@ export default function SuccessPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <SuccessPageContent />
+    </Suspense>
   );
 }

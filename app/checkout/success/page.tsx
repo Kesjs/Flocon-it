@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { OrderStorage } from "@/lib/order-storage";
 import { useCart } from "@/context/CartContext";
+import { syncStripeOrder } from "@/lib/order-sync";
 import Head from "next/head";
 
 // Meta component pour empêcher le cache
@@ -146,26 +147,22 @@ function CheckoutSuccessContent() {
                   const shippingData = JSON.parse(formData);
                   console.log('📦 Données de livraison trouvées:', shippingData);
                   
-                  const syncResult = syncStripeOrder({
-                    sessionId: sessionId,
-                    customerEmail: data.orderDetails.email || user.email || '',
-                    total: data.orderDetails.total,
-                    items: data.orderDetails.items.reduce((sum: number, item: any) => sum + item.quantity, 0),
-                    shippingAddress: {
-                      name: shippingData.name || data.orderDetails.email || 'Client',
-                      address: shippingData.address || 'Adresse confirmée',
-                      city: shippingData.city || 'Ville confirmée',
-                      postalCode: shippingData.postalCode || '00000',
-                      phone: shippingData.phone || 'Téléphone confirmé',
-                      country: shippingData.country || 'FR'
-                    }
-                  }, user.id);
+                  // const syncResult = syncStripeOrder({
+//                     sessionId: sessionId,
+//                     customerEmail: data.orderDetails.email || user.email || '',
+//                     total: data.orderDetails.total,
+//                     items: data.orderDetails.items.reduce((sum: number, item: any) => sum + item.quantity, 0),
+//                     shippingAddress: {
+//                       name: shippingData.name || data.orderDetails.email || 'Client',
+//                       address: shippingData.address || 'Adresse confirmée',
+//                       city: shippingData.city || 'Ville confirmée',
+//                       postalCode: shippingData.postalCode || '00000',
+//                       phone: shippingData.phone || 'Téléphone confirmé',
+//                       country: shippingData.country || 'FR'
+//                     }
+//                   }, user.id || 'anonymous');
                   
-                  if (syncResult) {
-                    console.log('✅ Synchronisation immédiate réussie:', syncResult.id);
-                  } else {
-                    console.log('⚠️ Synchronisation immédiate échouée, webhook requis');
-                  }
+                  console.log('⚠️ Synchronisation manuelle désactivée temporairement');
                 } catch (formError) {
                   console.error('❌ Erreur lecture données formulaire:', formError);
                 }

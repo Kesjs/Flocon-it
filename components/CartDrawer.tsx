@@ -52,7 +52,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     console.log('🔍 État auth détaillé:', {
       user: user ? `Connecté (${user.email})` : 'Non connecté',
       loading: loading,
-      session: !!user?.session
+      session: !!user
     });
     
     // Loader immédiat et fermeture du panier
@@ -88,6 +88,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       // Vérification Supabase directe pour être sûr
       const { createClient } = await import('@/lib/supabase/client');
       const supabase = createClient();
+      if (!supabase) {
+        console.log('❌ Supabase client non disponible');
+        return;
+      }
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {

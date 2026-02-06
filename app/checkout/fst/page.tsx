@@ -163,7 +163,7 @@ function FSTPageContent() {
           // Convertir le format localStorage vers le format Supabase
           const convertedOrder = {
             ...storedOrder,
-            user_email: user?.email || 'client@flocon-boutique.com',
+            user_email: 'client@flocon-boutique.com',
             shipping_address: {
               full_name: storedOrder.shippingAddress.name,
               address_line1: storedOrder.shippingAddress.address,
