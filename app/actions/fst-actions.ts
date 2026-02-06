@@ -52,14 +52,15 @@ export async function declarePayment(orderId: string) {
 
     // Déclarer le paiement
     try {
-      // @ts-ignore
+      const updateData: any = {
+        fst_status: 'declared',
+        payment_declared_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
       const { data: updatedOrder, error: updateError } = await (supabase
         .from('orders')
-        .update({
-          fst_status: 'declared',
-          payment_declared_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        } as any)
+        .update(updateData as any)
         .eq('id', orderId)
         .eq('user_email', user.email)
         .select()
@@ -77,11 +78,6 @@ export async function declarePayment(orderId: string) {
     
     return { success: true, order: updatedOrder };
     
-  } catch (updateError) {
-    console.log('❌ Erreur mise à jour côté serveur:', updateError);
-    return { success: false, error: 'Erreur lors de la déclaration' };
-  }
-  
   } catch (error) {
     console.error('💥 Erreur inattendue:', error);
     return { success: false, error: 'Erreur serveur inattendue' };
