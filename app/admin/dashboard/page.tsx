@@ -6,9 +6,8 @@ import { Shield, Users, ShoppingBag, BarChart, Check, X, Clock, TrendingUp, Acti
 import { supabaseAdminClient } from '@/lib/supabase-admin-client';
 import { processFSTValidation, processFSTRejection } from './actions';
 import AdminHeader from '../components/AdminHeader';
-import { Inter } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'] });
+// import { Inter } from 'next/font/google';
+// const inter = Inter({ subsets: ['latin'] });
 
 // Types
 interface FSTPayment {
@@ -372,7 +371,7 @@ export default function CommandCenter() {
   }
 
   return (
-    <div className={`min-h-screen bg-[#F9FAFB] ${inter.className} text-slate-900`}>
+    <div className="min-h-screen bg-[#F9FAFB] text-slate-900">
       {/* Header Admin */}
       <AdminHeader />
 

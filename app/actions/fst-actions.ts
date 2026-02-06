@@ -45,23 +45,25 @@ export async function declarePayment(orderId: string) {
     }
 
     // Vérifier que le paiement n'a pas déjà été déclaré
-    if (order.fst_status && order.fst_status !== 'pending') {
+    if (order && (order as any).fst_status && (order as any).fst_status !== 'pending') {
       console.log('❌ Paiement déjà déclaré côté serveur');
       return { success: false, error: 'Paiement déjà déclaré' };
     }
 
     // Déclarer le paiement
-    const { data: updatedOrder, error: updateError } = await supabase
-      .from('orders')
-      .update({
-        fst_status: 'declared',
-        payment_declared_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', orderId)
-      .eq('user_email', user.email)
-      .select()
-      .single();
+    try {
+      // @ts-ignore
+      const { data: updatedOrder, error: updateError } = await (supabase
+        .from('orders')
+        .update({
+          fst_status: 'declared',
+          payment_declared_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as any)
+        .eq('id', orderId)
+        .eq('user_email', user.email)
+        .select()
+        .single() as any);
 
     console.log('✅ Server updated order:', updatedOrder);
     console.log('❌ Server update error:', updateError);
@@ -72,18 +74,16 @@ export async function declarePayment(orderId: string) {
     }
 
     console.log(`✅ Paiement déclaré côté serveur pour ${orderId} par ${user.email}`);
-
-    return {
-      success: true,
-      message: 'Paiement déclaré avec succès',
-      order: updatedOrder
-    };
-
+    
+    return { success: true, order: updatedOrder };
+    
+  } catch (updateError) {
+    console.log('❌ Erreur mise à jour côté serveur:', updateError);
+    return { success: false, error: 'Erreur lors de la déclaration' };
+  }
+  
   } catch (error) {
-    console.error('💥 Server action error:', error);
-    return {
-      success: false,
-      error: 'Erreur serveur'
-    };
+    console.error('💥 Erreur inattendue:', error);
+    return { success: false, error: 'Erreur serveur inattendue' };
   }
 }

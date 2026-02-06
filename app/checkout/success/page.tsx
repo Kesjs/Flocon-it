@@ -7,7 +7,6 @@ import { Check, ArrowLeft, AlertCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { OrderStorage } from "@/lib/order-storage";
-import { syncStripeOrder } from "@/lib/order-sync";
 import { useCart } from "@/context/CartContext";
 import Head from "next/head";
 
@@ -16,7 +15,7 @@ function CacheControl() {
   useEffect(() => {
     // Forcer le rechargement si c'est une version en cache
     if (typeof window !== 'undefined') {
-      const version = '2025-01-01-v3'; // Version mise à jour pour Stripe
+      const version = '2025-01-01-v4'; // Version mise à jour pour FST
       const currentVersion = sessionStorage.getItem('checkout-success-version');
       
       if (currentVersion !== version) {

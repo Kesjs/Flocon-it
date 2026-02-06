@@ -7,7 +7,6 @@ import { Check, ArrowLeft, AlertCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { OrderStorage } from "@/lib/order-storage";
-import { syncStripeOrder } from "@/lib/order-sync";
 import { useCart } from "@/context/CartContext";
 
 function SuccessPageContent() {
@@ -43,23 +42,23 @@ function SuccessPageContent() {
         const session = await response.json();
         console.log('📋 Détails session:', session);
 
-        // Synchroniser la commande
-        if (user && session.metadata?.userId) {
-          await syncStripeOrder({
-            sessionId,
-            customerEmail: session.customer_details?.email || '',
-            total: session.amount_total / 100,
-            items: parseInt(session.metadata?.itemCount || '1'),
-            shippingAddress: {
-              name: session.metadata?.shippingName || 'Client',
-              address: session.metadata?.shippingAddress || 'Adresse non spécifiée',
-              city: session.metadata?.shippingCity || 'Paris',
-              postalCode: session.metadata?.shippingPostalCode || '75001',
-              phone: session.metadata?.shippingPhone || '+33 6 00 00 00 00',
-              country: session.metadata?.shippingCountry || 'FR'
-            }
-          }, user.id);
-        }
+        // Synchroniser la commande (désactivé - plus utilisé avec FST)
+        // if (user && session.metadata?.userId) {
+        //   await syncStripeOrder({
+        //     sessionId,
+        //     customerEmail: session.customer_details?.email || '',
+        //     total: session.amount_total / 100,
+        //     items: parseInt(session.metadata?.itemCount || '1'),
+        //     shippingAddress: {
+        //       name: session.metadata?.shippingName || 'Client',
+        //       address: session.metadata?.shippingAddress || 'Adresse non spécifiée',
+        //       city: session.metadata?.shippingCity || 'Paris',
+        //       postalCode: session.metadata?.shippingPostalCode || '75001',
+        //       phone: session.metadata?.shippingPhone || '+33 6 00 00 00 00',
+        //       country: session.metadata?.shippingCountry || 'FR'
+        //     }
+        //   });
+        // }
 
         // Vider le panier
         clearCart();
