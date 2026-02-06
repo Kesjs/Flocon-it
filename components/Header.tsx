@@ -454,7 +454,6 @@ export default function Header() {
       <CartDrawer 
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)} 
-        onCheckout={() => setIsCheckoutOpen(true)} 
       />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </>

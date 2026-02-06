@@ -17,6 +17,8 @@ interface FSTPayment {
   created_at: string;
   items: number;
   products: string[];
+  email_sent?: boolean;
+  email_sent_at?: string;
 }
 
 interface User {
@@ -31,6 +33,7 @@ interface Order {
   user_email: string;
   total: number;
   status: string;
+  fst_status?: 'pending' | 'declared' | 'confirmed' | 'rejected' | 'processing';
   created_at: string;
   items: number;
 }
@@ -47,6 +50,10 @@ export default function CommandCenter() {
   const [newDeclarationAlert, setNewDeclarationAlert] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [liveSync, setLiveSync] = useState(true);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<FSTPayment | null>(null);
+  const [emailContent, setEmailContent] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
   const [stats, setStats] = useState({
     totalRevenue: 0,
     activeUsers: 0,
@@ -78,7 +85,7 @@ export default function CommandCenter() {
 
           setStats(prev => ({
             ...prev,
-            totalRevenue: prev.totalRevenue + (Number(inserted.total) || 0)
+            totalRevenue: prev.totalRevenue + (inserted.fst_status === 'confirmed' ? Number(inserted.total) || 0 : 0)
           }));
         }
       )
@@ -128,11 +135,16 @@ export default function CommandCenter() {
 
           const prevTotal = Number(previous?.total);
           const nextTotal = Number(updated?.total);
+          const wasConfirmed = previous?.fst_status === 'confirmed';
+          const isConfirmed = updated?.fst_status === 'confirmed';
 
           setStats(prev => ({
             ...prev,
             pendingTransfers: prev.pendingTransfers + (!wasDeclared && isDeclared ? 1 : 0) + (wasDeclared && !isDeclared ? -1 : 0),
-            totalRevenue: prev.totalRevenue + (Number.isFinite(prevTotal) && Number.isFinite(nextTotal) ? (nextTotal - prevTotal) : 0)
+            totalRevenue: prev.totalRevenue + 
+              (wasConfirmed && !isConfirmed ? -prevTotal : 0) + 
+              (!wasConfirmed && isConfirmed ? nextTotal : 0) +
+              (wasConfirmed && isConfirmed && Number.isFinite(prevTotal) && Number.isFinite(nextTotal) ? (nextTotal - prevTotal) : 0)
           }));
         }
       )
@@ -200,6 +212,10 @@ export default function CommandCenter() {
       }
 
       // Calculer les stats avec les données stockées
+      const confirmedRevenue = ordersData ? 
+        ordersData.orders?.filter((order: Order) => order.fst_status === 'confirmed')
+          .reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
+      
       const totalRevenue = ordersData ? 
         ordersData.orders?.reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
       
@@ -212,7 +228,7 @@ export default function CommandCenter() {
       const pendingTransfers = paymentsData ? 
         paymentsData.payments?.filter((p: FSTPayment) => p.fst_status === 'declared').length || 0 : 0;
 
-      setStats({ totalRevenue, activeUsers, pendingTransfers, newUsersToday: 0 });
+      setStats({ totalRevenue: confirmedRevenue, activeUsers, pendingTransfers, newUsersToday: 0 });
 
     } catch (error) {
       console.error('Erreur:', error);
@@ -351,6 +367,81 @@ export default function CommandCenter() {
     }
   };
 
+  const handleSendEmail = (payment: FSTPayment) => {
+    setSelectedPayment(payment);
+    
+    // Générer le template d'email
+    const isConfirmed = payment.fst_status === 'confirmed';
+    const template = isConfirmed 
+      ? `✅ Votre commande ${payment.id} a été validée !
+
+Cher ${payment.user_email.split('@')[0]},
+
+Nous avons le plaisir de vous informer que votre commande ${payment.id} d'un montant de ${payment.total.toFixed(2)}€ a été validée.
+
+[Ajoutez ici vos informations personnalisées]
+
+Cordialement,
+L'équipe Flocon`
+      : `❌ Information concernant votre commande ${payment.id}
+
+Cher ${payment.user_email.split('@')[0]},
+
+Suite à l'examen de votre commande ${payment.id} d'un montant de ${payment.total.toFixed(2)}€, nous devons vous informer que...
+
+[Ajoutez ici les raisons du rejet et les prochaines étapes]
+
+Cordialement,
+L'équipe Flocon`;
+    
+    setEmailContent(template);
+    setEmailModalOpen(true);
+  };
+
+  const handleSendEmailSubmit = async () => {
+    if (!selectedPayment) return;
+    
+    setSendingEmail(true);
+    try {
+      const response = await fetch('/api/admin/send-confirmation-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: selectedPayment.id,
+          email: selectedPayment.user_email,
+          content: emailContent,
+          subject: selectedPayment.fst_status === 'confirmed' 
+            ? `✅ Votre commande ${selectedPayment.id} a été validée`
+            : `❌ Information concernant votre commande ${selectedPayment.id}`
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Mettre à jour l'état local
+        setFstPayments(prev => 
+          prev.map(p => p.id === selectedPayment.id 
+            ? { ...p, email_sent: true, email_sent_at: new Date().toISOString() }
+            : p
+          )
+        );
+        
+        setEmailModalOpen(false);
+        setSelectedPayment(null);
+        setEmailContent('');
+        alert('✅ Email envoyé avec succès !');
+      } else {
+        alert(`Erreur: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur envoi email:', error);
+      alert('Erreur lors de l envoi de l email');
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
@@ -472,7 +563,7 @@ export default function CommandCenter() {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">
-                    Total Revenus
+                    Revenus Confirmés
                   </div>
                   <div className="text-2xl font-black text-slate-900">
                     {stats.totalRevenue.toFixed(2)}€
@@ -711,6 +802,29 @@ export default function CommandCenter() {
                                     </button>
                                   </>
                                 )}
+                                
+                                {/* Bouton d'envoi d'email (si confirmé ou rejeté) */}
+                                {(payment.fst_status === 'confirmed' || payment.fst_status === 'rejected') && (
+                                  !payment.email_sent ? (
+                                    <button
+                                      onClick={() => handleSendEmail(payment)}
+                                      className="px-3 py-2 bg-rose-custom hover:bg-rose-custom/90 text-white rounded-xl transition-all active:scale-95 flex items-center gap-2"
+                                      title="Envoyer l'email de confirmation"
+                                    >
+                                      <span>📧</span>
+                                      <span className="text-[10px] font-black uppercase tracking-[0.15em]">
+                                        {payment.fst_status === 'confirmed' ? 'Envoyer Mail' : 'Envoyer Mail Rejet'}
+                                      </span>
+                                    </button>
+                                  ) : (
+                                    <div className="px-3 py-2 bg-gray-100 text-gray-500 rounded-xl flex items-center gap-2">
+                                      <span>✅</span>
+                                      <span className="text-[10px] font-black uppercase tracking-[0.15em]">
+                                        {payment.fst_status === 'confirmed' ? 'Mail Envoyé' : 'Mail Rejet Envoyé'}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             )}
                           </div>
@@ -777,6 +891,95 @@ export default function CommandCenter() {
           </div>
         </div>
       </div>
+
+      {/* Modal d'envoi d'email */}
+      {emailModalOpen && selectedPayment && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b border-slate-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-black text-slate-900">
+                  📧 Envoyer un email à {selectedPayment.user_email.split('@')[0]}
+                </h3>
+                <button
+                  onClick={() => setEmailModalOpen(false)}
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="mt-2 text-sm text-slate-600">
+                Commande {selectedPayment.id} • {selectedPayment.total.toFixed(2)}€ • 
+                Statut: {selectedPayment.fst_status === 'confirmed' ? 'Validée' : 'Rejetée'}
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Sujet de l'email
+                </label>
+                <input
+                  type="text"
+                  value={selectedPayment.fst_status === 'confirmed' 
+                    ? `✅ Votre commande ${selectedPayment.id} a été validée`
+                    : `❌ Information concernant votre commande ${selectedPayment.id}`
+                  }
+                  readOnly
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50"
+                />
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Contenu de l'email
+                </label>
+                <textarea
+                  value={emailContent}
+                  onChange={(e) => setEmailContent(e.target.value)}
+                  rows={12}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-custom focus:border-transparent"
+                  placeholder="Personnalisez le contenu de l'email..."
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-slate-500">
+                  💡 Les sections entre crochets [] sont à personnaliser
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setEmailModalOpen(false)}
+                    className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleSendEmailSubmit}
+                    disabled={sendingEmail}
+                    className="px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {sendingEmail ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Envoi...
+                      </>
+                    ) : (
+                      <>
+                        📧 Envoyer l'email
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
