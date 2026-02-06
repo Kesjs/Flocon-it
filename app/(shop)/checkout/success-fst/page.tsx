@@ -220,7 +220,7 @@ function SuccessFSTPageContent() {
 
       if (result.success) {
         // Mettre à jour l'état local
-        setOrder(prev => ({
+        setOrder((prev: any) => ({
           ...prev,
           fst_status: 'declared',
           payment_declared_at: new Date().toISOString()
