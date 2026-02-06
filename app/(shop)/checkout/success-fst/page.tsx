@@ -24,6 +24,7 @@ function SuccessFSTPageContent() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [isDeclaring, setIsDeclaring] = useState(false);
 
   // Fonction utilitaire pour récupérer une commande depuis localStorage
   const getLocalStorageOrder = (orderId: string) => {
@@ -193,6 +194,51 @@ function SuccessFSTPageContent() {
     return () => { supabaseClient.removeChannel(channel); };
   }, [orderId]);
 
+  const handleDeclarePayment = async () => {
+    if (!orderId) return;
+    
+    setIsDeclaring(true);
+    try {
+      // Récupérer le token depuis localStorage
+      const token = localStorage.getItem('sb-access-token') || localStorage.getItem('supabase.auth.token');
+      
+      if (!token) {
+        setError('Vous devez être connecté pour déclarer le paiement');
+        return;
+      }
+
+      const response = await fetch('/api/declare-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ orderId })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Mettre à jour l'état local
+        setOrder(prev => ({
+          ...prev,
+          fst_status: 'declared',
+          payment_declared_at: new Date().toISOString()
+        }));
+        setError('');
+        // Rafraîchir les données
+        await checkOrderStatus();
+      } else {
+        setError(result.error || 'Erreur lors de la déclaration');
+      }
+    } catch (error) {
+      console.error('Erreur déclaration:', error);
+      setError('Erreur lors de la déclaration du paiement');
+    } finally {
+      setIsDeclaring(false);
+    }
+  };
+
   useEffect(() => {
     if (!orderId) return;
     if (error) return;
@@ -289,24 +335,57 @@ function SuccessFSTPageContent() {
           </div>
 
           <motion.h1 
-            key={isConfirmed ? "t-conf" : "t-pend"}
+            key={isConfirmed ? "t-conf" : order?.fst_status === 'pending' ? "t-pend" : "t-decl"}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl font-serif italic mb-4"
           >
-            {isConfirmed ? "Commande validée" : "Virement déclaré"}
+            {isConfirmed ? "Commande validée" : order?.fst_status === 'pending' ? "Virement à déclarer" : "Virement déclaré"}
           </motion.h1>
 
           <motion.p 
              key={isConfirmed ? "p-conf" : "p-pend"}
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
-             className="text-stone-500 mb-10 leading-relaxed text-sm max-w-sm mx-auto"
+             className="text-stone-500 mb-6 leading-relaxed text-sm max-w-sm mx-auto"
           >
-            {isConfirmed 
-              ? "Excellente nouvelle ! Votre virement a été réceptionné. Votre colis entre maintenant en préparation." 
-              : "Votre déclaration est enregistrée. Une fois votre virement validé par notre équipe, cette page se mettra à jour instantanément."}
+            {order?.fst_status === 'pending' 
+              ? "Veuillez déclarer votre virement ci-dessous pour que nous puissions le valider."
+              : isConfirmed 
+                ? "Excellente nouvelle ! Votre virement a été réceptionné. Votre colis entre maintenant en préparation." 
+                : "Votre déclaration est enregistrée. Une fois votre virement validé par notre équipe, cette page se mettra à jour instantanément."
+            }
           </motion.p>
+
+          {/* Bouton de déclaration de paiement */}
+          {order?.fst_status === 'pending' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <button
+                onClick={handleDeclarePayment}
+                disabled={isDeclaring}
+                className="w-full bg-amber-500 text-white py-4 rounded-2xl font-semibold hover:bg-amber-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-lg shadow-amber-500/20"
+              >
+                {isDeclaring ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Déclaration en cours...
+                  </>
+                ) : (
+                  <>
+                    <Shield size={16} />
+                    J'ai fait mon virement
+                  </>
+                )}
+              </button>
+              <p className="text-xs text-stone-400 mt-2 text-center">
+                En cliquant, vous déclarez avoir effectué le virement bancaire
+              </p>
+            </motion.div>
+          )}
 
           {/* Bloc Mail Dynamique */}
           <motion.div 

@@ -6,7 +6,7 @@ export async function GET() {
     const { data, error } = await supabaseAdmin
       .from('orders')
       .select('*')
-      .in('fst_status', ['pending', 'declared', 'processing'])
+      .in('fst_status', ['pending', 'declared', 'processing', 'confirmed', 'rejected'])
       .order('created_at', { ascending: false });
 
     if (error) {

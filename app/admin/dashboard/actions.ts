@@ -12,17 +12,53 @@ export async function processFSTValidation(orderId: string) {
   console.log('🏦 Validation FST pour commande:', orderId);
 
   try {
-    // Mettre à jour la commande
+    // D'abord, récupérer la commande actuelle pour voir sa structure
+    const { data: existingOrder, error: fetchError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+
+    if (fetchError) {
+      console.error('❌ Erreur récupération commande:', fetchError);
+      return { success: false, error: fetchError.message };
+    }
+
+    if (!existingOrder) {
+      return { success: false, error: 'Commande non trouvée' };
+    }
+
+    console.log('📋 Commande actuelle:', existingOrder);
+
+    // Préparer l'objet de mise à jour avec uniquement les champs qui existent
+    const updateData: any = {
+      fst_status: 'confirmed',
+      updated_at: new Date().toISOString()
+    };
+
+    // Ajouter les champs uniquement s'ils existent dans la table
+    if (existingOrder.hasOwnProperty('status')) {
+      updateData.status = 'paid';
+    }
+    
+    if (existingOrder.hasOwnProperty('payment_status')) {
+      updateData.payment_status = 'confirmed';
+    }
+    
+    if (existingOrder.hasOwnProperty('payment_confirmed_at')) {
+      updateData.payment_confirmed_at = new Date().toISOString();
+    }
+    
+    if (existingOrder.hasOwnProperty('tracking_number')) {
+      updateData.tracking_number = `EN_PREPARATION_${orderId}_${Date.now()}`;
+    }
+
+    console.log('🔄 Données de mise à jour:', updateData);
+
+    // Mettre à jour la commande avec les champs valides
     const { data: order, error } = await supabase
       .from('orders')
-      .update({ 
-        fst_status: 'confirmed',
-        status: 'paid',
-        payment_status: 'confirmed',
-        payment_confirmed_at: new Date().toISOString(),
-        tracking_number: `EN_PREPARATION_${orderId}_${Date.now()}`,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', orderId)
       .select()
       .single();
@@ -33,18 +69,18 @@ export async function processFSTValidation(orderId: string) {
     }
 
     if (!order) {
-      return { success: false, error: 'Commande non trouvée' };
+      return { success: false, error: 'Commande non trouvée après mise à jour' };
     }
 
     console.log('✅ FST validé avec succès:', order.id);
 
-    // Créer la commande dans le localStorage du client
+    // Créer la commande pour le client (avec fallbacks si champs manquent)
     try {
       const clientOrder = {
         id: order.id,
-        userId: order.user_id || order.user_email, // Adapter selon la structure
+        userId: order.user_id || order.user_email,
         date: order.created_at,
-        status: 'En préparation', // Statut client après validation
+        status: 'En préparation',
         total: order.total,
         items: order.items,
         products: order.products || [],
@@ -58,31 +94,28 @@ export async function processFSTValidation(orderId: string) {
         }
       };
 
-      // Ajouter au localStorage du client (via un endpoint ou broadcast)
       console.log('📱 Création commande client:', clientOrder);
-      
-      // Ici on pourrait utiliser un système de broadcast temps réel
-      // ou créer un endpoint pour que le client synchronise
       
     } catch (localError) {
       console.warn('⚠️ Erreur création commande locale:', localError);
-      // Ne pas bloquer la validation
     }
 
-    // Vider le panier de l'utilisateur pour cette commande
+    // Vider le panier de l'utilisateur (avec fallback si user_id n'existe pas)
     try {
-      await supabase
-        .from('cart_items')
-        .delete()
-        .eq('user_id', order.user_id);
-      
-      console.log('🗑️ Panier vidé pour utilisateur:', order.user_id);
+      const userId = order.user_id || order.user_email;
+      if (userId) {
+        await supabase
+          .from('cart_items')
+          .delete()
+          .eq('user_id', userId);
+        
+        console.log('🗑️ Panier vidé pour utilisateur:', userId);
+      }
     } catch (cartError) {
       console.warn('⚠️ Erreur vidage panier:', cartError);
-      // Ne pas bloquer la validation si le vidage du panier échoue
     }
 
-    // Forcer un broadcast temps réel en faisant une mise à jour "dummy"
+    // Forcer un broadcast temps réel
     await supabase
       .from('orders')
       .update({ 

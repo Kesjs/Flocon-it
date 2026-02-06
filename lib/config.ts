@@ -16,7 +16,7 @@ export const APP_CONFIG = {
     
     // Fallback selon l'environnement
     const isDevelopment = process.env.NODE_ENV === 'development';
-    return isDevelopment ? 'http://localhost:3000' : 'https://flocon.example.com';
+    return isDevelopment ? 'http://localhost:3000' : 'https://www.flocon-market.fr';
   },
   
   // URLs de redirection pour Stripe

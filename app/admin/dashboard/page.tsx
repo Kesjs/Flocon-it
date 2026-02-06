@@ -610,6 +610,71 @@ L'équipe Flocon`;
     alert('✅ Email marqué comme envoyé !');
   };
 
+  const handleDiagnoseOrdersTable = async () => {
+    try {
+      console.log('🔍 Diagnostic de la table orders...');
+      addNotification({
+        type: 'info',
+        title: 'Diagnostic en cours',
+        message: 'Analyse de la structure de la table orders...'
+      });
+
+      const response = await fetch('/api/admin/diagnose-orders-table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      console.log('📊 Résultat diagnostic table:', result);
+      
+      if (result.success) {
+        let message = `Structure analysée avec ${result.fields?.length || result.columns?.length || 0} champs trouvés.`;
+        
+        if (result.recommendations && result.recommendations.length > 0) {
+          message += ` ${result.recommendations.length} recommandation(s) trouvée(s).`;
+          
+          result.recommendations.forEach((rec: any) => {
+            console.log(`⚠️ ${rec.type}: ${rec.message}`);
+            if (rec.severity === 'high') {
+              addNotification({
+                type: 'error',
+                title: 'Problème Critique',
+                message: rec.message,
+                data: { solution: rec.solution }
+              });
+            } else {
+              addNotification({
+                type: 'warning',
+                title: 'Amélioration Requise',
+                message: rec.message,
+                data: { solution: rec.solution }
+              });
+            }
+          });
+        } else {
+          addNotification({
+            type: 'success',
+            title: 'Structure OK',
+            message: 'La table orders est correctement configurée.'
+          });
+        }
+      } else {
+        addNotification({
+          type: 'error',
+          title: 'Erreur Diagnostic',
+          message: result.error || 'Impossible d\'analyser la table orders'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur diagnostic table:', error);
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors du diagnostic'
+      });
+    }
+  };
+
   const handleCheckArchivedStatus = async () => {
     try {
       console.log('🔍 Vérification du statut archived...');
@@ -925,6 +990,14 @@ L'équipe Flocon`;
               </button>
 
               <button
+                onClick={handleDiagnoseOrdersTable}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all active:scale-95"
+              >
+                <Activity className="w-3 h-3" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Table</span>
+              </button>
+
+              <button
                 onClick={handleResetOrders}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-all active:scale-95"
               >
@@ -1143,6 +1216,25 @@ L'équipe Flocon`;
                             <div className="text-xs text-gray-500 mb-2">
                               Debug: fst_status = "{payment.fst_status}"
                             </div>
+
+                            {/* Boutons d'action pour les commandes en attente */}
+                            {payment.fst_status === 'pending' && (
+                              <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 sm:ml-4">
+                                <button
+                                  onClick={() => handleMarkAsDeclared(payment.id)}
+                                  disabled={confirmingId === payment.id}
+                                  className="px-3 py-1 bg-orange-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  {confirmingId === payment.id ? '...' : 'DÉCLARER'}
+                                </button>
+                                <button
+                                  onClick={() => handleShowEmail(payment)}
+                                  className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-lg hover:bg-blue-600 transition-colors"
+                                >
+                                  EMAIL
+                                </button>
+                              </div>
+                            )}
 
                             {/* Boutons d'action pour les statuts déclarés */}
                             {payment.fst_status === 'declared' && (
