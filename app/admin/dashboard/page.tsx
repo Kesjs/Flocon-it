@@ -229,12 +229,21 @@ function CommandCenterWithNotifications() {
       }
 
       // Calculer les stats avec les données stockées
+      // Exclure les commandes archivées du calcul du revenu
       const confirmedRevenue = ordersData ? 
-        ordersData.orders?.filter((order: Order) => order.fst_status === 'confirmed')
+        ordersData.orders?.filter((order: Order) => 
+          order.fst_status === 'confirmed' && 
+          order.fst_status !== 'archived' &&
+          order.fst_status !== 'rejected'
+        )
           .reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
       
       const totalRevenue = ordersData ? 
-        ordersData.orders?.reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
+        ordersData.orders?.filter((order: Order) => 
+          order.fst_status !== 'archived' && 
+          order.fst_status !== 'rejected'
+        )
+          .reduce((sum: number, order: Order) => sum + order.total, 0) || 0 : 0;
       
       const activeUsers = usersData ? 
         usersData.users?.filter((user: User) => 
@@ -255,9 +264,60 @@ function CommandCenterWithNotifications() {
   };
 
   const refreshData = async () => {
+    console.log('🔄 Rafraîchissement des données du dashboard...');
     setIsRefreshing(true);
     try {
+      // Forcer un rechargement complet en ignorant le cache
+      const [paymentsRes, usersRes, ordersRes] = await Promise.all([
+        fetch('/api/admin/fst-payments', { cache: 'no-store' }),
+        fetch('/api/admin/users', { cache: 'no-store' }),
+        fetch('/api/admin/orders', { cache: 'no-store' })
+      ]);
+
+      // Mettre à jour les états avec les nouvelles données
+      if (paymentsRes.ok) {
+        const paymentsData = await paymentsRes.json();
+        setFstPayments(paymentsData.payments || []);
+        console.log(`✅ ${paymentsData.payments?.length || 0} paiements chargés`);
+      }
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData.users || []);
+        console.log(`✅ ${usersData.users?.length || 0} utilisateurs chargés`);
+      }
+
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        setOrders(ordersData.orders || []);
+        console.log(`✅ ${ordersData.orders?.length || 0} commandes chargées`);
+        
+        // Recalculer les stats avec les nouvelles données
+        const confirmedRevenue = ordersData.orders?.filter((order: Order) => 
+          order.fst_status === 'confirmed' && 
+          order.fst_status !== 'archived'
+        ).reduce((sum: number, order: Order) => sum + order.total, 0) || 0;
+        
+        setStats(prev => ({ ...prev, totalRevenue: confirmedRevenue }));
+        console.log(`💰 Revenu confirmé mis à jour: ${confirmedRevenue.toFixed(2)}€`);
+      }
+
+      // Appeler fetchData pour s'assurer que tout est synchronisé
       await fetchData();
+      
+      addNotification({
+        type: 'success',
+        title: 'Données actualisées',
+        message: 'Le dashboard a été rafraîchi avec les dernières données'
+      });
+      
+    } catch (error) {
+      console.error('Erreur rafraîchissement:', error);
+      addNotification({
+        type: 'error',
+        title: 'Erreur de rafraîchissement',
+        message: 'Impossible de charger les dernières données'
+      });
     } finally {
       setIsRefreshing(false);
     }
@@ -553,27 +613,102 @@ L'équipe Flocon`;
     alert('✅ Email marqué comme envoyé !');
   };
 
+  const handleCheckArchivedStatus = async () => {
+    try {
+      console.log('🔍 Vérification du statut archived...');
+      addNotification({
+        type: 'info',
+        title: 'Diagnostic en cours',
+        message: 'Vérification du statut archived dans la base de données...'
+      });
+
+      const response = await fetch('/api/admin/check-archived-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      console.log('📊 Résultat diagnostic:', result);
+      
+      if (result.exists) {
+        addNotification({
+          type: 'success',
+          title: 'Statut Archived OK',
+          message: 'Le statut archived est correctement configuré dans la base de données.'
+        });
+      } else if (result.needsMigration) {
+        addNotification({
+          type: 'warning',
+          title: 'Migration Requise',
+          message: 'Le statut archived n\'existe pas. Veuillez exécuter la migration SQL manuellement.',
+          data: { 
+            sql: result.sql,
+            instructions: '1. Allez dans votre dashboard Supabase\n2. Cliquez sur "SQL Editor"\n3. Copiez-collez le code SQL ci-dessus\n4. Exécutez la requête'
+          }
+        });
+        
+        // Afficher le SQL dans une alerte pour copier-coller facile
+        if (result.sql) {
+          alert('🔧 Migration Required\n\nCopiez ce SQL dans votre dashboard Supabase:\n\n' + result.sql);
+        }
+      } else {
+        addNotification({
+          type: 'error',
+          title: 'Erreur Diagnostic',
+          message: result.error || 'Impossible de vérifier le statut archived'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur diagnostic:', error);
+      addNotification({
+        type: 'error',
+        title: 'Erreur Système',
+        message: 'Une erreur est survenue lors du diagnostic'
+      });
+    }
+  };
+
   const handleResetRevenue = async () => {
     if (!confirm('⚠️ Réinitialiser le compteur de revenus ?\n\nCette action va archiver toutes les commandes confirmées et remettre le compteur de revenus à 0.\n\nCette action est irréversible.')) {
       return;
     }
 
     try {
+      console.log('🔄 Début réinitialisation des revenus...');
+      addNotification({
+        type: 'info',
+        title: 'Réinitialisation en cours',
+        message: 'Archivage des commandes confirmées...'
+      });
+
       const response = await fetch('/api/admin/reset-revenue', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       
       const result = await response.json();
+      console.log('📊 Résultat reset-revenue:', result);
       
       if (result.success) {
         addNotification({
           type: 'success',
           title: 'Revenus Réinitialisés',
           message: result.message,
-          data: { archivedCount: result.archivedCount }
+          data: { 
+            archivedCount: result.archivedCount,
+            usedArchivedStatus: result.usedArchivedStatus
+          }
         });
+        
+        // Forcer un rafraîchissement complet des données
+        console.log('🔄 Forcer le rafraîchissement des données...');
         await refreshData();
+        
+        // Attendre un peu pour s'assurer que tout est bien synchronisé
+        setTimeout(async () => {
+          await refreshData();
+        }, 1000);
+        
       } else {
         addNotification({
           type: 'error',
@@ -782,6 +917,14 @@ L'équipe Flocon`;
               >
                 <div className="w-3 h-3 bg-red-500 rounded-full" />
                 <span className="text-[10px] font-black uppercase tracking-[0.15em]">Réinitialiser Revenus</span>
+              </button>
+
+              <button
+                onClick={handleCheckArchivedStatus}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-all active:scale-95"
+              >
+                <AlertCircle className="w-3 h-3" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Diagnostic</span>
               </button>
 
               <button

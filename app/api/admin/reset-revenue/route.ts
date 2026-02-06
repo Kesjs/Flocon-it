@@ -8,6 +8,11 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 Début réinitialisation des revenus...');
+    
+    // D'abord, vérifier si le statut 'archived' existe en essayant de l'utiliser
+    let archivedStatusExists = true;
+    
     // Récupérer toutes les commandes confirmées
     const { data: orders, error } = await supabase
       .from('orders')
@@ -16,10 +21,12 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Erreur récupération commandes:', error);
-      return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+      return NextResponse.json({ error: 'Erreur serveur: ' + error.message }, { status: 500 });
     }
 
-    // Option 1: Mettre à jour le statut des commandes confirmées en 'archived'
+    console.log(`📊 ${orders?.length || 0} commandes confirmées trouvées`);
+
+    // Option 1: Essayer d'archiver les commandes confirmées
     if (orders && orders.length > 0) {
       const { error: updateError } = await supabase
         .from('orders')
@@ -28,24 +35,45 @@ export async function POST(request: NextRequest) {
 
       if (updateError) {
         console.error('Erreur mise à jour commandes:', updateError);
-        // Si l'erreur est une contrainte, essayer une autre approche
-        if (updateError.code === '23514') {
-          return NextResponse.json({ 
-            error: 'Contrainte de base de données. Veuillez exécuter la migration add_archived_status.sql dans Supabase.' 
-          }, { status: 400 });
+        archivedStatusExists = false;
+        
+        // Si le statut 'archived' n'existe pas, utiliser une autre approche
+        if (updateError.code === '23514' || updateError.message?.includes('invalid input value')) {
+          console.log('⚠️ Le statut "archived" n\'existe pas, utilisation du statut "rejected"');
+          
+          // Alternative: marquer comme 'rejected' avec un préfixe spécial
+          const { error: fallbackError } = await supabase
+            .from('orders')
+            .update({ 
+              fst_status: 'rejected',
+              // Ajouter un champ personnalisé pour marquer l'archivage
+              metadata: { archived_at: new Date().toISOString(), archived_from: 'confirmed' }
+            })
+            .eq('fst_status', 'confirmed');
+            
+          if (fallbackError) {
+            console.error('Erreur fallback:', fallbackError);
+            return NextResponse.json({ 
+              error: 'Impossible d\'archiver les commandes. Veuillez exécuter la migration add_archived_status.sql dans Supabase.' 
+            }, { status: 400 });
+          }
+        } else {
+          return NextResponse.json({ error: 'Erreur mise à jour: ' + updateError.message }, { status: 500 });
         }
-        return NextResponse.json({ error: 'Erreur mise à jour' }, { status: 500 });
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: `Compteur de revenus réinitialisé. ${orders?.length || 0} commandes archivées.`,
-      archivedCount: orders?.length || 0
+      message: archivedStatusExists 
+        ? `Compteur de revenus réinitialisé. ${orders?.length || 0} commandes archivées avec le statut 'archived'.`
+        : `Compteur de revenus réinitialisé. ${orders?.length || 0} commandes marquées comme 'rejected' (statut 'archived' non disponible).`,
+      archivedCount: orders?.length || 0,
+      usedArchivedStatus: archivedStatusExists
     });
 
   } catch (error) {
     console.error('Erreur réinitialisation revenus:', error);
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    return NextResponse.json({ error: 'Erreur serveur: ' + (error as Error).message }, { status: 500 });
   }
 }
