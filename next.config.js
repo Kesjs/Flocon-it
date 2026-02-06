@@ -49,62 +49,77 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'lespetitsimprimes.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.cdiscount.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'mycrazystuff.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.emmafashionstyle.fr',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'img.fruugo.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.yslbeauty.fr',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.maisondpm.fr',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'i.etsystatic.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'cadeau-couple.fr',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.brut-de-champ.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'mongraindesucre.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'img.freepik.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'placeducouple.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'lemondedescadeaux.fr',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.maisonfans.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
@@ -123,11 +138,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'm.media-amazon.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'ma.jumia.is',
         pathname: '/**',
       },
@@ -139,21 +149,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'ae01.alicdn.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.etsystatic.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.freepik.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.shopify.com',
         pathname: '/**',
       },
       {
@@ -179,76 +174,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'creationsettradition.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placeducouple.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lemondedescadeaux.fr',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.maisonfans.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cadeau-couple.fr',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.brut-de-champ.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'mongraindesucre.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lespetitsimprimes.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.cdiscount.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'mycrazystuff.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.emmafashionstyle.fr',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.fruugo.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.yslbeauty.fr',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.maisondpm.fr',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'boutique-rose-eternelle.com',
         pathname: '/**',
       },
       {

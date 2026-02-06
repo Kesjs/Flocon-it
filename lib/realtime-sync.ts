@@ -11,6 +11,7 @@ export interface RealtimeOrder extends Order {
   email_sent?: boolean;
   payment_declared_at?: string;
   payment_confirmed_at?: string;
+  created_at?: string;
 }
 
 export class RealtimeSync {

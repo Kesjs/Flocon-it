@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Package, Search, Filter, CreditCard, Check, Clock, Truck, MapPin, Calendar, Eye, RefreshCw } from "lucide-react";
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Package, Search, Filter, CreditCard, Check, Clock, 
+  Truck, MapPin, Calendar, Eye, RefreshCw, AlertCircle,
+  ChevronDown, ChevronUp, Box, Info, CheckCircle2
+} from "lucide-react";
 import { Order } from "@/lib/order-storage";
 import { syncPendingOrders, forceUpdateOrder } from "@/lib/order-sync";
 import { debugOrders, createTestOrder } from "@/lib/debug-orders";
@@ -37,54 +41,35 @@ export function OrdersSection({
   const [expandedConfirmation, setExpandedConfirmation] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Separate confirmed orders from others
-  const confirmedOrders = orders.filter(order => 
-    order.status === 'En préparation' || order.status === 'En cours' || order.status === 'Livré'
-  );
-  const otherOrders = orders.filter(order => 
-    !confirmedOrders.find(confirmed => confirmed.id === order.id)
-  );
+  // Optimisation du filtrage des commandes
+  const { confirmedOrders, otherOrders } = useMemo(() => {
+    const confirmed = orders.filter(order => 
+      ['En préparation', 'En cours', 'Livré'].includes(order.status)
+    );
+    const others = orders.filter(order => 
+      !confirmed.some(c => c.id === order.id)
+    );
+    return { confirmedOrders: confirmed, otherOrders: others };
+  }, [orders]);
 
-  // Fonction de synchronisation manuelle
   const handleSyncOrders = async () => {
-    console.log('🔄 Bouton synchronisation cliqué pour userId:', userId);
     setIsSyncing(true);
-    
     try {
-      // Vérifier que userId est disponible
-      if (!userId) {
-        console.error('❌ userId non disponible pour la synchronisation');
-        addNotification({
-          type: 'error',
-          title: 'Erreur de synchronisation',
-          message: 'Utilisateur non identifié'
-        });
-        return;
-      }
+      if (!userId) throw new Error('Utilisateur non identifié');
       
-      console.log('📦 Lancement synchronisation...');
       const syncedCount = syncPendingOrders(userId);
       
-      if (syncedCount > 0) {
-        addNotification({
-          type: 'success',
-          title: 'Synchronisation réussie',
-          message: `${syncedCount} commande(s) synchronisée(s) avec succès`
-        });
-      } else {
-        addNotification({
-          type: 'info',
-          title: 'Synchronisation',
-          message: 'Aucune nouvelle commande à synchroniser'
-        });
-      }
+      addNotification({
+        type: syncedCount > 0 ? 'success' : 'info',
+        title: syncedCount > 0 ? 'Synchronisation réussie' : 'Synchronisation',
+        message: syncedCount > 0 ? `${syncedCount} commande(s) synchronisée(s)` : 'Aucune nouvelle commande'
+      });
       
       await onOrdersChange();
     } catch (error) {
-      console.error('❌ Erreur synchronisation:', error);
       addNotification({
         type: 'error',
-        title: 'Erreur de synchronisation',
+        title: 'Erreur',
         message: 'Impossible de synchroniser les commandes'
       });
     } finally {
@@ -92,361 +77,293 @@ export function OrdersSection({
     }
   };
 
-  // Fonction pour forcer la mise à jour d'une commande
-  const handleForceUpdate = (orderId: string) => {
-    const defaultAddress = {
-      name: 'Client',
-      address: 'Adresse mise à jour manuellement',
-      city: 'Ville mise à jour',
-      postalCode: '00000',
-      phone: 'Téléphone mis à jour'
-    };
-    
-    if (forceUpdateOrder(orderId, defaultAddress)) {
-      addNotification({
-        type: 'success',
-        title: 'Adresse mise à jour',
-        message: 'L\'adresse de livraison a été mise à jour avec succès'
-      });
-      onOrdersChange(); // Recharger les commandes
-    }
-  };
-
-  // Fonction de debug
-  const handleDebug = () => {
-    console.log('🔍 Lancement debug commandes...');
-    debugOrders(userId);
-  };
-
-  // Fonction pour créer une commande de test
-  const handleCreateTestOrder = () => {
-    const testOrder = createTestOrder(userId);
-    if (testOrder) {
-      addNotification({
-        type: 'success',
-        title: 'Commande de test créée',
-        message: 'Une commande de test a été ajoutée à votre historique'
-      });
-      onOrdersChange(); // Recharger les commandes
-    }
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusStyles = (status: string) => {
     switch (status) {
-      case 'Livré': return 'bg-green-100 text-green-800';
-      case 'En préparation': return 'bg-blue-100 text-blue-800';
-      case 'En cours': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Livré': return { color: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: <CheckCircle2 className="w-3.5 h-3.5" /> };
+      case 'En préparation': return { color: 'bg-amber-100 text-amber-800 border-amber-200', icon: <Clock className="w-3.5 h-3.5" /> };
+      case 'En cours': return { color: 'bg-blue-100 text-blue-800 border-blue-200', icon: <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" /> };
+      default: return { color: 'bg-slate-100 text-slate-800 border-slate-200', icon: <Info className="w-3.5 h-3.5" /> };
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Livré': return <Check className="w-3 h-3" />;
-      case 'En préparation': return <Clock className="w-3 h-3" />;
-      case 'En cours': return <CreditCard className="w-3 h-3" />;
-      default: return null;
-    }
-  };
-
-  const getOrderType = (orderId: string) => {
+  const getOrderTypeStyles = (orderId: string) => {
     if (orderId.includes('cs_test_')) {
-      return { type: 'stripe', label: 'Stripe', color: 'bg-purple-100 text-purple-800', icon: <CreditCard className="w-3 h-3" /> };
+      return { label: 'Stripe', color: 'bg-indigo-100 text-indigo-800 border-indigo-200', icon: <CreditCard className="w-3.5 h-3.5" /> };
     }
-    if (orderId.includes('CMD-')) {
-      return { type: 'test', label: 'Test', color: 'bg-green-100 text-green-800', icon: <Check className="w-3 h-3" /> };
-    }
-    return { type: 'unknown', label: 'Inconnu', color: 'bg-gray-100 text-gray-800', icon: null };
+    return { label: 'Test', color: 'bg-slate-100 text-slate-800 border-slate-200', icon: <Box className="w-3.5 h-3.5" /> };
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="w-8 h-8 border-4 border-rose-custom border-t-transparent rounded-full animate-spin"></div>
-        <p className="ml-3 text-gray-600">Chargement des commandes...</p>
+      <div className="flex flex-col items-center justify-center py-24">
+        <RefreshCw className="w-10 h-10 text-rose-custom animate-spin mb-4" />
+        <p className="text-slate-500 font-medium italic">Récupération de vos commandes...</p>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div className="max-w-6xl mx-auto px-4">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mes Commandes</h2>
-          <p className="text-gray-600 mt-1">
-            {orders.length} commande{orders.length > 1 ? 's' : ''}
-            {orders.filter(o => o.status === 'En préparation').length > 0 && 
-              ` • ${orders.filter(o => o.status === 'En préparation').length} en attente de synchronisation`}
-            {isRealtimeActive && ' • Synchronisation temps réel active'}
-          </p>
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Mes Commandes</h2>
+          <div className="flex items-center gap-3 mt-2 text-slate-500">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-md text-sm font-medium">
+              <Package className="w-4 h-4" />
+              {orders.length} au total
+            </div>
+            {isRealtimeActive && (
+              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-sm font-medium animate-pulse">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                Live
+              </div>
+            )}
+          </div>
         </div>
         
-        <div className="hidden sm:flex items-center gap-2">
-          {isRealtimeActive && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs font-medium">Temps réel</span>
-            </div>
-          )}
-          
+        <div className="flex items-center gap-3">
           <button
             onClick={onManualSync || handleSyncOrders}
             disabled={isSyncing}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm min-h-[44px]"
+            className="group flex items-center gap-2 px-5 py-2.5 bg-rose-custom text-white rounded-xl hover:bg-rose-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 font-medium"
           >
-            <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Synchronisation...' : (isRealtimeActive ? 'Forcer Sync' : 'Synchroniser')}
+            <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
+            {isSyncing ? 'Synchronisation...' : 'Actualiser'}
           </button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+      {/* Control Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="md:col-span-2 relative group">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-custom transition-colors w-5 h-5" />
           <input
             type="text"
-            placeholder="Rechercher une commande..."
+            placeholder="Rechercher par ID, produit..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-custom focus:border-transparent"
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-custom transition-all outline-none shadow-sm"
           />
         </div>
         
-        <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-gray-500" />
+        <div className="relative">
+          <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
           <select
             value={filterType}
-            onChange={(e) => onFilterChange(e.target.value as "all" | "stripe" | "test")}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-custom focus:border-transparent"
+            onChange={(e) => onFilterChange(e.target.value as any)}
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-custom transition-all outline-none appearance-none shadow-sm cursor-pointer"
           >
-            <option value="all">Toutes</option>
-            <option value="stripe">Stripe</option>
-            <option value="test">Test</option>
+            <option value="all">Tous les types</option>
+            <option value="stripe">Paiements Stripe</option>
+            <option value="test">Commandes Test</option>
           </select>
+          <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none" />
         </div>
       </div>
 
-      {/* Orders List */}
+      {/* Main Content */}
       {orders.length === 0 ? (
-        <div className="text-center py-16">
-          <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucune commande</h3>
-          <p className="text-gray-600 mb-6">
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }}
+          className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200"
+        >
+          <div className="bg-white p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <Box className="w-10 h-10 text-slate-300" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">Aucun résultat</h3>
+          <p className="text-slate-500 max-w-xs mx-auto mb-8">
             {filterType !== 'all' 
-              ? `Aucune commande ${filterType} trouvée` 
-              : "Commencez vos achats pour voir vos commandes ici"
+              ? `Nous n'avons trouvé aucune commande correspondant au filtre "${filterType}".` 
+              : "Vous n'avez pas encore passé de commande."
             }
           </p>
           <button
-            onClick={onOrdersChange}
-            className="px-6 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
+            onClick={() => onFilterChange('all')}
+            className="text-rose-custom font-semibold hover:underline"
           >
-            Actualiser
+            Réinitialiser les filtres
           </button>
-        </div>
+        </motion.div>
       ) : (
-        <div className="space-y-4">
-          {/* Confirmed Orders - Confirmation Cards First */}
-          {confirmedOrders.map((order, index) => (
-            <OrderConfirmationCard
-              key={order.id}
-              order={order}
-              isExpanded={expandedConfirmation === order.id}
-              onToggle={() => setExpandedConfirmation(
-                expandedConfirmation === order.id ? null : order.id
-              )}
-            />
-          ))}
-          
-          {/* Other Orders - Regular Display */}
-          {otherOrders.map((order, index) => {
-            const orderType = getOrderType(order.id);
-            const isExpanded = expandedOrder === order.id;
-            
-            return (
-              <motion.div
+        <div className="space-y-6">
+          {/* Confirmed Orders Container */}
+          <div className="space-y-4">
+            {confirmedOrders.map((order) => (
+              <OrderConfirmationCard
                 key={order.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (confirmedOrders.length + index) * 0.1 }}
-                className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-              >
-                {/* Order Header */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-gray-900">
-                          Commande #{order.id.slice(-8)}
-                        </h3>
+                order={order}
+                isExpanded={expandedConfirmation === order.id}
+                onToggle={() => setExpandedConfirmation(
+                  expandedConfirmation === order.id ? null : order.id
+                )}
+              />
+            ))}
+          </div>
+          
+          {/* Separator if both types exist */}
+          {confirmedOrders.length > 0 && otherOrders.length > 0 && (
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
+              <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold text-slate-400 bg-white px-4">Historique & Autres</div>
+            </div>
+          )}
+
+          {/* Regular Orders */}
+          <div className="space-y-4">
+            {otherOrders.map((order, index) => {
+              const status = getStatusStyles(order.status);
+              const type = getOrderTypeStyles(order.id);
+              const isExpanded = expandedOrder === order.id;
+              
+              return (
+                <motion.div
+                  key={order.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`bg-white border rounded-2xl transition-all duration-300 ${
+                    isExpanded ? 'ring-1 ring-slate-200 shadow-xl' : 'border-slate-200 hover:border-rose-200 hover:shadow-md'
+                  }`}
+                >
+                  <div className="p-5 md:p-6">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-1 rounded">
+                            #{order.id.slice(-8).toUpperCase()}
+                          </span>
+                          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${status.color}`}>
+                            {status.icon}
+                            {order.status}
+                          </span>
+                          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${type.color}`}>
+                            {type.icon}
+                            {type.label}
+                          </span>
+                        </div>
                         
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {getStatusIcon(order.status)}
-                          {order.status}
-                        </span>
-                        
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${orderType.color}`}>
-                          {orderType.icon}
-                          {orderType.label}
-                        </span>
-                      </div>
-                      
-                      <p className="text-sm text-gray-600">
-                        {new Date(order.date).toLocaleDateString('fr-FR', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-rose-custom">
-                        {order.total.toFixed(2)} €
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {order.items} article{order.items > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Products Preview */}
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                    <Package className="w-4 h-4" />
-                    <span>
-                      {order.products.slice(0, 2).map(p => p.name).join(', ')}
-                      {order.products.length > 2 && ` +${order.products.length - 2} autre${order.products.length > 2 ? 's' : ''}`}
-                    </span>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    {order.shippingAddress && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="w-4 h-4" />
-                        <span className="line-clamp-1">
-                          {order.shippingAddress.address}, {order.shippingAddress.city}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <button
-                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                      className="flex items-center justify-center gap-2 px-4 py-2 text-rose-custom hover:text-rose-custom/80 transition-colors bg-rose-custom/10 hover:bg-rose-custom/20 rounded-lg min-h-[44px] w-full sm:w-auto"
-                    >
-                      <Eye className="w-4 h-4" />
-                      {isExpanded ? 'Masquer' : 'Détails'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Expanded Details */}
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: 'auto' }}
-                    className="border-t border-gray-200 bg-gray-50"
-                  >
-                    <div className="p-6">
-                      <h4 className="font-semibold text-gray-900 mb-4">Détails de la commande</h4>
-                      
-                      {/* Products List */}
-                      <div className="space-y-3 mb-6">
-                        {order.products.map((product, idx) => (
-                          <div key={idx} className="flex items-center gap-4 p-3 bg-white rounded-lg">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-16 h-16 rounded-lg object-cover"
-                            />
-                            <div className="flex-1">
-                              <p className="font-medium text-gray-900">{product.name}</p>
-                              <p className="text-sm text-gray-600">
-                                Quantité: {product.quantity} × {product.price.toFixed(2)} €
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-gray-900">
-                                {(product.price * product.quantity).toFixed(2)} €
-                              </p>
-                            </div>
+                        <div className="flex items-center gap-4 text-sm text-slate-500">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(order.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </div>
-                        ))}
-                      </div>
-
-                      {/* Shipping Address */}
-                      {order.shippingAddress && (
-                        <div className="bg-white rounded-lg p-4">
-                          <h5 className="font-medium text-gray-900 mb-2">Adresse de livraison</h5>
-                          <div className="text-sm text-gray-600 space-y-1">
-                            <p>{order.shippingAddress.name}</p>
-                            <p>{order.shippingAddress.address}</p>
-                            <p>{order.shippingAddress.postalCode} {order.shippingAddress.city}</p>
-                            <p>{order.shippingAddress.phone}</p>
+                          <div className="flex items-center gap-1">
+                            <Box className="w-4 h-4" />
+                            {order.items} article{order.items > 1 ? 's' : ''}
                           </div>
                         </div>
-                      )}
+                      </div>
 
-                      {/* Tracking Section */}
-                      <div className="bg-white rounded-lg p-4">
-                        <h5 className="font-medium text-gray-900 mb-2">Suivi de colis</h5>
-                        {order.trackingNumber ? (
-                          <div className="space-y-3">
-                            {order.trackingNumber.startsWith('EN_PREPARATION_') ? (
-                              <div className="text-center py-4">
-                                <Truck className="w-12 h-12 text-orange-500 mx-auto mb-3" />
-                                <p className="text-sm text-gray-600 mb-1">
-                                  Votre commande est en préparation
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  Le numéro de suivi sera disponible dès l'expédition
-                                </p>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm text-gray-600">Numéro de suivi :</span>
-                                  <span className="font-mono text-sm font-semibold text-rose-custom bg-rose-custom/10 px-2 py-1 rounded">
-                                    {order.trackingNumber}
-                                  </span>
-                                </div>
-                                <button
-                                  onClick={() => window.open(`https://www.laposte.fr/particulier/suivre-vos-envois?code=${order.trackingNumber}`, '_blank')}
-                                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
-                                >
-                                  <Truck className="w-4 h-4" />
-                                  Suivre mon colis
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="text-center py-4">
-                            <Truck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                            <p className="text-sm text-gray-600 mb-1">
-                              {order.status === 'En préparation' || order.status === 'En cours' 
-                                ? 'Votre colis est en préparation'
-                                : order.status === 'Livré'
-                                ? 'Le numéro de suivi sera bientôt disponible'
-                                : 'Le suivi sera disponible dès expédition'
-                              }
-                            </p>
-                            {order.status === 'En préparation' && (
-                              <p className="text-xs text-gray-500">
-                                Vous recevrez un email avec le numéro de suivi dès que votre commande sera expédiée
-                              </p>
-                            )}
-                          </div>
-                        )}
+                      <div className="text-right">
+                        <div className="text-2xl font-black text-slate-900">
+                          {order.total.toFixed(2)}<span className="text-sm ml-0.5">€</span>
+                        </div>
+                        <button
+                          onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
+                          className={`mt-2 flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                            isExpanded 
+                            ? 'bg-slate-900 text-white' 
+                            : 'bg-rose-50 text-rose-custom hover:bg-rose-100'
+                          }`}
+                        >
+                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {isExpanded ? 'Fermer' : 'Voir détails'}
+                        </button>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </motion.div>
-            );
-          })}
+                  </div>
+
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden bg-slate-50/50 border-t border-slate-100"
+                      >
+                        <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          {/* Left: Items */}
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                              <Package className="w-4 h-4" /> Articles commandés
+                            </h4>
+                            <div className="space-y-3">
+                              {order.products.map((product, idx) => (
+                                <div key={idx} className="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                  <div className="relative">
+                                    <img src={product.image} alt={product.name} className="w-14 h-14 rounded-lg object-cover bg-slate-100" />
+                                    <span className="absolute -top-2 -right-2 bg-slate-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                                      {product.quantity}
+                                    </span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-slate-900 truncate">{product.name}</p>
+                                    <p className="text-xs text-slate-500">{product.price.toFixed(2)} € l'unité</p>
+                                  </div>
+                                  <p className="font-bold text-slate-900">{(product.price * product.quantity).toFixed(2)} €</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Right: Info & Shipping */}
+                          <div className="space-y-6">
+                            {order.shippingAddress && (
+                              <div>
+                                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                  <MapPin className="w-4 h-4" /> Livraison
+                                </h4>
+                                <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm text-sm space-y-1">
+                                  <p className="font-bold text-slate-900">{order.shippingAddress.name}</p>
+                                  <p className="text-slate-600">{order.shippingAddress.address}</p>
+                                  <p className="text-slate-600">{order.shippingAddress.postalCode} {order.shippingAddress.city}</p>
+                                  <p className="text-rose-custom font-medium pt-1">{order.shippingAddress.phone}</p>
+                                </div>
+                              </div>
+                            )}
+
+                            <div>
+                              <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Truck className="w-4 h-4" /> Suivi logistique
+                              </h4>
+                              <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                                {order.trackingNumber && !order.trackingNumber.startsWith('EN_PREPARATION_') ? (
+                                  <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-3 bg-rose-50 rounded-lg border border-rose-100">
+                                      <span className="text-xs font-bold text-rose-800 uppercase">N° Suivi</span>
+                                      <span className="font-mono font-bold text-rose-custom uppercase tracking-wider">{order.trackingNumber}</span>
+                                    </div>
+                                    <button
+                                      onClick={() => window.open(`https://www.laposte.fr/particulier/suivre-vos-envois?code=${order.trackingNumber}`, '_blank')}
+                                      className="w-full flex items-center justify-center gap-2 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm"
+                                    >
+                                      Suivre sur le site transporteur
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="text-center py-2">
+                                    <div className="inline-flex p-3 bg-amber-50 rounded-full mb-3">
+                                      <Clock className="w-6 h-6 text-amber-600" />
+                                    </div>
+                                    <p className="text-sm font-bold text-slate-900">En attente d'expédition</p>
+                                    <p className="text-xs text-slate-500 mt-1 max-w-[200px] mx-auto">
+                                      Le numéro de suivi sera généré automatiquement dès que le colis quittera notre entrepôt.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
