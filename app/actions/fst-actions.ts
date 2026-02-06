@@ -52,15 +52,15 @@ export async function declarePayment(orderId: string) {
 
     // Déclarer le paiement
     try {
-      const updateData: any = {
-        fst_status: 'declared',
-        payment_declared_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      
+      // @ts-ignore
+      // @ts-nocheck
       const { data: updatedOrder, error: updateError } = await (supabase
         .from('orders')
-        .update(updateData as any)
+        .update({
+          fst_status: 'declared',
+          payment_declared_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as any)
         .eq('id', orderId)
         .eq('user_email', user.email)
         .select()
