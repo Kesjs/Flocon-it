@@ -6,118 +6,80 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNProgress } from "@/hooks/useNProgress";
-import { X, Plus, Minus, Trash2, ShoppingBag, Heart, CreditCard, ArrowRight } from "lucide-react";
+import { X, Plus, Minus, Trash2, ShoppingBag, Heart, CreditCard, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import OptimizedImage from "@/components/OptimizedImage";
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  onCheckout?: () => void;
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { cartItems, removeFromCart, updateQuantity, clearCart, addToCart } = useCart();
-  const { user, loading } = useAuth();
+  const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { start: startProgress, done: doneProgress } = useNProgress();
+  
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [isHydrated, setIsHydrated] = useState(false);
-  const { start: startProgress, done: doneProgress } = useNProgress();
 
-  // Attendre l'hydratation du contexte
+  // Hydratation client-side
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Prefetch stratégique pour le checkout
+  // Prefetch intelligent
   useEffect(() => {
-    if (isOpen) {
-      // Précharger checkout dès l'ouverture du panier
-      router.prefetch('/checkout');
-    }
+    if (isOpen) router.prefetch('/checkout');
   }, [isOpen, router]);
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  const handleImageError = (itemId: string) => {
-    setImageErrors(prev => new Set(prev).add(itemId));
-  };
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    console.log('🔘 Bouton "COMMANDER" du CartDrawer cliqué');
-    console.log('🔍 État auth détaillé:', {
-      user: user ? `Connecté (${user.email})` : 'Non connecté',
-      loading: loading,
-      session: !!user
-    });
-    
-    // Loader immédiat et fermeture du panier
-    setIsLoading(true);
+    setIsRedirecting(true);
     startProgress();
     
-    // Fermer le panier immédiatement pour feedback visuel
-    onClose();
-    
-    // Petite pause pour l'effet visuel
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
     try {
-      // Vérification améliorée avec attente si nécessaire
-      if (loading) {
-        console.log('⏳ Authentification en cours, attente...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // 1. Attente si l'auth est encore en train de charger
+      if (authLoading) {
+        await new Promise(resolve => setTimeout(resolve, 800));
       }
       
-      // Vérification finale avec double check
+      // 2. Vérification de l'utilisateur
       if (!user) {
-        console.log('🚪 Utilisateur non connecté, redirection vers login');
-        console.log('📋 Debug - User object:', user);
-        console.log('📋 Debug - Loading state:', loading);
-        
-        // Rediriger vers login avec intention de checkout
+        onClose();
         router.push('/login?redirect=checkout');
-        setIsLoading(false);
+        return;
+      }
+      
+      // 3. Vérification de session réelle via Supabase (Double Check)
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      
+      if (!supabase) {
+        console.error('❌ Supabase client non disponible');
+        setIsRedirecting(false);
         doneProgress();
         return;
       }
       
-      // Vérification Supabase directe pour être sûr
-      const { createClient } = await import('@/lib/supabase/client');
-      const supabase = createClient();
-      if (!supabase) {
-        console.log('❌ Supabase client non disponible');
-        return;
-      }
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.log('⚠️ Session Supabase invalide, redirection vers login');
+        onClose();
         router.push('/login?redirect=checkout');
-        setIsLoading(false);
-        doneProgress();
         return;
       }
       
-      // Redirection vers checkout avec router natif (pas de rechargement)
-      console.log('🔄 Redirection vers /checkout (router natif)');
-      console.log('✅ Utilisateur authentifié:', user.email);
-      console.log('✅ Session Supabase valide:', !!session);
+      // 4. Redirection finale
+      onClose();
       router.push('/checkout');
       
-      // Arrêter le loader après un court délai pour laisser le temps à la transition
-      setTimeout(() => {
-        setIsLoading(false);
-        doneProgress();
-      }, 500);
-      
     } catch (error) {
-      console.error('Erreur lors du traitement de la commande:', error);
-      alert('Une erreur est survenue. Veuillez réessayer.');
-      setIsLoading(false);
+      console.error('Checkout Error:', error);
+      setIsRedirecting(false);
       doneProgress();
     }
   };
@@ -126,200 +88,166 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop avec flou léger */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50"
           />
 
-          {/* Drawer */}
+          {/* Drawer Container */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 flex flex-col"
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[60] flex flex-col"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-display font-bold text-textDark">
-                Mon panier
-              </h2>
-              <button
+            {/* Header Stylisé */}
+            <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between bg-white">
+              <div>
+                <h2 className="text-xl font-serif italic text-stone-900">Mon Panier</h2>
+                <p className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">
+                  {cartItems.length} {cartItems.length > 1 ? 'Articles' : 'Article'}
+                </p>
+              </div>
+              <button 
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-stone-50 rounded-full transition-colors text-stone-400 hover:text-stone-900"
               >
-                <X className="w-5 h-5" />
+                <X size={20} />
               </button>
             </div>
 
-            {/* Items */}
-            <div className="flex-1 overflow-y-auto p-6">
-              {cartItems.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">Votre panier est vide</p>
-                  <Link
-                    href="/"
-                    onClick={onClose}
-                    className="text-rose-custom hover:underline"
-                  >
-                    Continuer vos achats
-                  </Link>
+            {/* List Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {!isHydrated ? (
+                <div className="h-full flex items-center justify-center">
+                   <Loader2 className="animate-spin text-stone-200" size={32} />
+                </div>
+              ) : cartItems.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center">
+                    <ShoppingBag className="text-stone-300" size={24} />
+                  </div>
+                  <p className="text-stone-500 font-serif italic">Votre panier est vide</p>
+                  <button onClick={onClose} className="text-xs font-bold uppercase tracking-widest text-rose-custom hover:opacity-70 transition-opacity">
+                    Découvrir la collection
+                  </button>
                 </div>
               ) : (
-                <>
-                  <div className="space-y-4 mb-6">
-                    {cartItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex gap-4 p-4 border rounded-lg"
-                      >
-                        <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
-                          {item.image && !imageErrors.has(item.id) ? (
-                            <OptimizedImage
-                              src={item.image}
-                              alt={item.name}
-                              fill
-                              className="object-cover"
-                              onError={() => handleImageError(item.id)}
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                              <span className="text-xs text-gray-500 text-center px-1">Img</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-medium text-textDark mb-1">
-                            {item.name}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-2">
-                            {item.price.toFixed(2)} €
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.id, item.quantity - 1)
-                              }
-                              className="p-1 hover:bg-gray-100 rounded"
-                            >
-                              <Minus className="w-4 h-4" />
-                            </button>
-                            <span className="w-8 text-center">{item.quantity}</span>
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.id, item.quantity + 1)
-                              }
-                              className="p-1 hover:bg-gray-100 rounded"
-                            >
-                              <Plus className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => removeFromCart(item.id)}
-                              className="ml-auto p-1 hover:bg-red-50 rounded text-red-600"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
+                cartItems.map((item) => (
+                  <motion.div 
+                    layout
+                    key={item.id}
+                    className="flex gap-4 group"
+                  >
+                    {/* Image Placeholder optimisé */}
+                    <div className="relative w-20 h-24 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-50">
+                      {item.image && !imageErrors.has(item.id) ? (
+                        <OptimizedImage
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          onError={() => setImageErrors(prev => new Set(prev).add(item.id))}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="text-stone-200" size={16}/></div>
+                      )}
+                    </div>
+
+                    {/* Info Produit */}
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <h3 className="text-sm font-semibold text-stone-800 line-clamp-1">{item.name}</h3>
+                        <p className="text-xs font-medium text-stone-400 mt-1">{item.price.toFixed(2)} €</p>
                       </div>
-                    ))}
-                  </div>
-                </>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center border border-stone-100 rounded-lg p-1 bg-stone-50/50">
+                          <button 
+                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            className="p-1 hover:text-rose-custom transition-colors"
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span className="text-xs font-bold w-8 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="p-1 hover:text-rose-custom transition-colors"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-stone-300 hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
               )}
             </div>
 
-            {/* Footer */}
-            <div className="border-t p-4 md:p-6 space-y-4">
-              {!isHydrated ? (
-                <div className="text-center py-8">
-                  <div className="w-8 h-8 border-2 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-gray-500">Chargement du panier...</p>
+            {/* Sticky Footer */}
+            {cartItems.length > 0 && (
+              <div className="p-6 bg-white border-t border-stone-100 space-y-4">
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">Total estimation</span>
+                  <span className="text-2xl font-serif italic text-stone-900">{total.toFixed(2)} €</span>
                 </div>
-              ) : cartItems.length > 0 ? (
-                <>
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total:</span>
-                    <span>{total.toFixed(2)} €</span>
-                  </div>
-                  
-                  {/* Message d'information */}
-                  <div className="text-xs text-gray-500 text-center">
-                    {cartItems.length} article{cartItems.length > 1 ? 's' : ''} dans votre panier
-                  </div>
-                  
-                  <button
-                    onClick={handleCheckout}
-                    disabled={isLoading || cartItems.length === 0}
-                    className={`w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all duration-200 flex items-center justify-center gap-3 shadow-lg ${
-                      isLoading || cartItems.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl'
-                    }`}
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Préparation...</span>
-                      </>
+
+                <button
+                  onClick={handleCheckout}
+                  disabled={isRedirecting}
+                  className="w-full relative group overflow-hidden bg-stone-900 text-white py-4 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-70 shadow-xl shadow-stone-200"
+                >
+                  <AnimatePresence mode="wait">
+                    {isRedirecting ? (
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="flex items-center justify-center gap-3"
+                      >
+                        <Loader2 className="animate-spin" size={18} />
+                        <span className="text-xs uppercase tracking-widest">Sécurisation...</span>
+                      </motion.div>
                     ) : (
-                      <>
-                        <CreditCard className="w-5 h-5" />
-                        <span>COMMANDER</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </>
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="flex items-center justify-center gap-3"
+                      >
+                        <CreditCard size={18} />
+                        <span className="text-xs uppercase tracking-widest">Passer à la commande</span>
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </motion.div>
                     )}
+                  </AnimatePresence>
+                </button>
+
+                {/* Actions Secondaires */}
+                <div className="flex gap-3">
+                  <button className="flex-1 py-3 px-2 border border-stone-100 rounded-xl text-[10px] font-bold uppercase tracking-tighter text-stone-500 hover:bg-stone-50 transition-colors flex items-center justify-center gap-2">
+                    <Heart size={12} /> Favoris
                   </button>
-                  
-                  {/* Options supplémentaires */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setIsLoading(true);
-                        setTimeout(() => {
-                          setIsLoading(false);
-                          alert('Fonctionnalité de sauvegarde en cours de développement');
-                        }, 1000);
-                      }}
-                      className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium md:text-xs"
-                    >
-                      <Heart className="w-4 h-4 inline mr-1" />
-                      <span className="hidden sm:inline">Sauvegarder</span>
-                      <span className="sm:hidden">💾</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm('Vider le panier ?')) {
-                          clearCart();
-                          onClose();
-                        }
-                      }}
-                      className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors text-sm font-medium md:text-xs"
-                    >
-                      <Trash2 className="w-4 h-4 inline mr-1" />
-                      <span className="hidden sm:inline">Vider</span>
-                      <span className="sm:hidden">🗑️</span>
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">Votre panier est vide</p>
-                  <button
-                    onClick={() => {
-                      onClose();
-                      // Rediriger vers la boutique
-                      window.location.href = '/boutique';
-                    }}
-                    className="mt-4 text-rose-custom hover:text-rose-custom/80 font-medium"
+                  <button 
+                    onClick={() => confirm('Vider le panier ?') && clearCart()}
+                    className="flex-1 py-3 px-2 border border-stone-100 rounded-xl text-[10px] font-bold uppercase tracking-tighter text-stone-500 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-2"
                   >
-                    Commencer mes achats
+                    <Trash2 size={12} /> Vider
                   </button>
                 </div>
-              )}
-            </div>
+                
+                <p className="text-center text-[9px] text-stone-300 uppercase tracking-widest">
+                  Paiement sécurisé par FST & Stripe
+                </p>
+              </div>
+            )}
           </motion.div>
         </>
       )}

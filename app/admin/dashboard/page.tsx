@@ -6,8 +6,6 @@ import { Shield, Users, ShoppingBag, BarChart, Check, X, Clock, TrendingUp, Acti
 import { supabaseAdminClient } from '@/lib/supabase-admin-client';
 import { processFSTValidation, processFSTRejection } from './actions';
 import AdminHeader from '../components/AdminHeader';
-// import { Inter } from 'next/font/google';
-// const inter = Inter({ subsets: ['latin'] });
 
 // Types
 interface FSTPayment {
@@ -106,7 +104,7 @@ export default function CommandCenter() {
 
           if (!wasDeclared && isDeclared) {
             setNewDeclarationAlert(updated.id);
-            setTimeout(() => setNewDeclarationAlert(null), 5000);
+            // L'alerte reste indéfiniment jusqu'à ce que l'admin la ferme
 
             try {
               const audio = new Audio('/notification.mp3');
@@ -118,23 +116,14 @@ export default function CommandCenter() {
 
           setFstPayments(prev => {
             const existing = prev.find(p => p.id === updated.id);
-            const isActive =
-              updated?.fst_status === 'pending' ||
-              updated?.fst_status === 'declared' ||
-              updated?.fst_status === 'processing';
-
+            
+            // Garder TOUS les paiements dans la liste (y compris confirmed/rejected)
             if (existing) {
-              if (!isActive) {
-                return prev.filter(p => p.id !== updated.id);
-              }
               return prev.map(p => (p.id === updated.id ? ({ ...p, ...(updated as FSTPayment) }) : p));
             }
 
-            if (isActive) {
-              return [updated as FSTPayment, ...prev];
-            }
-
-            return prev;
+            // Ajouter le nouveau paiement s'il n'existe pas
+            return [updated as FSTPayment, ...prev];
           });
 
           const prevTotal = Number(previous?.total);
@@ -387,6 +376,12 @@ export default function CommandCenter() {
           <span className="font-black text-sm uppercase tracking-wider">
             NOUVELLE DÉCLARATION
           </span>
+          <button
+            onClick={() => setNewDeclarationAlert(null)}
+            className="ml-2 p-1 hover:bg-emerald-600 rounded-lg transition-colors"
+          >
+            <X size={16} />
+          </button>
         </motion.div>
       )}
 
@@ -666,10 +661,14 @@ export default function CommandCenter() {
                             <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                               payment.fst_status === 'declared' ? 'bg-orange-100 text-orange-700' :
                               payment.fst_status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                              payment.fst_status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                              payment.fst_status === 'rejected' ? 'bg-red-100 text-red-700' :
                               'bg-gray-100 text-gray-700'
                             }`}>
                               {payment.fst_status === 'declared' ? 'DÉCLARÉ' :
                                payment.fst_status === 'processing' ? 'VÉRIFICATION' :
+                               payment.fst_status === 'confirmed' ? 'VALIDÉ' :
+                               payment.fst_status === 'rejected' ? 'REJETÉ' :
                                'EN ATTENTE'}
                             </div>
                             

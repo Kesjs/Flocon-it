@@ -37,6 +37,14 @@ export async function processFSTValidation(orderId: string) {
 
     console.log('✅ FST validé avec succès:', order.id);
 
+    // Forcer un broadcast temps réel en faisant une mise à jour "dummy"
+    await supabase
+      .from('orders')
+      .update({ 
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', orderId);
+
     return { 
       success: true, 
       order,
