@@ -30,7 +30,6 @@ export default function AdminHeader() {
           setAdmin(data.admin);
         }
       } catch (error) {
-        console.error('Erreur récupération infos admin:', error);
       }
     };
 
@@ -42,7 +41,6 @@ export default function AdminHeader() {
       await fetch('/api/admin/logout', { method: 'POST' });
       router.push('/admin/login');
     } catch (error) {
-      console.error('Erreur déconnexion:', error);
     }
   };
 

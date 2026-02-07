@@ -73,7 +73,6 @@ function ConfirmEmailContent() {
           }, 3000);
         }
       } catch (error) {
-        console.error('Erreur confirmation email:', error);
         setStatus('error');
         setMessage("Une erreur est survenue. Veuillez réessayer.");
         setTimeout(() => {

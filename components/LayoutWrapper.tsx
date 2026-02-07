@@ -10,6 +10,7 @@ import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 import CookieBanner from "@/components/CookieBanner";
 import NProgressProvider from "@/components/NProgressProvider";
 import { RedirectLoader } from "@/components/ui/RedirectLoader";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -31,38 +32,40 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   ].some(path => pathname?.includes(path) || pathname === path);
 
   return (
-    <NProgressProvider>
-      {isAdminRoute ? (
-        // Layout admin - pas de header/footer
-        <div className="min-h-screen bg-[#F9FAFB]">
-          {children}
-        </div>
-      ) : (
-        // Layout normal du site
-        <ClientLayoutWrapper>
-          <AuthProvider>
-            {needsCart ? (
-              <CartProviderWrapper>
-                <AnnounceBar />
-                <Header />
-                <main className="min-h-screen">{children}</main>
-                <Footer />
-                <CookieBanner />
-                <RedirectLoader />
-              </CartProviderWrapper>
-            ) : (
-              <>
-                <AnnounceBar />
-                <Header />
-                <main className="min-h-screen">{children}</main>
-                <Footer />
-                <CookieBanner />
-                <RedirectLoader />
-              </>
-            )}
-          </AuthProvider>
-        </ClientLayoutWrapper>
-      )}
-    </NProgressProvider>
+    <ErrorBoundary>
+      <NProgressProvider>
+        {isAdminRoute ? (
+          // Layout admin - pas de header/footer
+          <div className="min-h-screen bg-[#F9FAFB]">
+            {children}
+          </div>
+        ) : (
+          // Layout normal du site
+          <ClientLayoutWrapper>
+            <AuthProvider>
+              {needsCart ? (
+                <CartProviderWrapper>
+                  <AnnounceBar />
+                  <Header />
+                  <main className="min-h-screen">{children}</main>
+                  <Footer />
+                  <CookieBanner />
+                  <RedirectLoader />
+                </CartProviderWrapper>
+              ) : (
+                <>
+                  <AnnounceBar />
+                  <Header />
+                  <main className="min-h-screen">{children}</main>
+                  <Footer />
+                  <CookieBanner />
+                  <RedirectLoader />
+                </>
+              )}
+            </AuthProvider>
+          </ClientLayoutWrapper>
+        )}
+      </NProgressProvider>
+    </ErrorBoundary>
   );
 }

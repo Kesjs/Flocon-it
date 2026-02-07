@@ -16,7 +16,6 @@ export default function RealtimeListener({ onNewPayment, onPaymentConfirmed, use
   useEffect(() => {
     // Écouter les nouvelles déclarations FST
     if (!supabase) {
-      console.log('❌ Supabase non disponible pour RealtimeListener');
       return;
     }
     
@@ -31,7 +30,6 @@ export default function RealtimeListener({ onNewPayment, onPaymentConfirmed, use
           filter: 'fst_status=eq.declared'
         },
         (payload) => {
-          console.log('Nouveau paiement FST détecté:', payload);
           if (onNewPayment) {
             onNewPayment(payload.new);
           }
@@ -43,7 +41,6 @@ export default function RealtimeListener({ onNewPayment, onPaymentConfirmed, use
     const confirmationChannel = supabase
       .channel('payment-confirmations')
       .on('broadcast', { event: 'payment_confirmed' }, (payload) => {
-        console.log('Paiement confirmé:', payload);
         
         // Si c'est pour l'utilisateur connecté, rediriger vers la page de succès
         if (userId && payload.payload.user_email === userId) {

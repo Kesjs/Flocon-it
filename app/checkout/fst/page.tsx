@@ -40,7 +40,6 @@ function FSTPageContent() {
   };
 
   const syncOrderToSupabase = async (order: any) => {
-    console.log('🔄 Synchronisation commande vers Supabase:', order.id);
     
     try {
       const response = await fetch('/api/orders/sync-from-localstorage', {
@@ -55,12 +54,9 @@ function FSTPageContent() {
       });
 
       if (response.ok) {
-        console.log('✅ Commande synchronisée avec Supabase');
       } else {
-        console.log('⚠️ Échec synchronisation Supabase');
       }
     } catch (error) {
-      console.error('❌ Erreur synchronisation:', error);
     }
   };
 
@@ -98,7 +94,6 @@ function FSTPageContent() {
     setIsLoading(true);
     setError('');
     setOrder(null);
-    console.log('🔍 Récupération commande pour ID:', orderId);
 
     if (!orderId) {
       setError('ID de commande manquant');
@@ -112,16 +107,13 @@ function FSTPageContent() {
       // 🗄️ Essayer Supabase d'abord
       try {
         apiResponse = await fetch(`/api/orders/${orderId}`);
-        console.log('📡 Response status Supabase:', apiResponse.status);
 
         if (apiResponse.ok) {
           const orderData = await apiResponse.json();
-          console.log('✅ Commande trouvée dans Supabase:', orderData.order);
           
           // Si la commande Supabase n'a pas d'adresse, essayer de la compléter depuis localStorage
           let finalOrder = orderData.order;
           if (!finalOrder.shipping_address || !finalOrder.shipping_address.address_line1) {
-            console.log('🔄 Adresse manquante dans Supabase, recherche localStorage...');
             const localStorageOrder = getLocalStorageOrder(orderId);
             if (localStorageOrder && localStorageOrder.shippingAddress) {
               finalOrder = {
@@ -137,7 +129,6 @@ function FSTPageContent() {
                 customer_name: localStorageOrder.shippingAddress.name,
                 customer_phone: localStorageOrder.shippingAddress.phone
               };
-              console.log('✅ Adresse complétée depuis localStorage');
             }
           }
           
@@ -145,20 +136,16 @@ function FSTPageContent() {
           return;
         }
       } catch (supabaseError) {
-        console.log('⚠️ Supabase indisponible, fallback localStorage');
       }
 
       // 🔄 Fallback : localStorage
-      console.log('🔄 Tentative récupération depuis localStorage...');
       const storedOrders = localStorage.getItem('flocon_orders');
-      console.log('📦 Orders dans localStorage:', storedOrders);
 
       if (storedOrders) {
         const orders = JSON.parse(storedOrders);
         const storedOrder = orders.find((o: any) => o.id === orderId);
 
         if (storedOrder) {
-          console.log('✅ Commande trouvée dans localStorage:', storedOrder);
           
           // Convertir le format localStorage vers le format Supabase
           const convertedOrder = {
@@ -184,7 +171,6 @@ function FSTPageContent() {
           try {
             await syncOrderToSupabase(convertedOrder);
           } catch (syncError) {
-            console.log('⚠️ Synchronisation Supabase échouée:', syncError);
           }
           
           return;
@@ -198,7 +184,6 @@ function FSTPageContent() {
 
       setError('Impossible de récupérer la commande. Veuillez réessayer.');
     } catch (error) {
-      console.error('💥 Erreur fetchOrderDetails:', error);
       setError('Impossible de récupérer la commande. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
@@ -206,8 +191,6 @@ function FSTPageContent() {
   };
 
   const handleDeclarePayment = async () => {
-    console.log('🔍 Début handleDeclarePayment avec supabaseClient unique');
-    console.log('📋 OrderID:', orderId);
     
     if (!orderId) {
       setError('ID de commande manquant');
@@ -219,31 +202,22 @@ function FSTPageContent() {
 
     try {
       // Utiliser l'instance unique supabaseClient
-      console.log('🔍 Utilisation de supabaseClient:', supabaseClient);
       
       // Utiliser getUser() (force vérification serveur)
       const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
       
-      console.log('👤 User from getUser():', user);
-      console.log('❌ User error from getUser():', userError);
       
       if (userError || !user || !user.email) {
-        console.log('🚫 getUser() a échoué - tentative refreshSession()');
         
         // Vérifier si un cookie sb-access-token existe
         const cookies = document.cookie.split(';');
         const hasSbCookie = cookies.some(cookie => cookie.trim().startsWith('sb-access-token'));
-        console.log('🍪 Cookie sb-access-token trouvé:', hasSbCookie);
         
         if (hasSbCookie) {
-          console.log('🔄 Tentative refreshSession()...');
           const { data: { session }, error: refreshError } = await supabaseClient.auth.refreshSession();
           
-          console.log('🔄 Refresh session result:', session);
-          console.log('❌ Refresh session error:', refreshError);
           
           if (refreshError || !session || !session.user) {
-            console.log('🚫 refreshSession() a échoué - redirection vers login');
             setError('Session expirée. Redirection...');
             setTimeout(() => {
               router.push('/login');
@@ -253,7 +227,6 @@ function FSTPageContent() {
           
           // Utiliser la session rafraîchie
           const token = session.access_token;
-          console.log('🎫 Token après refresh:', token ? 'présent' : 'manquant');
           
           if (!token) {
             setError('Session sans token. Veuillez vous reconnecter.');
@@ -265,7 +238,6 @@ function FSTPageContent() {
           return;
         }
         
-        console.log('🚫 Pas de cookie - redirection vers login');
         setError('Vous devez être connecté. Redirection...');
         setTimeout(() => {
           router.push('/login');
@@ -277,11 +249,8 @@ function FSTPageContent() {
       const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
       const token = session?.access_token;
       
-      console.log('📧 Session from getSession():', session);
-      console.log('🎫 Token:', token ? 'présent' : 'manquant');
 
       if (!token) {
-        console.log('🚫 Pas de token dans la session');
         setError('Session sans token. Veuillez vous reconnecter.');
         return;
       }
@@ -290,7 +259,6 @@ function FSTPageContent() {
       await callDeclareAPI(orderId, token, setError, setIsSuccess, router);
       
     } catch (error) {
-      console.error('💥 Erreur catch:', error);
       setError('Erreur de connexion. Veuillez réessayer.');
     } finally {
       setIsDeclaring(false);
@@ -299,7 +267,6 @@ function FSTPageContent() {
 
   // Fonction séparée pour l'appel API
   const callDeclareAPI = async (orderId: string, token: string, setError: Function, setIsSuccess: Function, router: any) => {
-    console.log('📡 Appel API /api/declare-payment');
     
     const response = await fetch('/api/declare-payment', {
       method: 'POST',
@@ -310,19 +277,15 @@ function FSTPageContent() {
       body: JSON.stringify({ orderId })
     });
 
-    console.log('📡 Response status:', response.status);
     
     const data = await response.json();
-    console.log('📦 Response data:', data);
 
     if (response.ok && data.success) {
-      console.log('✅ Succès - redirection vers page succès FST');
       setIsSuccess(true);
       setTimeout(() => {
         router.push(`/checkout/success-fst?order_id=${orderId}`);
       }, 3000);
     } else {
-      console.log('❌ Erreur API:', data.error);
       setError(data.error || 'Erreur lors de la déclaration du paiement');
     }
   };

@@ -9,6 +9,7 @@ import { useNProgress } from "@/hooks/useNProgress";
 import { X, Plus, Minus, Trash2, ShoppingBag, Heart, CreditCard, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import OptimizedImage from "@/components/OptimizedImage";
+import ErrorBoundaryCart from "@/components/ErrorBoundaryCart";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -16,6 +17,14 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+  return (
+    <ErrorBoundaryCart>
+      <CartDrawerContent isOpen={isOpen} onClose={onClose} />
+    </ErrorBoundaryCart>
+  );
+}
+
+function CartDrawerContent({ isOpen, onClose }: CartDrawerProps) {
   const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -70,7 +79,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       const supabase = createClient();
       
       if (!supabase) {
-        console.error('❌ Supabase client non disponible');
         setIsRedirecting(false);
         doneProgress();
         return;
@@ -91,7 +99,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       router.push('/checkout');
       
     } catch (error) {
-      console.error('Checkout Error:', error);
       setIsRedirecting(false);
       doneProgress();
     }

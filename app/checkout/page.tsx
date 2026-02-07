@@ -18,9 +18,18 @@ import { CheckoutSkeleton } from "@/components/ui/skeleton";
 import RedirectOverlay from "@/components/ui/redirect-overlay";
 import { ALL_COUNTRIES, DEFAULT_COUNTRY, filterCountries } from "@/lib/countries";
 import { filterCitiesByCountry } from "@/lib/world-cities";
+import ErrorBoundaryCheckout from "@/components/ErrorBoundaryCheckout";
 import { formatPhoneNumber, getPhoneType, getPhoneExample } from "@/lib/phone-utils";
 
 export default function Checkout() {
+  return (
+    <ErrorBoundaryCheckout>
+      <CheckoutContent />
+    </ErrorBoundaryCheckout>
+  );
+}
+
+function CheckoutContent() {
   const { cartItems, clearCart } = useCart();
   const { user } = useAuth();
   const router = useRouter();
@@ -74,7 +83,9 @@ export default function Checkout() {
         const parsed = JSON.parse(saved);
         setShippingAddress(parsed);
         setCustomerEmail(localStorage.getItem('checkout-email') || '');
-      } catch (e) { console.error("Restore failed", e); }
+      } catch (e) {
+        // Invalid JSON, ignore
+      }
     }
     
     // Check Intent

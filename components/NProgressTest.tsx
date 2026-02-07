@@ -6,13 +6,11 @@ export function NProgressTest() {
   const { start, done } = useNProgress();
 
   const testProgress = async () => {
-    console.log('🧪 Test NProgress');
     start();
     
     // Simuler une opération de 2 secondes
     setTimeout(() => {
       done();
-      console.log('✅ NProgress terminé');
     }, 2000);
   };
 

@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   // Timeout protection pour éviter les latences 7s
   const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('Supabase timeout')), 2000);
+    setTimeout(() => reject(new Error('Supabase timeout')), 5000);
   });
 
   let user = null;

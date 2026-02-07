@@ -21,10 +21,8 @@ export default function CleanDataPage() {
         const key = localStorage.key(i);
         if (key) {
           allKeys.push(key);
-          console.log('🔍 Clé trouvée:', key);
         }
       }
-      console.log('📋 Toutes les clés localStorage:', allKeys);
 
       // Nettoyer TOUTES les données possibles
       const keysToRemove = [];
@@ -45,7 +43,6 @@ export default function CleanDataPage() {
       // Supprimer toutes les clés trouvées
       keysToRemove.forEach(key => {
         localStorage.removeItem(key);
-        console.log('🗑️ Supprimé:', key);
       });
 
       // Nettoyage forcé des clés connues
@@ -73,7 +70,6 @@ export default function CleanDataPage() {
         const key = localStorage.key(i);
         if (key && key.includes('flocon_user_stats_')) {
           localStorage.removeItem(key);
-          console.log('🗑️ Supprimé stat utilisateur:', key);
         }
       }
 
@@ -87,8 +83,6 @@ export default function CleanDataPage() {
       }
 
       setMessage(`✅ Nettoyage terminé ! ${keysToRemove.length + forcedKeys.length} entrées supprimées.`);
-      console.log('🧹 Clés supprimées:', [...keysToRemove, ...forcedKeys]);
-      console.log('📝 Clés restantes:', remainingKeys);
       
       // Forcer le rechargement de la page
       setTimeout(() => {
@@ -97,7 +91,6 @@ export default function CleanDataPage() {
 
     } catch (error) {
       setMessage(`❌ Erreur lors du nettoyage: ${error}`);
-      console.error('❌ Erreur nettoyage:', error);
     } finally {
       setIsCleaning(false);
     }

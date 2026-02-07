@@ -17,7 +17,6 @@ function SuccessFSTPageContent() {
   const router = useRouter();
   const orderId = searchParams.get('order_id');
   
-  console.log('🎯 SuccessFSTPageContent - orderId:', orderId);
   
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +38,6 @@ function SuccessFSTPageContent() {
 
   // Fonction pour créer une commande de test si aucune donnée n'est trouvée
   const createTestOrderData = (orderId: string) => {
-    console.log('🎯 Création données de test pour:', orderId);
     return {
       shipping_address: {
         full_name: 'Marie Laurent',
@@ -65,7 +63,6 @@ function SuccessFSTPageContent() {
         
         // Si la commande n'a pas d'adresse complète, chercher dans localStorage
         if (!finalOrder.shipping_address || !finalOrder.shipping_address.address_line1) {
-          console.log('🔄 Adresse manquante dans Supabase, recherche localStorage...');
           const localStorageOrder = getLocalStorageOrder(orderId);
           if (localStorageOrder && localStorageOrder.shippingAddress) {
             finalOrder = {
@@ -81,16 +78,13 @@ function SuccessFSTPageContent() {
               customer_name: localStorageOrder.shippingAddress.name,
               customer_phone: localStorageOrder.shippingAddress.phone
             };
-            console.log('✅ Adresse complétée depuis localStorage');
           } else {
             // Si aucune donnée n'est trouvée, utiliser des données de test pour démonstration
-            console.log('⚠️ Aucune adresse trouvée, utilisation de données de test');
             const testData = createTestOrderData(orderId);
             finalOrder = {
               ...finalOrder,
               ...testData
             };
-            console.log('✅ Données de test appliquées');
           }
         }
         
@@ -104,7 +98,6 @@ function SuccessFSTPageContent() {
 
       if (response.status === 404) {
         // Si la commande n'existe pas dans Supabase, chercher dans localStorage
-        console.log('🔄 Commande non trouvée dans Supabase, recherche localStorage...');
         const localStorageOrder = getLocalStorageOrder(orderId);
         if (localStorageOrder) {
           const convertedOrder = {
@@ -132,7 +125,6 @@ function SuccessFSTPageContent() {
           return;
         } else {
           // Créer une commande de test si aucune donnée n'est trouvée
-          console.log('⚠️ Aucune commande trouvée, création de données de test');
           const testData = createTestOrderData(orderId);
           const testOrder = {
             id: orderId,
@@ -145,7 +137,6 @@ function SuccessFSTPageContent() {
             customer_phone: testData.customer_phone
           };
           
-          console.log('🎯 Données de test créées:', testOrder);
           setOrder(testOrder);
           setIsConfirmed(true);
           setError('');
@@ -160,7 +151,6 @@ function SuccessFSTPageContent() {
       setOrder(null);
       setError('Impossible de récupérer la commande. Veuillez réessayer.');
     } catch (error) {
-      console.error('Erreur:', error);
       setOrder(null);
       setError('Impossible de récupérer la commande. Veuillez réessayer.');
     } finally {
@@ -232,7 +222,6 @@ function SuccessFSTPageContent() {
         setError(result.error || 'Erreur lors de la déclaration');
       }
     } catch (error) {
-      console.error('Erreur déclaration:', error);
       setError('Erreur lors de la déclaration du paiement');
     } finally {
       setIsDeclaring(false);

@@ -24,8 +24,66 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    // Logging structuré pour le debugging en production
+    const errorData = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      timestamp: new Date().toISOString(),
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
+      url: typeof window !== 'undefined' ? window.location.href : 'server',
+    };
+
+    // En environnement de développement, afficher dans la console
+    if (process.env.NODE_ENV === 'development') {
+      console.group('🚨 ErrorBoundary - Error Caught');
+      console.error('Error:', error);
+      console.error('Error Info:', errorInfo);
+      console.error('Full Error Data:', errorData);
+      console.groupEnd();
+    }
+
+    // En production, envoyer vers un service de monitoring (ex: Sentry, LogRocket)
+    if (process.env.NODE_ENV === 'production') {
+      // Option 1: Envoyer vers une API endpoint personnalisée
+      this.logErrorToService(errorData);
+      
+      // Option 2: Stocker localement pour analyse future
+      this.storeErrorLocally(errorData);
+    }
   }
+
+  logErrorToService = async (errorData: any) => {
+    try {
+      // Envoyer vers votre endpoint de logging
+      await fetch('/api/errors/log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(errorData),
+      });
+    } catch (e) {
+      // Échec silencieux pour éviter les erreurs en cascade
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Failed to log error to service:', e);
+      }
+    }
+  };
+
+  storeErrorLocally = (errorData: any) => {
+    try {
+      // Stocker les erreurs dans localStorage pour analyse
+      const storedErrors = JSON.parse(localStorage.getItem('app_errors') || '[]');
+      storedErrors.push(errorData);
+      
+      // Garder seulement les 50 dernières erreurs
+      const recentErrors = storedErrors.slice(-50);
+      localStorage.setItem('app_errors', JSON.stringify(recentErrors));
+    } catch (e) {
+      // Échec silencieux
+    }
+  };
 
   handleReset = () => {
     // Forcer un rechargement complet pour nettoyer l'état

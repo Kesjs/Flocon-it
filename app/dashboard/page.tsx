@@ -36,10 +36,8 @@ function DashboardWithNotifications() {
     // Attendre que l'auth soit complètement chargée avant de vérifier
     if (!authLoading) {
       if (!user) {
-        console.log('❌ Dashboard: Utilisateur non connecté, redirection vers login');
         router.push("/login");
       } else {
-        console.log('✅ Dashboard: Utilisateur connecté:', user.email);
         
         // Initialiser le gestionnaire unifié
         initializeOrderManager();
@@ -70,7 +68,6 @@ function DashboardWithNotifications() {
       loadOrders();
 
     } catch (error) {
-      console.error('❌ Erreur initialisation order manager:', error);
       // Fallback: charger les commandes locales uniquement
       loadOrders();
     }
@@ -80,7 +77,6 @@ function DashboardWithNotifications() {
   const setupEventListeners = () => {
     // Écouter les mises à jour de commandes
     const handleOrderUpdate = (event: CustomEvent) => {
-      console.log('🔄 Order update event received:', event.detail);
       loadOrders(); // Recharger les commandes
     };
 
@@ -104,7 +100,6 @@ function DashboardWithNotifications() {
 
   useEffect(() => {
     if (user && !authLoading && !isLoadingOrders) {
-      console.log('🔄 useEffect déclenché pour user:', user.id);
       setIsLoadingOrders(true);
       
       // Si le gestionnaire unifié est initialisé, il gère le chargement
@@ -150,13 +145,10 @@ function DashboardWithNotifications() {
   }, [orders, searchTerm, filterType]);
 
   const loadOrders = async () => {
-    console.log('🔄 loadOrders appelé - Début');
     setLoading(true);
     try {
-      console.log('🔄 Chargement des commandes pour:', user?.id);
       
       if (!user?.id) {
-        console.log('❌ User ID non disponible');
         setOrders([]);
         setFilteredOrders([]);
         return;
@@ -165,7 +157,6 @@ function DashboardWithNotifications() {
       // Nettoyer les commandes en double avant de charger
       const duplicatesRemoved = OrderStorage.removeDuplicateOrders(user.id);
       if (duplicatesRemoved > 0) {
-        console.log(`🧹 ${duplicatesRemoved} commandes en double supprimées`);
       }
 
       // Si le gestionnaire unifié est disponible, utiliser la synchronisation complète
@@ -174,18 +165,15 @@ function DashboardWithNotifications() {
       }
 
       const userOrders = OrderStorage.getUserOrders(user.id);
-      console.log('📦 Commandes chargées:', userOrders.length, userOrders.map(o => ({ id: o.id, total: o.total, items: o.items, status: o.status })));
       
       setOrders(userOrders);
       setFilteredOrders(userOrders);
     } catch (error) {
-      console.error('❌ Erreur lors du chargement des commandes:', error);
       setOrders([]);
       setFilteredOrders([]);
     } finally {
       setLoading(false);
       setIsLoadingOrders(false);
-      console.log('✅ loadOrders terminé');
     }
   };
 
@@ -211,7 +199,6 @@ function DashboardWithNotifications() {
         setIsLoadingOrders(false); // Réinitialiser le flag
         alert(`✅ ${keysToRemove.length} entrées supprimées !`);
       } catch (error) {
-        console.error('❌ Erreur nettoyage:', error);
       }
     }
   };

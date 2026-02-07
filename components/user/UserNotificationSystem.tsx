@@ -40,7 +40,6 @@ export function UserNotificationProvider({ children }: { children: ReactNode }) 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then(permission => {
-        console.log('Permission notifications utilisateur:', permission);
       });
     }
   }, []);
@@ -56,7 +55,6 @@ export function UserNotificationProvider({ children }: { children: ReactNode }) 
           timestamp: new Date(n.timestamp)
         })));
       } catch (e) {
-        console.error('Erreur chargement notifications utilisateur:', e);
       }
     }
   }, []);
@@ -139,10 +137,8 @@ function playNotificationSound(type: UserNotificationType) {
     const audio = new Audio('/notification.mp3');
     audio.volume = 0.2;
     audio.play().catch(() => {
-      console.log('Impossible de jouer le son de notification utilisateur');
     });
   } catch (e) {
-    console.log('Audio non disponible');
   }
 }
 

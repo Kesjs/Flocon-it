@@ -175,7 +175,7 @@ function CommandCenterWithNotifications() {
           table: 'auth.users'
         },
         (payload) => {
-          console.log(' Nouvel utilisateur:', payload.new);
+          
           const newUser = payload.new as User;
           
           addNotification({
@@ -255,14 +255,14 @@ function CommandCenterWithNotifications() {
       setStats({ totalRevenue: confirmedRevenue, activeUsers, pendingTransfers, newUsersToday: 0 });
 
     } catch (error) {
-      console.error('Erreur:', error);
+      
     } finally {
       setIsLoading(false);
     }
   };
 
   const refreshData = async () => {
-    console.log('🔄 Rafraîchissement des données du dashboard...');
+    
     setIsRefreshing(true);
     try {
       // Forcer un rechargement complet en ignorant le cache
@@ -276,19 +276,19 @@ function CommandCenterWithNotifications() {
       if (paymentsRes.ok) {
         const paymentsData = await paymentsRes.json();
         setFstPayments(paymentsData.payments || []);
-        console.log(`✅ ${paymentsData.payments?.length || 0} paiements chargés`);
+        
       }
 
       if (usersRes.ok) {
         const usersData = await usersRes.json();
         setUsers(usersData.users || []);
-        console.log(`✅ ${usersData.users?.length || 0} utilisateurs chargés`);
+        
       }
 
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
         setOrders(ordersData.orders || []);
-        console.log(`✅ ${ordersData.orders?.length || 0} commandes chargées`);
+        
         
         // Recalculer les stats avec les nouvelles données
         const confirmedRevenue = ordersData.orders?.filter((order: Order) => 
@@ -296,7 +296,7 @@ function CommandCenterWithNotifications() {
         ).reduce((sum: number, order: Order) => sum + order.total, 0) || 0;
         
         setStats(prev => ({ ...prev, totalRevenue: confirmedRevenue }));
-        console.log(`💰 Revenu confirmé mis à jour: ${confirmedRevenue.toFixed(2)}€`);
+        
       }
 
       // Appeler fetchData pour s'assurer que tout est synchronisé
@@ -309,7 +309,7 @@ function CommandCenterWithNotifications() {
       });
       
     } catch (error) {
-      console.error('Erreur rafraîchissement:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur de rafraîchissement',
@@ -355,7 +355,7 @@ function CommandCenterWithNotifications() {
         alert(`Erreur: ${result.error}`);
       }
     } catch (error) {
-      console.error('Erreur marquage déclaré:', error);
+      
       alert('Erreur lors du marquage de la commande');
     } finally {
       setConfirmingId(null);
@@ -412,7 +412,7 @@ function CommandCenterWithNotifications() {
         });
       }
     } catch (error) {
-      console.error('Erreur confirmation FST:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',
@@ -479,7 +479,7 @@ function CommandCenterWithNotifications() {
         });
       }
     } catch (error) {
-      console.error('Erreur rejet FST:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',
@@ -543,7 +543,7 @@ function CommandCenterWithNotifications() {
         alert(`Erreur: ${result.error}`);
       }
     } catch (error) {
-      console.error('Erreur ajout suivi:', error);
+      
       alert('Erreur lors de l\'ajout du numéro de suivi');
     } finally {
       setConfirmingId(null);
@@ -612,7 +612,7 @@ L'équipe Flocon`;
 
   const handleDiagnoseOrdersTable = async () => {
     try {
-      console.log('🔍 Diagnostic de la table orders...');
+      
       addNotification({
         type: 'info',
         title: 'Diagnostic en cours',
@@ -625,7 +625,7 @@ L'équipe Flocon`;
       });
       
       const result = await response.json();
-      console.log('📊 Résultat diagnostic table:', result);
+      
       
       if (result.success) {
         let message = `Structure analysée avec ${result.fields?.length || result.columns?.length || 0} champs trouvés.`;
@@ -634,7 +634,7 @@ L'équipe Flocon`;
           message += ` ${result.recommendations.length} recommandation(s) trouvée(s).`;
           
           result.recommendations.forEach((rec: any) => {
-            console.log(`⚠️ ${rec.type}: ${rec.message}`);
+            
             if (rec.severity === 'high') {
               addNotification({
                 type: 'error',
@@ -666,7 +666,7 @@ L'équipe Flocon`;
         });
       }
     } catch (error) {
-      console.error('Erreur diagnostic table:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',
@@ -677,7 +677,7 @@ L'équipe Flocon`;
 
   const handleCheckArchivedStatus = async () => {
     try {
-      console.log('🔍 Vérification du statut archived...');
+      
       addNotification({
         type: 'info',
         title: 'Diagnostic en cours',
@@ -690,7 +690,7 @@ L'équipe Flocon`;
       });
       
       const result = await response.json();
-      console.log('📊 Résultat diagnostic:', result);
+      
       
       if (result.exists) {
         addNotification({
@@ -721,7 +721,7 @@ L'équipe Flocon`;
         });
       }
     } catch (error) {
-      console.error('Erreur diagnostic:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',
@@ -736,7 +736,7 @@ L'équipe Flocon`;
     }
 
     try {
-      console.log('🔄 Début réinitialisation des revenus...');
+      
       addNotification({
         type: 'info',
         title: 'Réinitialisation en cours',
@@ -749,7 +749,7 @@ L'équipe Flocon`;
       });
       
       const result = await response.json();
-      console.log('📊 Résultat reset-revenue:', result);
+      
       
       if (result.success) {
         addNotification({
@@ -763,7 +763,7 @@ L'équipe Flocon`;
         });
         
         // Forcer un rafraîchissement complet des données
-        console.log('🔄 Forcer le rafraîchissement des données...');
+        
         await refreshData();
         
         // Attendre un peu pour s'assurer que tout est bien synchronisé
@@ -779,7 +779,7 @@ L'équipe Flocon`;
         });
       }
     } catch (error) {
-      console.error('Erreur réinitialisation revenus:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',
@@ -817,7 +817,7 @@ L'équipe Flocon`;
         });
       }
     } catch (error) {
-      console.error('Erreur réinitialisation commandes:', error);
+      
       addNotification({
         type: 'error',
         title: 'Erreur Système',

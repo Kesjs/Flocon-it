@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import HomePageClient from './HomePageClient';
 
 export const metadata: Metadata = {
   title: "Flocon - Cadeaux Saint-Valentin & Personnalisés | Livraison France",
@@ -51,7 +50,3 @@ export const metadata: Metadata = {
     },
   },
 };
-
-export default function HomePage() {
-  return <HomePageClient />;
-}

@@ -92,31 +92,22 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   
   
   const handleSimulatedPayment = async () => {
-    console.log('🔍 Debug handleSimulatedPayment appelé');
-    console.log('📦 Panier:', cartItems.length, 'articles');
-    console.log('👤 Utilisateur:', user ? 'connecté' : 'non connecté');
-    console.log('📧 Email:', customerEmail);
-    console.log('🏠 Adresse:', shippingAddress);
     
     // Test simple pour vérifier que la fonction s'exécute
     alert('Fonction handleSimulatedPayment appelée!');
     
     if (cartItems.length === 0) {
-      console.log('❌ Panier vide');
       alert('Votre panier est vide');
       return;
     }
     
     // Validation stricte du formulaire
     const isValid = validateForm();
-    console.log('✅ Validation formulaire:', isValid);
     if (!isValid) {
-      console.log('❌ Erreurs validation:', validationErrors);
       return;
     }
     
     if (!user) {
-      console.log('❌ Utilisateur non connecté');
       // Sauvegarder l'intention de checkout avec les données du formulaire
       RedirectManager.setCheckoutIntent({
         email: customerEmail,
@@ -127,11 +118,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       return;
     }
 
-    console.log('✅ Tous les contrôles passés, début du traitement...');
     setIsProcessing(true);
 
     try {
-      console.log('🛒 Début paiement:', { userId: user.id, cartItems: cartItems.length, shippingAddress });
       
       const result = await CheckoutService.processPayment(
         user.id,
@@ -140,12 +129,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         'card'
       );
 
-      console.log('✅ Début du traitement paiement');
 
       if (result.success) {
-        console.log('✅ Paiement réussi, vidage du panier...');
         clearCart();
-        console.log('🧹 Panier vidé');
         
         // Afficher le message de succès
         setSuccessMessage(`🎉 ${result.message}\nNuméro de commande: ${result.orderId}`);
@@ -153,17 +139,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         setIsComplete(true);
         
         setTimeout(() => {
-          console.log('🔄 Redirection vers dashboard...');
           onClose();
           // Rediriger vers dashboard après succès
           window.location.href = '/dashboard';
         }, 3000);
       } else {
-        console.error('❌ Échec paiement:', result.message);
         setValidationErrors([result.message]);
       }
     } catch (error) {
-      console.error('💥 Erreur lors du paiement:', error);
       alert('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
     } finally {
       setIsProcessing(false);
@@ -328,7 +311,6 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <div className="space-y-3">
                   <button
                     onClick={() => {
-                      console.log('🔘 Bouton cliqué!');
                       handleSimulatedPayment();
                     }}
                     disabled={isProcessing}

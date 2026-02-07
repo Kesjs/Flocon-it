@@ -25,22 +25,12 @@ function ResetPasswordContent() {
     const refreshToken = searchParams.get('refresh_token');
     const code = searchParams.get('code');
 
-    // Debug: afficher les paramètres reçus
-    console.log('🔍 Reset Password - Paramètres URL:', {
-      code: code ? 'présent' : 'absent',
-      accessToken: accessToken ? 'présent' : 'absent',
-      refreshToken: refreshToken ? 'présent' : 'absent',
-      fullUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
-    });
-
     if (!accessToken && !refreshToken && !code) {
-      console.log('❌ Aucun token ou code trouvé');
       setError("Lien de réinitialisation invalide ou expiré. Veuillez demander un nouveau lien.");
       setTimeout(() => {
         router.push('/forgot-password');
       }, 3000);
     } else {
-      console.log('✅ Tokens/code valides - affichage formulaire');
     }
   }, [searchParams, router]);
 
@@ -105,7 +95,6 @@ function ResetPasswordContent() {
         }, 2000);
       }
     } catch (error) {
-      console.error('Erreur reset password:', error);
       setError("Une erreur est survenue. Veuillez réessayer.");
     }
     

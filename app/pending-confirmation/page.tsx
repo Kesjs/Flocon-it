@@ -34,7 +34,6 @@ export default function PendingConfirmation() {
       
       // @ts-ignore - Supabase client peut être null en développement
       if (!supabase) {
-        console.error('❌ Supabase client not available');
         alert('Service temporairement indisponible. Réessayez dans quelques instants.');
         setResendLoading(false);
         return;
@@ -53,7 +52,6 @@ export default function PendingConfirmation() {
         alert("Une petite erreur est survenue. Merci de réessayer dans un instant.");
       }
     } catch (err) {
-      console.error(err);
     } finally {
       setResendLoading(false);
     }

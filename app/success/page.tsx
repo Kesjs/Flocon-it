@@ -30,7 +30,6 @@ function SuccessPageContent() {
 
     const processSuccess = async () => {
       try {
-        console.log('Traitement succès paiement:', sessionId);
         
         // Récupérer les détails de la session
         const response = await fetch(`/api/stripe/session?session_id=${sessionId}`);
@@ -40,7 +39,6 @@ function SuccessPageContent() {
         }
 
         const session = await response.json();
-        console.log('📋 Détails session:', session);
 
         // Synchroniser la commande (désactivé - plus utilisé avec FST)
         // if (user && session.metadata?.userId) {
@@ -83,7 +81,6 @@ function SuccessPageContent() {
         setLoading(false);
 
       } catch (err) {
-        console.error('❌ Erreur traitement succès:', err);
         setError(err instanceof Error ? err.message : 'Erreur inconnue');
         setLoading(false);
       }

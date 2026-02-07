@@ -21,7 +21,6 @@ function CacheControl() {
       
       if (currentVersion !== version) {
         sessionStorage.setItem('checkout-success-version', version);
-        console.log('🔄 Forcing reload due to version change');
         window.location.reload();
       }
     }
@@ -47,17 +46,13 @@ function CheckoutSuccessContent() {
 
   useEffect(() => {
     // VIDAGE SYSTÉMATIQUE DU PANIER DÈS L'ARRIVÉE SUR LA PAGE
-    console.log('🛒 Arrivée sur page succès - VIDAGE SYSTÉMATIQUE DU PANIER');
     clearCart();
-    console.log('✅ Panier vidé avec succès (action immédiate)');
     
     // Forcer le nettoyage de tout localStorage résiduel
     try {
       localStorage.removeItem('cart-cleared-notification');
       localStorage.removeItem('checkout-cart-cleared');
-      console.log('🧹 Nettoyage localStorage résiduel');
     } catch (error) {
-      console.log('ℹ️ Erreur nettoyage localStorage:', error);
     }
     
     if (!sessionId) {
@@ -71,29 +66,23 @@ function CheckoutSuccessContent() {
 
     // Attendre que l'utilisateur soit chargé
     if (authLoading) {
-      console.log('⏳ Chargement auth en cours...');
       return;
     }
 
-    console.log('👤 Auth chargé, user:', !!user);
     
     // Récupérer les vraies données de la session Stripe et créer la commande
     const fetchOrderDetails = async () => {
       try {
-        console.log('🔄 Récupération session Stripe:', sessionId);
         const response = await fetch(`/api/get-session?session_id=${sessionId}`);
         const data = await response.json();
 
-        console.log('📊 Response API:', { ok: response.ok, hasOrderDetails: !!data.orderDetails });
 
         if (response.ok && data.orderDetails) {
           setOrderDetails(data.orderDetails);
           
           // Créer la commande dans localStorage si l'utilisateur est connecté
-          console.log('🔍 Vérification création commande:', { user: !!user, items: data.orderDetails.items?.length, total: data.orderDetails.total });
           
           if (user && data.orderDetails.items) {
-            console.log('🛒 Vérification si commande existe déjà...');
             
             // Vérifier si une commande avec cet ID de session existe déjà
             const existingOrders = OrderStorage.getUserOrders(user.id);
@@ -105,11 +94,9 @@ function CheckoutSuccessContent() {
             );
             
             if (existingOrder) {
-              console.log('✅ Commande existe déjà:', existingOrder.id);
               return; // Ne pas créer de doublon
             }
             
-            console.log('🛒 Création de la commande Stripe...');
             
             const orderProducts = data.orderDetails.items.map((item: any) => ({
               id: item.id || 'unknown',
@@ -119,7 +106,6 @@ function CheckoutSuccessContent() {
               image: item.image || '/logof.jpg'
             }));
 
-            console.log('📦 Produits transformés:', orderProducts);
 
             try {
               const order = OrderStorage.addOrder({
@@ -137,15 +123,12 @@ function CheckoutSuccessContent() {
                 }
               });
 
-              console.log('✅ Commande Stripe créée:', order.id);
-              console.log('📊 Détails commande:', order);
               
               // Tenter une synchronisation immédiate avec les données du formulaire
               const formData = localStorage.getItem('checkout-shipping-address');
               if (formData) {
                 try {
                   const shippingData = JSON.parse(formData);
-                  console.log('📦 Données de livraison trouvées:', shippingData);
                   
                   // const syncResult = syncStripeOrder({
 //                     sessionId: sessionId,
@@ -162,22 +145,16 @@ function CheckoutSuccessContent() {
 //                     }
 //                   }, user.id || 'anonymous');
                   
-                  console.log('⚠️ Synchronisation manuelle désactivée temporairement');
                 } catch (formError) {
-                  console.error('❌ Erreur lecture données formulaire:', formError);
                 }
               }
               
               // Le panier est déjà vidé au début du useEffect - pas besoin de le revider
-              console.log('📝 Panier déjà vidé à l\'arrivée sur la page');
             } catch (error) {
-              console.error('❌ Erreur création commande:', error);
             }
           } else {
-            console.log('❌ Conditions non remplies:', { user: !!user, items: data.orderDetails.items?.length });
           }
         } else {
-          console.error('Erreur:', data.error);
           // En cas d'erreur, afficher des données par défaut
           setOrderDetails({
             id: sessionId,
@@ -187,7 +164,6 @@ function CheckoutSuccessContent() {
           });
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des détails:', error);
         // En cas d'erreur, afficher des données par défaut
         setOrderDetails({
           id: sessionId,
