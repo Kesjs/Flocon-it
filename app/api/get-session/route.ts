@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const sessionId = searchParams.get('session_id');
 
     if (!sessionId) {
-      return NextResponse.json({ error: 'Session ID manquant' }, { status: 400 });
+      return NextResponse.json({ error: 'Session ID mancante' }, { status: 400 });
     }
 
     // Récupérer les détails de la session Stripe
@@ -20,13 +20,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (!session) {
-      return NextResponse.json({ error: 'Session non trouvée' }, { status: 404 });
+      return NextResponse.json({ error: 'Sessione non trovata' }, { status: 404 });
     }
 
     // Extraire les informations pertinentes
     const orderDetails = {
       id: session.id,
-      status: session.payment_status === 'paid' ? 'Payée' : 'En attente',
+      status: session.payment_status === 'paid' ? 'Pagata' : 'In attesa',
       email: session.customer_details?.email || session.customer_email,
       total: session.amount_total ? session.amount_total / 100 : 0,
       currency: session.currency,
@@ -42,9 +42,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ orderDetails });
   } catch (error) {
-    console.error('Erreur lors de la récupération de la session:', error);
+    console.error('Errore durante il recupero della sessione:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des détails de la commande' },
+      { error: 'Errore durante il recupero dei dettagli dell\'ordine' },
       { status: 500 }
     );
   }

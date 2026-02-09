@@ -27,13 +27,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    console.log('Début de la création de session Stripe...');
+    console.log('Inizio creazione sessione Stripe...');
     
     // Vérifier les variables d'environnement
     if (!process.env.STRIPE_SECRET_KEY) {
-      console.error('STRIPE_SECRET_KEY manquant');
+      console.error('STRIPE_SECRET_KEY mancante');
       const response = NextResponse.json(
-        { error: 'Configuration Stripe manquante' },
+        { error: 'Configurazione Stripe mancante' },
         { status: 500 }
       );
       return corsMiddleware(request, response);
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     if (!validation.isValid) {
       const response = NextResponse.json(
         { 
-          error: 'Données invalides', 
+          error: 'Dati non validi', 
           details: validation.errors 
         },
         { status: 400 }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       customerEmail: sanitizeString(body.customerEmail)
     };
 
-    console.log('Données validées:', { cartItems: cartItems.length, customerEmail });
+    console.log('Dati validati:', { cartItems: cartItems.length, customerEmail });
 
     // Créer les line items pour Stripe
     const lineItems = cartItems.map((item: any) => ({
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         currency: 'eur',
         product_data: {
           name: item.name,
-          description: item.description && item.description.trim() ? item.description : `Produit: ${item.name}`,
+          description: item.description && item.description.trim() ? item.description : `Prodotto: ${item.name}`,
           images: item.image ? [item.image] : [],
         },
         unit_amount: Math.round(item.price * 100), // Convertir en centimes
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       quantity: item.quantity,
     }));
 
-    console.log('Line items créés:', lineItems.length);
+    console.log('Line items creati:', lineItems.length);
 
     // Créer la session de paiement
     const session = await stripe.checkout.sessions.create({
@@ -103,23 +103,23 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('Session Stripe créée:', session.id);
+    console.log('Sessione Stripe creata:', session.id);
 
     const response = NextResponse.json({ sessionId: session.id, url: session.url });
     return corsMiddleware(request, response);
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('Errore creazione sessione checkout:', error);
     
     // Afficher plus de détails sur l'erreur
     if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
+      console.error('Messaggio errore:', error.message);
+      console.error('Stack errore:', error.stack);
     }
     
     const response = NextResponse.json(
       { 
-        error: 'Erreur lors de la création de la session de paiement',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Errore durante la creazione della sessione di pagamento',
+        details: error instanceof Error ? error.message : 'Errore sconosciuto'
       },
       { status: 500 }
     );

@@ -56,22 +56,22 @@ export async function POST(request: NextRequest) {
 
       case 'checkout.session.expired':
         const expiredSession = event.data.object as Stripe.Checkout.Session;
-        console.log('Session expired:', expiredSession.id);
+        console.log('Sessione scaduta:', expiredSession.id);
         break;
 
       case 'payment_intent.payment_failed':
         const failedPayment = event.data.object as Stripe.PaymentIntent;
-        console.log('Payment failed:', failedPayment.id);
+        console.log('Pagamento fallito:', failedPayment.id);
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        console.log(`Tipo evento non gestito: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
-    const response = NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
+    console.error('Errore webhook:', error);
+    const response = NextResponse.json({ error: 'Gestore webhook fallito' }, { status: 500 });
     return corsMiddleware(request, response);
   }
 }
@@ -105,11 +105,11 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
       .insert([orderData]);
 
     if (error) {
-      console.error('Error creating order:', error);
+      console.error('Errore creazione ordine:', error);
       throw error;
     }
 
-    console.log('Order created successfully:', orderData.id);
+    console.log('Ordine creato con successo:', orderData.id);
 
     // Envoyer l'email de confirmation
     await sendConfirmationEmail({
@@ -123,7 +123,7 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
     });
 
   } catch (error) {
-    console.error('Error handling successful payment:', error);
+    console.error('Errore gestione pagamento riuscito:', error);
     throw error;
   }
 }
@@ -141,15 +141,15 @@ async function sendConfirmationEmail(orderData: {
     // Pour l'instant, on va juste logger l'email
     // Plus tard, vous pouvez intégrer un service d'email comme Resend, SendGrid, etc.
     
-    console.log('📧 ENVOI EMAIL DE CONFIRMATION');
+    console.log('📧 INVIO EMAIL DI CONFERMA');
     console.log('=====================================');
-    console.log(`À: ${orderData.email}`);
-    console.log(`Commande: ${orderData.orderId}`);
-    console.log(`Session: ${orderData.sessionId}`);
-    console.log(`Total: ${orderData.total} €`);
-    console.log(`Statut: ${orderData.status}`);
-    console.log(`Date: ${new Date(orderData.created_at).toLocaleDateString('fr-FR')}`);
-    console.log('Articles:');
+    console.log(`A: ${orderData.email}`);
+    console.log(`Ordine: ${orderData.orderId}`);
+    console.log(`Sessione: ${orderData.sessionId}`);
+    console.log(`Totale: ${orderData.total} €`);
+    console.log(`Stato: ${orderData.status}`);
+    console.log(`Data: ${new Date(orderData.created_at).toLocaleDateString('it-IT')}`);
+    console.log('Articoli:');
     orderData.items.forEach((item: any, index: number) => {
       console.log(`  ${index + 1}. ${item.name} x${item.quantity} - ${item.price} €`);
     });
@@ -164,13 +164,13 @@ async function sendConfirmationEmail(orderData: {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: orderData.email,
-      subject: 'Confirmation de votre commande - Flocon',
+      subject: 'Conferma del tuo ordine - Flocon',
       html: generateOrderEmailHTML(orderData),
     });
     */
     
   } catch (error) {
-    console.error('Error sending confirmation email:', error);
+    console.error('Errore invio email conferma:', error);
   }
 }
 
@@ -180,7 +180,7 @@ function generateOrderEmailHTML(orderData: any) {
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Confirmation de commande</title>
+      <title>Conferma ordine</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }

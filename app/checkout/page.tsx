@@ -33,7 +33,7 @@ export default function Checkout() {
         setShowSummary(true);
       }
     } catch (error) {
-      console.error('Erreur lors de la restauration de l\'état checkout:', error);
+      console.error('Errore durante il ripristino dello stato checkout:', error);
     }
   }, []);
 
@@ -43,7 +43,7 @@ export default function Checkout() {
       localStorage.setItem('checkout-email', customerEmail);
       localStorage.setItem('checkout-show-summary', showSummary.toString());
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde de l\'état checkout:', error);
+      console.error('Errore durante il salvataggio dello stato checkout:', error);
     }
   }, [customerEmail, showSummary]);
 
@@ -61,7 +61,7 @@ export default function Checkout() {
     }
 
     setIsProcessing(true);
-    console.log('🚀 Début du paiement:', { cartItems: cartItems.length, customerEmail });
+    console.log('🚀 Inizio pagamento:', { cartItems: cartItems.length, customerEmail });
 
     try {
       // Créer la session Stripe
@@ -76,29 +76,29 @@ export default function Checkout() {
         }),
       });
 
-      console.log('📡 Réponse API:', response.status);
+      console.log('📡 Risposta API:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Erreur API:', errorText);
-        throw new Error(`Erreur API: ${response.status} - ${errorText}`);
+        console.error('❌ Errore API:', errorText);
+        throw new Error(`Errore API: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      console.log('✅ Données reçues:', data);
+      console.log('✅ Dati ricevuti:', data);
 
       const { sessionId, url } = data;
 
       if (url) {
-        console.log('🔄 Redirection vers:', url);
+        console.log('🔄 Reindirizzamento verso:', url);
         // Rediriger vers Stripe Checkout
         window.location.href = url;
       } else {
-        console.error('❌ URL manquante dans la réponse:', data);
-        throw new Error('URL de paiement non reçue');
+        console.error('❌ URL mancante nella risposta:', data);
+        throw new Error('URL di pagamento non ricevuto');
       }
     } catch (error) {
-      console.error('💥 Erreur lors du paiement:', error);
+      console.error('💥 Errore durante il pagamento:', error);
       alert('Si è verificato un errore durante l\'elaborazione del pagamento. Riprova.');
     } finally {
       setIsProcessing(false);
@@ -129,7 +129,7 @@ export default function Checkout() {
       localStorage.removeItem('checkout-email');
       localStorage.removeItem('checkout-show-summary');
     } catch (error) {
-      console.error('Erreur lors du nettoyage de l\'état checkout:', error);
+      console.error('Errore durante la pulizia dello stato checkout:', error);
     }
   };
 
@@ -407,6 +407,51 @@ export default function Checkout() {
                 <p className="text-xs text-gray-500 text-center mt-3">
                   Sarai reindirizzato a Stripe Checkout per finalizzare il pagamento
                 </p>
+              </div>
+
+              {/* Virement Bancaire Italien */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="font-semibold text-textDark mb-4">Bonifico Bancario</h3>
+                
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-blue-800 mb-3">
+                    <strong>Alternativa sicura:</strong> Puoi pagare direttamente tramite bonifico bancario
+                  </p>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Beneficiario:</span>
+                    <span className="text-sm font-bold">GIULIO SALVADORI</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">IBAN:</span>
+                    <span className="text-sm font-mono">IT92M3608105138245057545064</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">BIC:</span>
+                    <span className="text-sm font-mono">PPAYITR1XXX</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Banca:</span>
+                    <span className="text-sm">POSTEPAY S.P.A</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Tipo:</span>
+                    <span className="text-sm">Istantaneo o SEPA</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm font-medium text-gray-600">Motivo:</span>
+                    <span className="text-sm">Pagamento per servizio</span>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-xs text-yellow-800">
+                    <strong>Importante:</strong> Inserisci il tuo nome e numero ordine nel motivo del bonifico.
+                    La spedizione avverrà dopo la ricezione del pagamento.
+                  </p>
+                </div>
               </div>
 
               <button
