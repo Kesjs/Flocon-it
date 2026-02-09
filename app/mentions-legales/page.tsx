@@ -6,58 +6,58 @@ export default function MentionsLegales() {
     <div className="pt-28 min-h-screen bg-gray-50 px-4">
       <div className="max-w-4xl mx-auto py-12">
         <h1 className="text-4xl font-display font-bold text-textDark mb-8">
-          Mentions Légales
+          Informazioni Legali
         </h1>
         <div className="bg-white rounded-lg shadow-md p-8 space-y-6 text-gray-700">
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              1. Éditeur du site
+              1. Editore del sito
             </h2>
             <div className="space-y-2">
               <p><strong>Flocon</strong></p>
-              <p>Société par actions simplifiée (SAS) au capital de 10 000€</p>
-              <p>RCS Paris : 123 456 789</p>
+              <p>Società per azioni semplificata (SAS) con capitale di 10 000€</p>
+              <p>RCS Roma : 123 456 789</p>
               <p>SIRET : 123 456 789 00012</p>
-              <p>Siège social : 123 Rue de la Mode, 75001 Paris, France</p>
-              <p>Téléphone : +33 (0)1 23 45 67 89</p>
-              <p>Email : contact@flocon.fr</p>
+              <p>Sede sociale : 123 Via della Moda, 00100 Roma, Italia</p>
+              <p>Telefono : +39 (0)6 12 34 56 78</p>
+              <p>Email : contact@flocon.it</p>
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              2. Directeur de la publication
+              2. Direttore della pubblicazione
             </h2>
             <div className="space-y-2">
               <p><strong>Jean Dupont</strong></p>
-              <p>Président-Directeur Général</p>
-              <p>Email : jean.dupont@flocon.fr</p>
+              <p>Presidente-Direttore Generale</p>
+              <p>Email : jean.dupont@flocon.it</p>
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              3. Hébergeur du site
+              3. Hosting del sito
             </h2>
             <div className="space-y-2">
               <p><strong>Vercel Inc.</strong></p>
               <p>340 S Lemon Ave #4133</p>
               <p>Walnut, CA 91789</p>
-              <p>États-Unis</p>
-              <p>Téléphone : +1 (650) 488-8398</p>
-              <p>Site web : www.vercel.com</p>
+              <p>Stati Uniti</p>
+              <p>Telefono : +1 (650) 488-8398</p>
+              <p>Sito web : www.vercel.com</p>
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              4. Propriété intellectuelle
+              4. Proprietà intellettuale
             </h2>
             <p>
-              L'ensemble du site est soumis à la législation française et internationale sur 
-              le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction, 
-              représentation et utilisation sont réservés pour tous les éléments 
-              du site, incluant textes, articles, dessins, images, logos, icônes, etc.
+              L'intero sito è soggetto alla legislazione francese e internazionale sul 
+              diritto d'autore e la proprietà intellettuale. Tutti i diritti di riproduzione, 
+              rappresentazione e utilizzo sono riservati per tutti gli elementi 
+              del sito, inclusi testi, articoli, disegni, immagini, loghi, icone, ecc.
             </p>
           </section>
 

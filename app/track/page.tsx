@@ -78,15 +78,15 @@ export default function TrackOrder() {
           className="inline-flex items-center gap-2 text-rose-custom hover:underline mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à l'accueil
+          Torna alla home
         </Link>
 
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-4xl font-display font-bold text-textDark mb-2">
-            Suivi de commande
+            Tracking ordine
           </h1>
           <p className="text-gray-600 mb-8">
-            Entrez votre numéro de commande pour suivre votre livraison
+            Inserisci il tuo numero ordine per tracciare la consegna
           </p>
 
           {/* Search Bar */}
@@ -107,7 +107,7 @@ export default function TrackOrder() {
               disabled={isSearching || !orderId.trim()}
               className="px-6 py-3 bg-textDark text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSearching ? "Recherche..." : "Rechercher"}
+              {isSearching ? "Ricerca..." : "Cerca"}
             </button>
           </div>
 
@@ -178,28 +178,28 @@ export default function TrackOrder() {
               {/* Order Details */}
               <div className="bg-gray-50 rounded-lg p-6 mt-8">
                 <h2 className="text-xl font-display font-semibold text-textDark mb-4">
-                  Détails de la commande
+                  Dettagli ordine
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Numéro de commande</p>
+                    <p className="text-sm text-gray-600">Numero ordine</p>
                     <p className="font-semibold text-textDark">{orderId}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Statut actuel</p>
+                    <p className="text-sm text-gray-600">Stato attuale</p>
                     <p className="font-semibold text-rose-custom">
                       {steps[currentStepIndex]?.label}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Date de commande</p>
+                    <p className="text-sm text-gray-600">Data ordine</p>
                     <p className="font-semibold text-textDark">22 Jan 2026</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Livraison estimée</p>
+                    <p className="text-sm text-gray-600">Consegna stimata</p>
                     <p className="font-semibold text-textDark">
                       {currentStatus === "delivered"
-                        ? "Livrée"
+                        ? "Consegnata"
                         : currentStatus === "shipped"
                         ? "25 Jan 2026"
                         : "27 Jan 2026"}
@@ -211,9 +211,9 @@ export default function TrackOrder() {
               {/* Help Text */}
               <div className="text-center text-sm text-gray-600">
                 <p>
-                  Des questions ?{" "}
+                  Domande?{" "}
                   <Link href="/contact" className="text-rose-custom hover:underline">
-                    Contactez-nous
+                    Contattaci
                   </Link>
                 </p>
               </div>
@@ -225,10 +225,10 @@ export default function TrackOrder() {
             <div className="text-center py-12">
               <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600">
-                Entrez un numéro de commande pour commencer le suivi
+                Inserisci un numero ordine per iniziare il tracking
               </p>
               <p className="text-sm text-gray-500 mt-2">
-                Exemples : CMD-001 (livrée), CMD-002 (expédiée), CMD-003 (en préparation)
+                Esempi: CMD-001 (consegnata), CMD-002 (spedita), CMD-003 (in preparazione)
               </p>
             </div>
           )}

@@ -17,8 +17,8 @@ export default function OccasionsPage() {
   const occasions = [
     {
       id: "saint-valentin",
-      name: "Saint-Valentin",
-      description: "L'amour mérite d'être célébré",
+      name: "San Valentino",
+      description: "L'amore merita di essere celebrato",
       icon: Heart,
       color: "from-rose-400 to-pink-500",
       category: "Saint-Valentin",
@@ -26,8 +26,8 @@ export default function OccasionsPage() {
     },
     {
       id: "anniversaire",
-      name: "Anniversaire",
-      description: "Une année de plus à fêter",
+      name: "Compleanno",
+      description: "Un anno in più da festeggiare",
       icon: Gift,
       color: "from-purple-400 to-indigo-500",
       category: "Hiver",
@@ -35,8 +35,8 @@ export default function OccasionsPage() {
     },
     {
       id: "noel",
-      name: "Noël",
-      description: "La magie du partage",
+      name: "Natale",
+      description: "La magia della condivisione",
       icon: Package,
       color: "from-green-400 to-emerald-500",
       category: "Hiver",
@@ -44,8 +44,8 @@ export default function OccasionsPage() {
     },
     {
       id: "fete-des-meres",
-      name: "Fête des Mères",
-      description: "Pour elle, avec amour",
+      name: "Festa della Mamma",
+      description: "Per lei, con amore",
       icon: Sparkles,
       color: "from-pink-400 to-rose-500",
       category: "Hiver",
@@ -53,8 +53,8 @@ export default function OccasionsPage() {
     },
     {
       id: "nouveau-ne",
-      name: "Nouveau-né",
-      description: "Bienvenue dans la vie",
+      name: "Neonato",
+      description: "Benvenuto nella vita",
       icon: Gift,
       color: "from-blue-400 to-cyan-500",
       category: "Hiver",
@@ -62,8 +62,8 @@ export default function OccasionsPage() {
     },
     {
       id: "remerciement",
-      name: "Remerciement",
-      description: "Dire merci avec le cœur",
+      name: "Ringraziamento",
+      description: "Dire grazie con il cuore",
       icon: Heart,
       color: "from-amber-400 to-orange-500",
       category: "Hiver",
@@ -112,18 +112,18 @@ export default function OccasionsPage() {
             >
               <div className="mb-6">
                 <span className="inline-block bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-                  Célébrez Chaque Moment Spécial
+                  Celebra Ogni Momento Speciale
                 </span>
               </div>
               <h1 className="text-4xl lg:text-6xl font-display font-black text-textDark mb-6 leading-tight">
-                Le Cadeau
-                <span className="text-rose-custom"> Parfait</span>
+                Il Regalo
+                <span className="text-rose-custom"> Perfetto</span>
                 <br />
-                pour Chaque Occasion
+                per Ogni Occasione
               </h1>
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-                De la Saint-Valentin à l'anniversaire, trouvez le présent idéal qui transformera 
-                chaque moment en souvenir inoubliable. Chaque occasion mérite son cadeau unique !
+                Da San Valentino al compleanno, trova il regalo ideale che trasformerà 
+                ogni momento in ricordo indimenticabile. Ogni occasione merita il suo regalo unico!
               </p>
               
               {/* Occasions populaires */}
@@ -141,10 +141,10 @@ export default function OccasionsPage() {
                   href="#toutes-occasions"
                   className="bg-rose-custom text-white px-8 py-4 rounded-lg font-black hover:bg-opacity-90 transition-all duration-300 hover:scale-105 shadow-lg"
                 >
-                  Explorer les Occasions
+                  Esplora le Occasioni
                 </Link>
                 <button className="bg-white text-rose-custom border-2 border-rose-custom px-8 py-4 rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300">
-                  Guide des Cadeaux
+                  Guida ai Regali
                 </button>
               </div>
             </motion.div>
@@ -224,7 +224,7 @@ export default function OccasionsPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
             <input
               type="text"
-              placeholder="Pour quelle occasion cherchez-vous un cadeau ?"
+              placeholder="Per quale occasione cerchi un regalo?"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-14 pr-6 py-4 text-lg border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-custom focus:border-transparent"
@@ -253,7 +253,7 @@ export default function OccasionsPage() {
               }`}
             >
               <Calendar className="w-4 h-4" />
-              Toutes les occasions
+              Tutte le occasioni
             </button>
             {occasions.map((occasion) => (
               <button
@@ -296,11 +296,11 @@ export default function OccasionsPage() {
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Gift className="w-4 h-4" />
-                          <span>{occasion.products.length} cadeaux uniques</span>
+                          <span>{occasion.products.length} regali unici</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Sparkles className="w-4 h-4" />
-                          <span>Personnalisables</span>
+                          <span>Personalizzabili</span>
                         </div>
                       </div>
                     </div>
@@ -323,13 +323,13 @@ export default function OccasionsPage() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-textDark">
               {selectedOccasion === "all" 
-                ? `${filteredProducts.length} cadeaux pour toutes les occasions`
-                : `${filteredProducts.length} cadeaux pour ${occasions.find(o => o.id === selectedOccasion)?.name}`
+                ? `${filteredProducts.length} regali per tutte le occasioni`
+                : `${filteredProducts.length} regali per ${occasions.find(o => o.id === selectedOccasion)?.name}`
               }
             </h2>
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Calendar className="w-4 h-4" />
-              Livraison rapide
+              Consegna rapida
             </div>
           </div>
 
@@ -350,8 +350,8 @@ export default function OccasionsPage() {
             <div className="text-center py-12">
               <p className="text-gray-500 mb-4">
                 {selectedOccasion === "all" 
-                  ? "Aucun produit trouvé pour votre recherche"
-                  : `Aucun produit trouvé pour ${occasions.find(o => o.id === selectedOccasion)?.name}`
+                  ? "Nessun prodotto trovato per la tua ricerca"
+                  : `Nessun prodotto trovato per ${occasions.find(o => o.id === selectedOccasion)?.name}`
                 }
               </p>
               <button 
@@ -361,7 +361,7 @@ export default function OccasionsPage() {
                 }}
                 className="text-rose-custom hover:underline"
               >
-                Réinitialiser les filtres
+                Resetta i filtri
               </button>
             </div>
           )}
@@ -374,7 +374,7 @@ export default function OccasionsPage() {
           transition={{ delay: 0.6 }}
           className="mt-16"
         >
-          <h2 className="text-2xl font-bold text-textDark mb-8 text-center">Guide des Cadeaux par Occasion</h2>
+          <h2 className="text-2xl font-bold text-textDark mb-8 text-center">Guida ai Regali per Occasione</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {occasions.map((occasion) => (
               <motion.div
@@ -391,9 +391,9 @@ export default function OccasionsPage() {
                 </div>
                 <p className="text-gray-600 text-sm mb-4">{occasion.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">{occasion.products.length} produits</span>
+                  <span className="text-xs text-gray-500">{occasion.products.length} prodotti</span>
                   <button className="text-rose-custom hover:text-rose-custom/80 text-sm font-medium">
-                    Explorer →
+                    Esplora →
                   </button>
                 </div>
               </motion.div>
@@ -410,16 +410,16 @@ export default function OccasionsPage() {
         >
           <div className="text-center">
             <Sparkles className="w-8 h-8 text-rose-custom mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-textDark mb-4">Besoin d'inspiration ?</h3>
+            <h3 className="text-2xl font-bold text-textDark mb-4">Hai bisogno di ispirazione?</h3>
             <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-              Notre équipe d'experts vous aide à trouver le cadeau parfait. Découvrez nos sélections thématiques et nos conseils personnalisés.
+              Il nostro team di esperti ti aiuta a trovare il regalo perfetto. Scopri le nostre selezioni tematiche e i nostri consigli personalizzati.
             </p>
             <div className="flex justify-center gap-4">
               <button className="bg-rose-custom text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors">
-                Consulter le guide
+                Consulta la guida
               </button>
               <button className="bg-white text-rose-custom border border-rose-custom px-6 py-3 rounded-lg hover:bg-rose-50 transition-colors">
-                Contactez un expert
+                Contatta un esperto
               </button>
             </div>
           </div>
@@ -431,7 +431,7 @@ export default function OccasionsPage() {
             href="/"
             className="inline-flex items-center text-gray-600 hover:text-textDark transition-colors"
           >
-            ← Retour à l'accueil
+            ← Torna alla home
           </Link>
         </div>
       </div>

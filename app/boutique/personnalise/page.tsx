@@ -40,42 +40,42 @@ export default function PersonnalisePage() {
             >
               <div className="mb-6">
                 <span className="inline-block bg-white/20 backdrop-blur-sm text-rose-custom px-4 py-2 rounded-full text-sm font-semibold mb-4">
-                  L'Art de la Personnalisation
+                  L'Arte della Personalizzazione
                 </span>
               </div>
               <h1 className="text-4xl lg:text-6xl font-display font-black text-textDark mb-6 leading-tight">
-                Transformez vos
-                <span className="text-rose-custom"> Souvenirs</span>
+                Trasforma i tuoi
+                <span className="text-rose-custom"> Ricordi</span>
                 <br />
-                en Cadeaux Uniques
+                in Regali Unici
               </h1>
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-                Ajoutez vos photos, vos messages et créez des présents qui marquent les esprits. 
-                Chaque détail compte pour rendre votre cadeau inoubliable.
+                Aggiungi le tue foto, i tuoi messaggi e crea regali che lasciano il segno. 
+                Ogni dettaglio conta per rendere il tuo regalo indimenticabile.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link 
                   href="#types-personnalisation"
                   className="bg-rose-custom text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-300 hover:scale-105 shadow-lg"
                 >
-                  Commencer à Personnaliser
+                  Inizia a Personalizzare
                 </Link>
                 <button className="bg-white text-rose-custom border-2 border-rose-custom px-8 py-4 rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300">
-                  Voir les Exemples
+                  Vedi gli Esempi
                 </button>
               </div>
               <div className="flex items-center gap-8 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Camera className="w-5 h-5 text-rose-custom" />
-                  <span>Photos HD</span>
+                  <span>Foto HD</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <PenTool className="w-5 h-5 text-rose-custom" />
-                  <span>Textes personnalisés</span>
+                  <span>Testi personalizzati</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Scissors className="w-5 h-5 text-rose-custom" />
-                  <span>Qualité premium</span>
+                  <span>Qualità premium</span>
                 </div>
               </div>
             </motion.div>
@@ -155,7 +155,7 @@ export default function PersonnalisePage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
             <input
               type="text"
-              placeholder="Quel cadeau souhaitez-vous personnaliser aujourd'hui ?"
+              placeholder="Quale regalo vuoi personalizzare oggi?"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-14 pr-6 py-4 text-lg border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-custom focus:border-transparent"
@@ -174,30 +174,30 @@ export default function PersonnalisePage() {
           id="types-personnalisation"
           className="mb-12"
         >
-          <h2 className="text-3xl font-bold text-textDark mb-8 text-center">Types de personnalisation</h2>
+          <h2 className="text-3xl font-bold text-textDark mb-8 text-center">Tipi di personalizzazione</h2>
           <div className="grid md:grid-cols-4 gap-6">
             {[
               {
-                title: "Photo",
-                description: "Ajoutez vos plus beaux souvenirs",
+                title: "Foto",
+                description: "Aggiungi i tuoi bei ricordi",
                 icon: Camera,
                 color: "bg-blue-100 text-blue-600"
               },
               {
-                title: "Texte",
-                description: "Messages et citations personnalisées",
+                title: "Testo",
+                description: "Messaggi e citazioni personalizzate",
                 icon: PenTool,
                 color: "bg-green-100 text-green-600"
               },
               {
-                title: "Gravure",
-                description: "Gravures durables et élégantes",
+                title: "Incisione",
+                description: "Incisioni durevoli ed eleganti",
                 icon: Type,
                 color: "bg-purple-100 text-purple-600"
               },
               {
-                title: "Broderie",
-                description: "Touches personnelles brodées",
+                title: "Ricamo",
+                description: "Tocchi personali ricamati",
                 icon: Scissors,
                 color: "bg-pink-100 text-pink-600"
               }
@@ -227,11 +227,11 @@ export default function PersonnalisePage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-textDark">
-              {filteredProducts.length} cadeaux personnalisés
+              {filteredProducts.length} regali personalizzati
             </h2>
             <button className="flex items-center gap-2 text-gray-600 hover:text-textDark">
               <Filter className="w-4 h-4" />
-              Filtrer
+              Filtra
             </button>
           </div>
 
@@ -250,12 +250,12 @@ export default function PersonnalisePage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">Aucun produit trouvé pour "{searchTerm}"</p>
+              <p className="text-gray-500 mb-4">Nessun prodotto trovato per "{searchTerm}"</p>
               <button 
                 onClick={() => setSearchTerm("")}
                 className="text-rose-custom hover:underline"
               >
-                Effacer la recherche
+                Cancella la ricerca
               </button>
             </div>
           )}
@@ -268,23 +268,23 @@ export default function PersonnalisePage() {
           transition={{ delay: 0.6 }}
           className="mt-16 bg-white rounded-2xl p-8"
         >
-          <h2 className="text-2xl font-bold text-textDark mb-6">Comment personnaliser votre cadeau ?</h2>
+          <h2 className="text-2xl font-bold text-textDark mb-6">Come personalizzare il tuo regalo?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 step: "1",
-                title: "Choisissez votre cadeau",
-                description: "Parcourez notre sélection et trouvez le produit parfait pour votre occasion."
+                title: "Scegli il tuo regalo",
+                description: "Scorri la nostra selezione e trova il prodotto perfetto per la tua occasione."
               },
               {
                 step: "2", 
-                title: "Ajoutez votre touche personnelle",
-                description: "Téléchargez vos photos, écrivez votre message ou choisissez votre gravure."
+                title: "Aggiungi il tuo tocco personale",
+                description: "Carica le tue foto, scrivi il tuo messaggio o scegli la tua incisione."
               },
               {
                 step: "3",
-                title: "Validez et recevez",
-                description: "Prévisualisez votre création et recevez votre cadeau unique chez vous."
+                title: "Valida e ricevi",
+                description: "Anteprima la tua creazione e ricevi il tuo regalo unico a casa."
               }
             ].map((item, index) => (
               <div key={index} className="text-center">
@@ -304,7 +304,7 @@ export default function PersonnalisePage() {
             href="/"
             className="inline-flex items-center text-gray-600 hover:text-textDark transition-colors"
           >
-            ← Retour à l'accueil
+            ← Torna alla home
           </Link>
         </div>
       </div>
