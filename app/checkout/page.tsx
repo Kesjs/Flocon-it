@@ -56,7 +56,7 @@ export default function Checkout() {
     if (cartItems.length === 0) return;
     
     if (!customerEmail || !customerEmail.includes('@')) {
-      alert('Veuillez entrer une adresse email valide');
+      alert('Per favore inserisci un indirizzo email valido');
       return;
     }
 
@@ -99,7 +99,7 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error('💥 Erreur lors du paiement:', error);
-      alert('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
+      alert('Si è verificato un errore durante l\'elaborazione del pagamento. Riprova.');
     } finally {
       setIsProcessing(false);
     }
@@ -109,7 +109,7 @@ export default function Checkout() {
     if (customerEmail && customerEmail.includes('@')) {
       setShowSummary(true);
     } else {
-      alert('Veuillez entrer une adresse email valide');
+      alert('Per favore inserisci un indirizzo email valido');
     }
   };
 
@@ -141,16 +141,16 @@ export default function Checkout() {
             <Check className="w-8 h-8 text-green-600" />
           </div>
           <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-            Commande confirmée !
+            Ordine confermato!
           </h1>
           <p className="text-gray-600 mb-6">
-            Merci pour votre achat. Vous recevrez un email de confirmation sous peu.
+            Grazie per il tuo acquisto. Riceverai un'email di conferma a breve.
           </p>
           <Link
             href="/"
             className="inline-block bg-textDark text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
           >
-            Retour à l'accueil
+            Torna alla home
           </Link>
         </div>
       </div>
@@ -162,14 +162,14 @@ export default function Checkout() {
       <div className="pt-28 min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
           <h1 className="text-2xl font-display font-bold text-textDark mb-4">
-            Votre panier est vide
+            Il tuo carrello è vuoto
           </h1>
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
-            Continuer vos achats
+            Continua i tuoi acquisti
           </Link>
         </div>
       </div>
@@ -184,7 +184,7 @@ export default function Checkout() {
           className="inline-flex items-center gap-2 text-rose-custom hover:underline mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la boutique
+          Torna al negozio
         </Link>
 
         {!showSummary ? (
@@ -194,14 +194,14 @@ export default function Checkout() {
             className="bg-white rounded-lg shadow-md p-6"
           >
             <h1 className="text-3xl font-display font-bold text-textDark mb-6">
-              Finaliser ma commande
+              Finalizza il mio ordine
             </h1>
             
             {/* Informations essentielles */}
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-textDark mb-2">
-                  Email pour la confirmation
+                  Email per la conferma
                 </label>
                 <input
                   type="email"
@@ -212,28 +212,28 @@ export default function Checkout() {
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Vous recevrez la confirmation de commande et les détails de suivi à cette adresse
+                  Riceverai la conferma dell'ordine e i dettagli di tracking a questo indirizzo
                 </p>
               </div>
 
               {/* Informations sur le paiement */}
               <div className="bg-gradient-to-r from-rose-custom-50 to-iceBlue-50 rounded-lg p-4">
-                <h3 className="font-semibold text-textDark mb-3">Informations de livraison et paiement</h3>
+                <h3 className="font-semibold text-textDark mb-3">Informazioni di spedizione e pagamento</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Vos informations de livraison et de paiement seront collectées de manière sécurisée via Stripe Checkout.
+                  Le tue informazioni di spedizione e pagamento saranno raccolte in modo sicuro tramite Stripe Checkout.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-green-600" />
-                    <span className="text-sm font-medium">Paiement sécurisé</span>
+                    <span className="text-sm font-medium">Pagamento sicuro</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Truck className="w-5 h-5 text-blue-600" />
-                    <span className="text-sm font-medium">Livraison offerte</span>
+                    <span className="text-sm font-medium">Spedizione gratuita</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-purple-600" />
-                    <span className="text-sm font-medium">Expédition rapide</span>
+                    <span className="text-sm font-medium">Spedizione rapida</span>
                   </div>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export default function Checkout() {
               {/* Résumé simplifié */}
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-lg font-semibold">Total ({cartItems.length} article{cartItems.length > 1 ? 's' : ''})</span>
+                  <span className="text-lg font-semibold">Totale ({cartItems.length} articolo{cartItems.length > 1 ? 's' : ''})</span>
                   <span className="text-2xl font-bold text-rose-custom">{total.toFixed(2)} €</span>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function Checkout() {
                 className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2"
               >
                 <CreditCard className="w-5 h-5" />
-                Voir le résumé et payer
+                Vedi il riepilogo e paga
               </button>
               
               {customerEmail && (
@@ -263,7 +263,7 @@ export default function Checkout() {
                   }}
                   className="w-full text-center text-gray-500 hover:text-gray-700 text-sm underline"
                 >
-                  Réinitialiser le formulaire
+                  Resetta il modulo
                 </button>
               )}
             </div>
@@ -278,7 +278,7 @@ export default function Checkout() {
             <div className="md:col-span-2 space-y-6">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-display font-bold text-textDark mb-4">
-                  Résumé de votre commande
+                  Riepilogo del tuo ordine
                 </h2>
                 
                 <div className="space-y-4 mb-6">
@@ -303,13 +303,13 @@ export default function Checkout() {
                                 target.style.display = 'none';
                                 const parent = target.parentElement;
                                 if (parent) {
-                                  parent.innerHTML = '<div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"><span class="text-xs text-gray-500">Photo</span></div>';
+                                  parent.innerHTML = '<div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"><span class="text-gray-500">Immagine non disponibile</span></div>';
                                 }
                               }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                              <span className="text-xs text-gray-500">Photo</span>
+                              <span className="text-xs text-gray-500">Foto</span>
                             </div>
                           )}
                         </div>
@@ -323,11 +323,11 @@ export default function Checkout() {
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-textDark truncate">{item.name}</h3>
                         <p className="text-sm text-gray-600">
-                          {item.description || 'Produit de qualité'}
+                          {item.description || 'Prodotto di qualità'}
                         </p>
                         <div className="flex items-center gap-4 mt-2">
-                          <span className="text-sm text-gray-600">Quantité: {item.quantity}</span>
-                          <span className="text-sm font-medium text-rose-custom">{item.price.toFixed(2)} €/pièce</span>
+                          <span className="text-sm text-gray-600">Quantità: {item.quantity}</span>
+                          <span className="text-sm font-medium text-rose-custom">{item.price.toFixed(2)} €/pezzo</span>
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -339,7 +339,7 @@ export default function Checkout() {
                           className="text-xs text-rose-custom hover:underline flex items-center gap-1 mt-1"
                         >
                           <Eye className="w-3 h-3" />
-                          Voir
+                          Vedi
                         </button>
                       </div>
                     </motion.div>
@@ -350,7 +350,7 @@ export default function Checkout() {
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="text-lg font-bold text-textDark">Total</div>
-                      <div className="text-sm text-gray-600">TVA incluse</div>
+                      <div className="text-sm text-gray-600">IVA inclusa</div>
                     </div>
                     <div className="text-2xl font-bold text-rose-custom">{total.toFixed(2)} €</div>
                   </div>
@@ -358,10 +358,10 @@ export default function Checkout() {
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-textDark mb-3">Email de confirmation</h3>
+                <h3 className="font-semibold text-textDark mb-3">Email di conferma</h3>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="font-medium">{customerEmail}</p>
-                  <p className="text-sm text-gray-600">Vous recevrez la confirmation à cette adresse</p>
+                  <p className="text-sm text-gray-600">Riceverai la conferma a questo indirizzo</p>
                 </div>
               </div>
             </div>
@@ -369,20 +369,20 @@ export default function Checkout() {
             {/* Paiement */}
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-textDark mb-4">Paiement sécurisé</h3>
+                <h3 className="font-semibold text-textDark mb-4">Pagamento sicuro</h3>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Shield className="w-4 h-4 text-green-600" />
-                    <span>Paiement 100% sécurisé</span>
+                    <span>Pagamento 100% sicuro</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <CreditCard className="w-4 h-4 text-blue-600" />
-                    <span>Carte bancaire, PayPal...</span>
+                    <span>Carta di credito, PayPal...</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Truck className="w-4 h-4 text-purple-600" />
-                    <span>Livraison en France métropolitaine</span>
+                    <span>Spedizione in Italia</span>
                   </div>
                 </div>
 
@@ -394,18 +394,18 @@ export default function Checkout() {
                   {isProcessing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Paiement en cours...
+                      Pagamento in corso...
                     </>
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4" />
-                      Payer
+                      Paga
                     </>
                   )}
                 </button>
                 
                 <p className="text-xs text-gray-500 text-center mt-3">
-                  Vous serez redirigé vers Stripe Checkout pour finaliser le paiement
+                  Sarai reindirizzato a Stripe Checkout per finalizzare il pagamento
                 </p>
               </div>
 
@@ -413,7 +413,7 @@ export default function Checkout() {
                 onClick={() => setShowSummary(false)}
                 className="w-full text-center text-rose-custom hover:underline text-sm font-medium"
               >
-                Modifier mes informations
+                Modifica le mie informazioni
               </button>
             </div>
           </motion.div>
@@ -474,25 +474,25 @@ export default function Checkout() {
                 <div className="space-y-4">
                   <div>
                     <p className="text-3xl font-bold text-rose-custom">{selectedProduct.price.toFixed(2)} €</p>
-                    <p className="text-sm text-gray-600">Prix unitaire</p>
+                    <p className="text-sm text-gray-600">Prezzo unitario</p>
                   </div>
                   
                   <div>
-                    <h3 className="font-semibold text-textDark mb-2">Description</h3>
+                    <h3 className="font-semibold text-textDark mb-2">Descrizione</h3>
                     <p className="text-gray-600">
-                      {selectedProduct.description || 'Produit de qualité supérieure, parfait pour vos besoins. Fabriqué avec des matériaux premium pour une durabilité exceptionnelle.'}
+                      {selectedProduct.description || 'Prodotto di alta qualità, perfetto per le tue esigenze. Realizzato con materiali premium per una durata eccezionale.'}
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="font-semibold text-textDark mb-2">Dans votre panier</h3>
+                    <h3 className="font-semibold text-textDark mb-2">Nel tuo carrello</h3>
                     <div className="bg-gray-50 rounded-lg p-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Quantité:</span>
+                        <span className="text-gray-600">Quantità:</span>
                         <span className="font-semibold">{selectedProduct.quantity}</span>
                       </div>
                       <div className="flex justify-between items-center mt-2">
-                        <span className="text-gray-600">Total:</span>
+                        <span className="text-gray-600">Totale:</span>
                         <span className="font-bold text-lg text-rose-custom">
                           {(selectedProduct.price * selectedProduct.quantity).toFixed(2)} €
                         </span>
@@ -505,14 +505,14 @@ export default function Checkout() {
                       onClick={closeProductModal}
                       className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                     >
-                      Fermer
+                      Chiudi
                     </button>
                     <Link
                       href={`/boutique`}
                       onClick={closeProductModal}
                       className="flex-1 bg-rose-custom text-white py-2 rounded-lg font-medium hover:bg-rose-custom/90 transition-colors text-center"
                     >
-                      Voir la boutique
+                      Vedi il negozio
                     </Link>
                   </div>
                 </div>

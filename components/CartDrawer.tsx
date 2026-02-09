@@ -43,7 +43,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-2xl font-display font-bold text-textDark">
-                Mon panier
+                Il mio carrello
               </h2>
               <button
                 onClick={onClose}
@@ -57,13 +57,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="flex-1 overflow-y-auto p-6">
               {cartItems.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">Votre panier est vide</p>
+                  <p className="text-gray-500 mb-4">Il tuo carrello è vuoto</p>
                   <Link
                     href="/"
                     onClick={onClose}
                     className="text-rose-custom hover:underline"
                   >
-                    Continuer vos achats
+                    Continua i tuoi acquisti
                   </Link>
                 </div>
               ) : (

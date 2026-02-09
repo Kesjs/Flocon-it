@@ -12,16 +12,16 @@ export default function CheckoutCancel() {
         </div>
         
         <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-          Paiement annulé
+          Pagamento annullato
         </h1>
         
         <p className="text-gray-600 mb-6">
-          Votre paiement a été annulé. Aucun montant n'a été débité de votre compte.
+          Il tuo pagamento è stato annullato. Nessun importo è stato addebitato sul tuo account.
         </p>
 
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-orange-800">
-            Vous pouvez réessayer le paiement ou modifier votre commande si nécessaire.
+            Puoi riprovare il pagamento o modificare il tuo ordine se necessario.
           </p>
         </div>
 
@@ -30,14 +30,14 @@ export default function CheckoutCancel() {
             href="/checkout"
             className="block w-full bg-gradient-to-r from-rose-custom to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
-            Réessayer le paiement
+            Riprova il pagamento
           </Link>
           <Link
             href="/boutique"
             className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ShoppingBag className="w-4 h-4" />
-            Retour à la boutique
+            Torna al negozio
           </Link>
         </div>
       </div>

@@ -65,19 +65,19 @@ function CheckoutSuccessContent() {
             <AlertCircle className="w-8 h-8 text-orange-600" />
           </div>
           <h1 className="text-2xl font-display font-bold text-textDark mb-4">
-            Accès non valide
+            Accesso non valido
           </h1>
           <p className="text-gray-600 mb-4">
-            Cette page n'est accessible qu'après un paiement réussi.
+            Questa pagina è accessibile solo dopo un pagamento riuscito.
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Vous serez redirigé vers la page de paiement dans 3 secondes...
+            Sarai reindirizzato alla pagina di pagamento tra 3 secondi...
           </p>
           <Link
             href="/checkout"
             className="inline-block bg-rose-custom text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors"
           >
-            Retour au paiement
+            Torna al pagamento
           </Link>
         </div>
       </div>
@@ -89,7 +89,7 @@ function CheckoutSuccessContent() {
       <div className="pt-28 min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement des détails de votre commande...</p>
+          <p className="text-gray-600">Caricamento dettagli ordine...</p>
         </div>
       </div>
     );
@@ -103,14 +103,14 @@ function CheckoutSuccessContent() {
         </div>
         
         <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-          Paiement réussi !
+          Pagamento riuscito!
         </h1>
         
         <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-          <h2 className="font-semibold text-textDark mb-3">Détails de la commande</h2>
+          <h2 className="font-semibold text-textDark mb-3">Dettagli ordine</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-start">
-              <span className="text-gray-600 flex-shrink-0">Numéro de commande:</span>
+              <span className="text-gray-600 flex-shrink-0">Numero ordine:</span>
               <div className="text-right ml-2">
                 <span className="font-medium block">
                   {orderDetails?.id ? `CMD-${orderDetails.id.substring(0, 8)}...` : 'N/A'}
@@ -121,11 +121,11 @@ function CheckoutSuccessContent() {
               </div>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Statut:</span>
+              <span className="text-gray-600">Stato:</span>
               <span className={`font-medium ${
                 orderDetails?.status === 'Payée' ? 'text-green-600' : 'text-yellow-600'
               }`}>
-                {orderDetails?.status}
+                {orderDetails?.status === 'Payée' ? 'Pagamento effettuato' : 'Pagamento non effettuato'}
               </span>
             </div>
             <div className="flex justify-between items-start">
@@ -135,12 +135,12 @@ function CheckoutSuccessContent() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Total:</span>
+              <span className="text-gray-600">Totale:</span>
               <span className="font-bold text-lg">{orderDetails?.total?.toFixed(2)} €</span>
             </div>
             {orderDetails?.items && orderDetails.items.length > 0 && (
               <div className="mt-3 pt-3 border-t border-gray-200">
-                <p className="text-gray-600 mb-2">Articles commandés:</p>
+                <p className="text-gray-600 mb-2">Articoli ordinati:</p>
                 {orderDetails.items.map((item: any, index: number) => (
                   <div key={index} className="flex justify-between text-xs">
                     <span className="flex-1 mr-2" style={{wordBreak: 'break-word'}}>
@@ -155,7 +155,7 @@ function CheckoutSuccessContent() {
         </div>
 
         <p className="text-gray-600 mb-6">
-          Merci pour votre commande ! Vous recevrez un email de confirmation sous peu avec les détails de livraison.
+          Grazie per il tuo ordine! Riceverai un'email di conferma a breve con i dettagli di spedizione.
         </p>
 
         <div className="space-y-3">
@@ -163,14 +163,14 @@ function CheckoutSuccessContent() {
             href="/dashboard"
             className="block w-full bg-gradient-to-r from-rose-custom to-iceBlue text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
-            Voir mes commandes
+            Vedi i miei ordini
           </Link>
           <Link
             href="/boutique"
             className="inline-flex items-center gap-2 text-rose-custom hover:underline"
           >
             <ShoppingBag className="w-4 h-4" />
-            Continuer mes achats
+            Continua i tuoi acquisti
           </Link>
         </div>
       </div>
@@ -184,7 +184,7 @@ export default function CheckoutSuccess() {
       <div className="pt-28 min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-rose-custom border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+          <p className="text-gray-600">Caricamento...</p>
         </div>
       </div>
     }>

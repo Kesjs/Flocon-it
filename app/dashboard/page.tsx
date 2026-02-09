@@ -12,7 +12,7 @@ type View = "commandes" | "adresses" | "profil" | "statistiques";
 interface Order {
   id: string;
   date: string;
-  status: "Livré" | "En cours" | "En préparation";
+  status: "Consegnato" | "In corso" | "In preparazione";
   total: number;
   items: number;
   products?: string[];
@@ -31,44 +31,44 @@ const mockOrders: Order[] = [
   {
     id: "CMD-001",
     date: "15 Jan 2026",
-    status: "Livré",
+    status: "Consegnato",
     total: 149.97,
     items: 3,
-    products: ["Plaid à manche", "WoodWick Ellipse bougie", "Couverture Électrique"]
+    products: ["Plaid con maniche", "Candela WoodWick Ellipse", "Coperta Elettrica"]
   },
   {
     id: "CMD-002",
     date: "20 Jan 2026",
-    status: "En cours",
+    status: "In corso",
     total: 89.99,
     items: 2,
-    products: ["Duo de Tasses Cœur", "Bracelets Couple Magnétiques"]
+    products: ["Duo di Tazze Cuore", "Bracciali Coppia Magnetici"]
   },
   {
     id: "CMD-003",
     date: "22 Jan 2026",
-    status: "En préparation",
+    status: "In preparazione",
     total: 59.99,
     items: 1,
-    products: ["Rose Éternelle Dôme Verre"]
+    products: ["Rosa Eterna Dôme Vetro"]
   },
   {
     id: "CMD-004",
     date: "25 Jan 2026",
-    status: "En cours",
+    status: "In corso",
     total: 129.99,
     items: 2,
-    products: ["Pack Soirée Amoureux", "Kit Massage Couple Luxe"]
+    products: ["Pack Serata Amore", "Kit Massaggio Coppia Luxe"]
   },
 ];
 
 const mockStats: Stats = {
   totalOrders: 12,
   totalSpent: 1254.85,
-  favoriteCategory: "Saint-Valentin",
-  memberSince: "Décembre 2025",
+  favoriteCategory: "San Valentino",
+  memberSince: "Dicembre 2025",
   loyaltyPoints: 450,
-  nextReward: "-50€ sur prochaine commande (500 points)"
+  nextReward: "-50€ su prossimo ordine (500 punti)"
 };
 
 export default function Dashboard() {
@@ -90,10 +90,10 @@ export default function Dashboard() {
   };
 
   const menuItems = [
-    { id: "statistiques" as View, label: "Statistiques", icon: TrendingUp },
-    { id: "commandes" as View, label: "Mes Commandes", icon: Package },
-    { id: "adresses" as View, label: "Adresses", icon: MapPin },
-    { id: "profil" as View, label: "Profil", icon: User },
+    { id: "statistiques" as View, label: "Statistiche", icon: TrendingUp },
+    { id: "commandes" as View, label: "I Miei Ordini", icon: Package },
+    { id: "adresses" as View, label: "Indirizzi", icon: MapPin },
+    { id: "profil" as View, label: "Profilo", icon: User },
   ];
 
   return (
@@ -201,7 +201,7 @@ export default function Dashboard() {
               }`}
             >
               <h2 className="text-2xl font-display font-bold text-textDark mb-6">
-                Mon Compte
+                Il Mio Account
               </h2>
               <nav className="space-y-2">
                 {menuItems.map((item) => {
@@ -230,7 +230,7 @@ export default function Dashboard() {
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors mt-6"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="font-medium">Déconnexion</span>
+                <span className="font-medium">Disconnessione</span>
               </button>
             </motion.aside>
 
@@ -246,17 +246,17 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h1 className="text-3xl font-display font-bold text-textDark mb-2">
-                      Mes Statistiques
+                      Le Mie Statistiche
                     </h1>
-                    <p className="text-gray-600">Suivez votre activité et vos récompenses</p>
+                    <p className="text-gray-600">Segui la tua attività e le tue ricompense</p>
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-custom to-iceBlue text-white rounded-full">
                     <Star className="w-5 h-5" />
-                    <span className="font-semibold">{mockStats.loyaltyPoints} points</span>
+                    <span className="font-semibold">{mockStats.loyaltyPoints} punti</span>
                   </div>
                 </div>
 
-                {/* Cartes de statistiques */}
+                {/* Carte di statistiche */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -269,7 +269,7 @@ export default function Dashboard() {
                       <ArrowUpRight className="w-4 h-4 text-rose-custom" />
                     </div>
                     <div className="text-2xl font-bold text-textDark">{mockStats.totalOrders}</div>
-                    <div className="text-sm text-gray-600">Commandes totales</div>
+                    <div className="text-sm text-gray-600">Ordini totali</div>
                   </motion.div>
 
                   <motion.div
@@ -283,7 +283,7 @@ export default function Dashboard() {
                       <TrendingUp className="w-4 h-4 text-iceBlue" />
                     </div>
                     <div className="text-2xl font-bold text-textDark">{mockStats.totalSpent.toFixed(2)} €</div>
-                    <div className="text-sm text-gray-600">Total dépensé</div>
+                    <div className="text-sm text-gray-600">Totale speso</div>
                   </motion.div>
 
                   <motion.div
@@ -297,7 +297,7 @@ export default function Dashboard() {
                       <Calendar className="w-4 h-4 text-purple" />
                     </div>
                     <div className="text-2xl font-bold text-textDark">{mockStats.favoriteCategory}</div>
-                    <div className="text-sm text-gray-600">Catégorie préférée</div>
+                    <div className="text-sm text-gray-600">Categoria preferita</div>
                   </motion.div>
 
                   <motion.div
@@ -311,11 +311,11 @@ export default function Dashboard() {
                       <Settings className="w-4 h-4 text-green" />
                     </div>
                     <div className="text-2xl font-bold text-textDark">{mockStats.memberSince}</div>
-                    <div className="text-sm text-gray-600">Membre depuis</div>
+                    <div className="text-sm text-gray-600">Membro dal</div>
                   </motion.div>
                 </div>
 
-                {/* Prochaine récompense */}
+                {/* Prossima ricompensa */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -324,12 +324,12 @@ export default function Dashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-xl font-bold mb-2">Prochaine récompense</h3>
+                      <h3 className="text-xl font-bold mb-2">Prossima ricompensa</h3>
                       <p className="text-white/90">{mockStats.nextReward}</p>
                     </div>
                     <div className="text-right">
                       <div className="text-3xl font-bold">{500 - mockStats.loyaltyPoints}</div>
-                      <div className="text-sm text-white/80">points restants</div>
+                      <div className="text-sm text-white/80">punti rimanenti</div>
                     </div>
                   </div>
                   <div className="mt-4 bg-white/20 rounded-full h-2">
@@ -346,16 +346,16 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h1 className="text-3xl font-display font-bold text-textDark mb-2">
-                      Mes Commandes
+                      I Miei Ordini
                     </h1>
-                    <p className="text-gray-600">Suivez l'état de vos commandes récentes</p>
+                    <p className="text-gray-600">Segui lo stato dei tuoi ordini recenti</p>
                   </div>
                   <Link
                     href="/boutique"
                     className="flex items-center gap-2 px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors"
                   >
                     <ShoppingBag className="w-4 h-4" />
-                    <span>Nouvelle commande</span>
+                    <span>Nuovo ordine</span>
                   </Link>
                 </div>
 
@@ -374,9 +374,9 @@ export default function Dashboard() {
                             <span className="text-lg font-bold text-textDark">{order.id}</span>
                             <span
                               className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                                order.status === "Livré"
+                                order.status === "Consegnato"
                                   ? "bg-green-100 text-green-800"
-                                  : order.status === "En cours"
+                                  : order.status === "In corso"
                                   ? "bg-blue-100 text-blue-800"
                                   : "bg-orange-100 text-orange-800"
                               }`}
@@ -400,11 +400,11 @@ export default function Dashboard() {
                         </div>
                         <div className="flex flex-col items-end gap-2">
                           <div className="text-right">
-                            <div className="text-sm text-gray-600">{order.items} article(s)</div>
+                            <div className="text-sm text-gray-600">{order.items} articolo/i</div>
                             <div className="text-xl font-bold text-textDark">{order.total.toFixed(2)} €</div>
                           </div>
                           <button className="px-4 py-2 border border-rose-custom text-rose-custom rounded-lg hover:bg-rose-custom hover:text-white transition-colors text-sm font-medium">
-                            Voir détails
+                            Vedi dettagli
                           </button>
                         </div>
                       </div>
@@ -415,14 +415,14 @@ export default function Dashboard() {
                 {mockOrders.length === 0 && (
                   <div className="text-center py-16">
                     <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-textDark mb-2">Aucune commande</h3>
-                    <p className="text-gray-600 mb-6">Commencez vos achats pour voir vos commandes ici</p>
+                    <h3 className="text-xl font-semibold text-textDark mb-2">Nessun ordine</h3>
+                    <p className="text-gray-600 mb-6">Inizia i tuoi acquisti per vedere i tuoi ordini qui</p>
                     <Link
                       href="/boutique"
                       className="inline-flex items-center gap-2 px-6 py-3 bg-rose-custom text-white rounded-lg hover:bg-rose-custom/90 transition-colors font-medium"
                     >
                       <ShoppingBag className="w-4 h-4" />
-                      Découvrir nos produits
+                      <span>Scopri i nostri prodotti</span>
                     </Link>
                   </div>
                 )}

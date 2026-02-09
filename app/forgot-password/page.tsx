@@ -50,12 +50,12 @@ export default function ForgotPassword() {
           </motion.div>
           
           <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-            Email envoyé !
+            Email inviato!
           </h1>
           
           <p className="text-gray-600 mb-8">
-            Un email de réinitialisation de mot de passe a été envoyé à {email}. 
-            Veuillez vérifier votre boîte de réception et suivre les instructions.
+            Un'email di reimpostazione password è stata inviata a {email}. 
+            Per favore controlla la tua casella di posta e segui le istruzioni.
           </p>
 
           <div className="mt-8">
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
               href="/login"
               className="block w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors"
             >
-              Retour à la connexion
+              Torna al login
             </Link>
           </div>
 
@@ -82,10 +82,10 @@ export default function ForgotPassword() {
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display font-bold text-textDark mb-2">
-            Mot de passe oublié
+            Password dimenticata
           </h1>
           <p className="text-gray-600">
-            Entrez votre email pour recevoir un lien de réinitialisation
+            Inserisci la tua email per ricevere un link di reimpostazione
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-all"
-                placeholder="votre@email.com"
+                placeholder="tua@email.com"
               />
             </div>
           </div>
@@ -127,11 +127,11 @@ export default function ForgotPassword() {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Envoi en cours...
+                Invio in corso...
               </>
             ) : (
               <>
-                Envoyer le lien
+                Invia il link
                 <Mail className="w-5 h-5" />
               </>
             )}
