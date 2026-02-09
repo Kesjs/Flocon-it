@@ -267,7 +267,7 @@ export default function TrackOrder() {
                 )}
 
                 {/* Status Message */}
-                {orderData.fst_status === 'declared' && (
+                {orderData.fstStatus === 'declared' && (
                   <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-100">
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-amber-600" />

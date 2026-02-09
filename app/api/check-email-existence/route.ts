@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier si l'utilisateur existe avec une méthode plus fiable
-    const { data: { users }, error } = await supabase
+    const { data, error } = await supabase
       .from('auth.users')
       .select('email')
       .eq('email', email)
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userExists = !error && users;
+    const userExists = !error && data;
 
     return NextResponse.json({
       exists: userExists,

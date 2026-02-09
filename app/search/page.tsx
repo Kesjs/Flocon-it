@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product, products } from "@/data/products";
@@ -8,7 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import { Search, Filter, X, ArrowLeft, ShoppingBag, Sparkles, Command } from "lucide-react";
 import Link from "next/link";
 
-const SearchPage = () => {
+const SearchPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -183,6 +183,23 @@ const SearchPage = () => {
         </AnimatePresence>
       </main>
     </div>
+  );
+};
+
+const SearchPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex p-6 rounded-full bg-rose-50 text-rose-custom mb-4">
+            <Search size={40} />
+          </div>
+          <p className="text-gray-500">Chargement de la recherche...</p>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 };
 
