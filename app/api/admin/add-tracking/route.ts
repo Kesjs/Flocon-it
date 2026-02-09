@@ -19,26 +19,66 @@ export async function POST(request: NextRequest) {
 
     console.log('📦 Ajout numéro de suivi:', orderId, trackingNumber);
 
-    // Vérifier l'authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authorization header manquant ou invalide' },
-        { status: 401 }
-      );
-    }
+    // Vérifier la session admin via les cookies (méthode principale)
+    const sessionToken = request.cookies.get('admin_session')?.value;
 
-    const token = authHeader.split(' ')[1];
-    
-    // Vérifier le token avec Supabase
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (!sessionToken) {
+      // Fallback: essayer de récupérer le token depuis les headers (développement)
+      const authHeader = request.headers.get('x-admin-session');
+      if (!authHeader) {
+        return NextResponse.json(
+          { error: 'Session admin requise - veuillez vous reconnecter' },
+          { status: 401 }
+        );
+      }
+      
+      // Utiliser le token des headers pour le développement
+      try {
+        const sessionData = JSON.parse(Buffer.from(authHeader, 'base64').toString());
+        
+        // Vérifier si la session n'est pas expirée (8 heures)
+        const isExpired = Date.now() - sessionData.timestamp > 8 * 60 * 60 * 1000;
+        
+        if (isExpired) {
+          return NextResponse.json(
+            { error: 'Session admin expirée' },
+            { status: 401 }
+          );
+        }
 
-    if (authError || !user) {
-      console.error('Erreur auth:', authError);
-      return NextResponse.json(
-        { error: 'Utilisateur invalide' },
-        { status: 401 }
-      );
+        console.log('✅ Session admin valide (fallback):', sessionData.email);
+
+      } catch (decodeError) {
+        console.error('❌ Session admin invalide (fallback):', decodeError);
+        return NextResponse.json(
+          { error: 'Session admin invalide' },
+          { status: 401 }
+        );
+      }
+    } else {
+      // Décoder et vérifier le token de session (cookies)
+      try {
+        const sessionData = JSON.parse(Buffer.from(sessionToken, 'base64').toString());
+        
+        // Vérifier si la session n'est pas expirée (8 heures)
+        const isExpired = Date.now() - sessionData.timestamp > 8 * 60 * 60 * 1000;
+        
+        if (isExpired) {
+          return NextResponse.json(
+            { error: 'Session admin expirée' },
+            { status: 401 }
+          );
+        }
+
+        console.log('✅ Session admin valide (cookies):', sessionData.email);
+
+      } catch (decodeError) {
+        console.error('❌ Session admin invalide (cookies):', decodeError);
+        return NextResponse.json(
+          { error: 'Session admin invalide' },
+          { status: 401 }
+        );
+      }
     }
 
     // Mettre à jour le numéro de suivi de la commande

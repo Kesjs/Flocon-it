@@ -748,5 +748,29 @@
       "phone": "97 91 49 22"
     },
     "date": "2026-02-06T13:43:00.957Z"
+  },
+  "CMD-1770627789044": {
+    "id": "CMD-1770627789044",
+    "userId": "guest",
+    "status": "En attente",
+    "total": 1005.4799999999999,
+    "items": 28,
+    "products": [
+      {
+        "id": "8",
+        "name": "Diffuseur Ultrasonique Bois 400ml",
+        "price": 35.91,
+        "quantity": 28,
+        "image": "https://ma.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/89/134893/1.jpg?7768"
+      }
+    ],
+    "shippingAddress": {
+      "name": "Ken Babatounde",
+      "address": "Togba",
+      "city": "Calavi",
+      "postalCode": "75001",
+      "phone": "22 12 44 44"
+    },
+    "date": "2026-02-09T09:03:09.046Z"
   }
 }

@@ -85,9 +85,20 @@ export default function CGV() {
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
               7. Droit de rétractation
             </h2>
-            <p>
-              <strong>Droit de rétractation :</strong> Conformément à la législation, vous disposez d'un délai de 14 jours à compter de la réception pour exercer votre droit de rétractation sans avoir à justifier de motifs. Les frais de retour sont à votre charge.
-            </p>
+            <div className="space-y-3">
+              <p><strong>Délai de rétractation :</strong> Conformément à la législation, vous disposez d'un délai de 14 jours calendaires à compter de la réception de votre commande pour exercer votre droit de rétractation sans avoir à justifier de motifs.</p>
+              
+              <p><strong>Modalités de retour :</strong></p>
+              <ul className="list-disc list-inside ml-6 space-y-1">
+                <li>Notifier votre intention par email à contact@flocon-market.fr</li>
+                <li>Renvoyer les produits dans leur état d'origine (emballage, étiquettes)</li>
+                <li>Utiliser notre transporteur partenaire : Colissimo</li>
+                <li>Frais de retour : 3,99€ (offerts pour toute commande supérieure à 50€)</li>
+                <li>Délai de retour : 14 jours après notification</li>
+              </ul>
+              
+              <p><strong>Remboursement :</strong> Effectué sous 14 jours après réception et vérification du retour, via le moyen de paiement initial.</p>
+            </div>
           </section>
 
           <section>
@@ -115,18 +126,31 @@ export default function CGV() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              10. Litiges
+              10. Service Client
+            </h2>
+            <div className="space-y-2">
+              <p><strong>Contact Service Client :</strong></p>
+              <p>Email : contact@flocon-market.fr</p>
+              <p>Disponibilité : Du lundi au vendredi, 9h-18h</p>
+              <p>Temps de réponse : Sous 24h ouvrées</p>
+              <p><em>Pour toute question, réclamation ou demande d'information, notre service client est à votre disposition.</em></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
+              11. Litiges
             </h2>
             <p>
               Pour tout litige, le client peut contacter le service client à l'adresse 
               contact@flocon-market.fr. En l'absence d'accord amiable, le litige pourra être soumis 
-              au tribunal compétent.
+              au médiateur de la consommation CM2C ou au tribunal compétent.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              11. Propriété intellectuelle
+              12. Propriété intellectuelle
             </h2>
             <p>
               Tous les éléments du site www.flocon.fr, incluant textes, images, 
@@ -138,7 +162,7 @@ export default function CGV() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              12. Force majeure
+              13. Force majeure
             </h2>
             <p>
               Flocon ne pourra être tenue responsable en cas d'inexécution ou de retard 
@@ -149,7 +173,7 @@ export default function CGV() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              13. Responsabilité du client
+              14. Responsabilité du client
             </h2>
             <p>
               Le client s'engage à ne pas utiliser les produits à des fins illégles ou contraires à l'ordre public. Le client est responsable de l'exactitude des informations fournies lors de la commande.

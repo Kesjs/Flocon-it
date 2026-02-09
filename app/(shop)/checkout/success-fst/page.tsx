@@ -438,7 +438,7 @@ function SuccessFSTPageContent() {
           {/* Bouton Rose Identité */}
           <div className="space-y-4">
             <Link
-              href="/dashboard"
+              href={isConfirmed ? "/track" : "/dashboard"}
               className="w-full bg-rose-custom text-white py-4 rounded-2xl font-semibold hover:bg-rose-custom/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-custom/20 active:scale-[0.98]"
             >
               {isConfirmed ? "Suivre mon colis" : "Accéder à mon compte"}

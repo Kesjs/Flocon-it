@@ -1,0 +1,10 @@
+
+> flocon-ecommerce@1.0.0 dev
+> next dev --port 3000
+
+   ▲ Next.js 15.5.12
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.220:3000
+   - Environments: .env.local, .env
+
+ ✓ Starting...

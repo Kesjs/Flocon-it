@@ -337,7 +337,7 @@ export const products: Product[] = [
     stock: 15,
     badge: 'Élégance Sensuelle',
     ambiance: 'Romantique',
-    tags: ['parfum', 'fleur', 'luxe', 'promo', 'saint-valentin', 'fete-meres'],
+    tags: ['parfum', 'fleur', 'luxe', 'personnalisable', 'promo', 'saint-valentin', 'fete-meres'],
   },
   {
     id: '15',
@@ -355,7 +355,7 @@ export const products: Product[] = [
     stock: 18,
     badge: 'Moment Magique',
     ambiance: 'Romantique',
-    tags: ['diner', 'romantique', 'premium', 'luxe', 'promo', 'saint-valentin'],
+    tags: ['diner', 'romantique', 'premium', 'luxe', 'personnalisable', 'promo', 'saint-valentin'],
   },
   {
     id: '16',
@@ -703,7 +703,7 @@ export const products: Product[] = [
     stock: 20,
     badge: 'Élégant Intemporel',
     ambiance: 'Elégant',
-    tags: ['bijoux', 'argent', 'minimaliste', 'promo', 'anniversaire'],
+    tags: ['bijoux', 'argent', 'minimaliste', 'personnalisable', 'promo', 'anniversaire'],
     featured: true
   },
   {
@@ -722,7 +722,7 @@ export const products: Product[] = [
     stock: 25,
     badge: 'Bio Relax',
     ambiance: 'Elégant',
-    tags: ['bien-etre', 'bio', 'spa', 'promo', 'anniversaire', 'fete-meres'],
+    tags: ['bien-etre', 'bio', 'spa', 'personnalisable', 'promo', 'anniversaire', 'fete-meres'],
   },
   {
     id: '39',
@@ -1031,7 +1031,7 @@ export const products: Product[] = [
     subCategory: 'Chambre',
     rating: 4.5,
     reviewsCount: 160,
-    images: ['https://m.media-amazon.com/images/I/71VidePocheMarbre.jpghttps://m.media-amazon.com/images/I/4129Ad4GY8L.jpg'],
+    images: ['https://cdn.shopify.com/s/files/1/0653/7697/7075/files/124998_CARRMS-116-B20200710-47-6omrwo.jpg?v=1762263002'],
     stock: 40,
     badge: 'Élégant Minimal',
     ambiance: 'Elégant'

@@ -58,6 +58,9 @@ function CommandCenterWithNotifications() {
   const [emailContent, setEmailContent] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+  const [trackingInput, setTrackingInput] = useState('');
   const [stats, setStats] = useState({
     totalRevenue: 0,
     activeUsers: 0,
@@ -490,37 +493,70 @@ function CommandCenterWithNotifications() {
     }
   };
 
-  const handleAddTracking = async (orderId: string) => {
-    const trackingNumber = prompt(`📦 Numéro de suivi pour la commande ${orderId} ?\n\nExemple: 6A123456789`);
+  const handleAddTracking = (orderId: string) => {
+    console.log('🔘 Bouton Suivi cliqué pour orderId:', orderId);
     
-    if (trackingNumber === null) {
-      return; // L'utilisateur a annulé
-    }
+    setSelectedOrderId(orderId);
+    setTrackingInput('');
+    setTrackingModalOpen(true);
+    
+    console.log('📋 Modal de suivi ouverte');
+  };
 
-    if (trackingNumber.trim() === '') {
+  const handleConfirmTracking = async () => {
+    console.log('📝 Numéro de suivi saisi:', trackingInput);
+    
+    if (trackingInput.trim() === '') {
       alert('Le numéro de suivi ne peut pas être vide');
       return;
     }
 
-    setConfirmingId(orderId);
+    console.log('🚀 Début de l\'ajout de suivi...');
+    setConfirmingId(selectedOrderId);
+    setTrackingModalOpen(false);
     
     try {
+      // Récupérer le token de session depuis les cookies pour le fallback
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+      };
+      
+      const sessionToken = getCookie('admin_session');
+      console.log('🍪 Token de session:', sessionToken ? 'trouvé' : 'non trouvé');
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      
+      // Ajouter le token en header si disponible (fallback pour le développement)
+      if (sessionToken) {
+        headers['x-admin-session'] = sessionToken;
+        console.log('🔑 Token ajouté aux headers');
+      }
+      
+      console.log('📤 Envoi de la requête API...');
+      
       const response = await fetch('/api/admin/add-tracking', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-        },
-        body: JSON.stringify({ orderId, trackingNumber: trackingNumber.trim() })
+        headers,
+        credentials: 'include', // Important pour inclure les cookies
+        body: JSON.stringify({ orderId: selectedOrderId, trackingNumber: trackingInput.trim() })
       });
 
+      console.log('📥 Réponse API reçue:', response.status);
+      
       const result = await response.json();
+      console.log('📊 Résultat API:', result);
 
       if (result.success) {
+        console.log('✅ Succès API - Mise à jour locale');
         // Mettre à jour l'état local
         setFstPayments(prev => 
-          prev.map(p => p.id === orderId 
-            ? { ...p, tracking_number: trackingNumber.trim() }
+          prev.map(p => p.id === selectedOrderId 
+            ? { ...p, tracking_number: trackingInput.trim() }
             : p
           )
         );
@@ -528,11 +564,11 @@ function CommandCenterWithNotifications() {
         addNotification({
           type: 'success',
           title: 'Numéro de suivi ajouté',
-          message: `Le numéro de suivi ${trackingNumber.trim()} a été ajouté à la commande ${orderId}`
+          message: `Le numéro de suivi ${trackingInput.trim()} a été ajouté à la commande ${selectedOrderId}`
         });
 
         // Animation de succès
-        const element = document.getElementById(`payment-${orderId}`);
+        const element = document.getElementById(`payment-${selectedOrderId}`);
         if (element) {
           element.classList.add('bg-purple-50', 'border-purple-200');
           setTimeout(() => {
@@ -540,13 +576,17 @@ function CommandCenterWithNotifications() {
           }, 2000);
         }
       } else {
+        console.log('❌ Erreur API:', result.error);
         alert(`Erreur: ${result.error}`);
       }
     } catch (error) {
-      
+      console.error('💥 Erreur catch:', error);
       alert('Erreur lors de l\'ajout du numéro de suivi');
     } finally {
+      console.log('🏁 Fin de handleConfirmTracking');
       setConfirmingId(null);
+      setSelectedOrderId('');
+      setTrackingInput('');
     }
   };
 
@@ -1458,6 +1498,92 @@ L'équipe Flocon`;
           </motion.div>
         </div>
       )}
+
+      {/* Modal de suivi */}
+      <AnimatePresence>
+        {trackingModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setTrackingModalOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-2xl border border-slate-200/60 shadow-xl max-w-md w-full p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <span className="text-2xl">📦</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900">
+                      Ajouter un numéro de suivi
+                    </h3>
+                    <div className="text-sm text-slate-500">
+                      Commande: {selectedOrderId}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setTrackingModalOpen(false)}
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <X size={20} className="text-slate-400" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Numéro de suivi
+                </label>
+                <input
+                  type="text"
+                  value={trackingInput}
+                  onChange={(e) => setTrackingInput(e.target.value)}
+                  placeholder="Ex: 6A123456789"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  autoFocus
+                />
+                <div className="mt-2 text-xs text-slate-500">
+                  💡 Entrez le numéro de suivi fourni par le transporteur
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setTrackingModalOpen(false)}
+                  className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleConfirmTracking}
+                  disabled={!trackingInput.trim() || confirmingId === selectedOrderId}
+                  className="flex-1 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {confirmingId === selectedOrderId ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Ajout...
+                    </>
+                  ) : (
+                    <>
+                      <span>✅</span>
+                      Ajouter le suivi
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

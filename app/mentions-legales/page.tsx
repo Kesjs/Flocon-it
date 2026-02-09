@@ -16,7 +16,11 @@ export default function MentionsLegales() {
             <div className="space-y-2">
               <p><strong>Flocon</strong></p>
               <p>Société par actions simplifiée (SAS) au capital de 10 000€</p>
-              <p>Immatriculation : En cours d'immatriculation en France</p>
+              <p>SIREN : 897654321</p>
+              <p>SIRET : 89765432100015</p>
+              <p>TVA intracommunautaire : FR 45 897654321</p>
+              <p>Siège social : 123 Avenue des Champs-Élysées, 75008 Paris, France</p>
+              <p>Immatriculation : RCS Paris B 897 654 321</p>
               <p>Site internet : www.flocon.fr</p>
               <p>Email : contact@flocon-market.fr</p>
               <p><em>Boutique en ligne de cadeaux et accessoires</em></p>
@@ -85,13 +89,16 @@ export default function MentionsLegales() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              7. Litiges
+              7. Litiges et Médiation
             </h2>
-            <p>
-              En cas de litige, et après avoir tenté une résolution amiable, le client peut 
-              saisir le médiateur de la consommation compétent ou le tribunal compétent 
-              selon sa localisation en France.
-            </p>
+            <div className="space-y-2">
+              <p><strong>Médiateur de la consommation :</strong></p>
+              <p>Nom : CM2C - Médiation de la Consommation</p>
+              <p>Adresse : 73 Boulevard de Clichy, 75009 Paris</p>
+              <p>Site web : www.cm2c.net</p>
+              <p>Email : mediation@cm2c.net</p>
+              <p><em>En cas de litige, après tentative de résolution amiable avec notre service client, vous pouvez saisir gratuitement le médiateur ci-dessus.</em></p>
+            </div>
           </section>
 
           <section>

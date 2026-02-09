@@ -109,7 +109,7 @@ export default function PromotionsPage() {
               <div className="relative rounded-3xl shadow-2xl overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform duration-500">
                 <div className="aspect-square relative">
                   <img
-                    src="https://images.unsplash.com/photo-1602143407151-711c2b47c2ed?w=600"
+                    src="/man-holding-shopping-bag-medium-shot.webp"
                     alt="Homme tenant un sac de shopping pour les promotions"
                     className="w-full h-full object-cover"
                     loading="eager"

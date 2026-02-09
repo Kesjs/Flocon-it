@@ -49,16 +49,16 @@ export default function OptimizedImage({
     setIsMounted(true);
   }, []);
 
-  // Gestion des erreurs de chargement
+  // Gestion des erreurs de chargement - SANS FALLBACK
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.warn(`⚠️ OptimizedImage - Failed to load:`, originalSrc);
+    
     if (onError) {
       onError(e);
     }
     
+    // ❌ PLUS DE FALLBACK - On laisse l'image échouer naturellement
     if (!hasError) {
-      if (fallbackSrc && imgSrc !== fallbackSrc) {
-        setImgSrc(fallbackSrc);
-      }
       setHasError(true);
     }
   };

@@ -16,11 +16,29 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { cartItems } = useCart();
   const { user, signOut, loading } = useAuth();
   const router = useRouter();
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch(e as any);
+    }
+  };
 
   // Prefetch stratégique pour les pages critiques
   useEffect(() => {
@@ -28,6 +46,7 @@ export default function Header() {
     router.prefetch('/checkout');
     router.prefetch('/dashboard');
     router.prefetch('/login');
+    router.prefetch('/search');
   }, [router]);
 
   useEffect(() => {
@@ -150,7 +169,7 @@ export default function Header() {
             {/* Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4">
               {/* Search - Desktop only */}
-              <div className="hidden md:flex items-center bg-gray-100/50 rounded-full px-3 py-2 group">
+              <form onSubmit={handleSearch} className="hidden md:flex items-center bg-gray-100/50 rounded-full px-3 py-2 group">
                 <motion.div
                   animate={{ rotate: isScrolled ? 360 : 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -160,9 +179,12 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Rechercher..."
+                  value={searchTerm}
+                  onChange={handleSearchInputChange}
+                  onKeyPress={handleSearchKeyPress}
                   className="ml-2 bg-transparent border-none outline-none text-sm w-24 sm:w-32 group-hover:w-32 sm:group-hover:w-40 transition-all duration-300"
                 />
-              </div>
+              </form>
 
               {/* Profile */}
               <div className="relative">
@@ -407,15 +429,18 @@ export default function Header() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2, delay: 0.3 }}
-                    className="flex items-center bg-gray-100/50 rounded-full px-3 py-2 mt-2 group"
-                    whileHover={{ backgroundColor: 'rgba(231, 34, 129, 0.1)' }}
                   >
-                    <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
-                    <input
-                      type="text"
-                      placeholder="Rechercher..."
-                      className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-32 transition-all duration-300"
-                    />
+                    <form onSubmit={handleSearch} className="flex items-center bg-gray-100/50 rounded-full px-3 py-2 mt-2 group">
+                      <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
+                      <input
+                        type="text"
+                        placeholder="Rechercher..."
+                        value={searchTerm}
+                        onChange={handleSearchInputChange}
+                        onKeyPress={handleSearchKeyPress}
+                        className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-32 transition-all duration-300"
+                      />
+                    </form>
                   </motion.div>
 
                   {/* Mobile Profile/Login */}

@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 8, // 8 heures
-      path: '/'
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost'
     });
 
     console.log('✅ Admin connecté:', email);

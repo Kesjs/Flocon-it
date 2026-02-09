@@ -1,9 +1,9 @@
+/* Importer NProgress styles */
+@import '../styles/nprogress.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Importer NProgress styles */
-@import '../styles/nprogress.css';
 
 :root {
   --cream: #f9f7f2;

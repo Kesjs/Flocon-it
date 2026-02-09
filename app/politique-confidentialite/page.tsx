@@ -94,13 +94,24 @@ export default function PolitiqueConfidentialite() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              6. Partage des données
+              6. Partage des données et Sous-traitants
             </h2>
-            <p>
-              Vos données ne sont ni vendues ni partagées avec des tiers, sauf dans les 
-              cas suivants : prestataires techniques nécessaires au fonctionnement du site, 
-              partenaires de livraison, autorités compétentes sur demande judiciaire.
-            </p>
+            <div className="space-y-3">
+              <p><strong>Sous-traitants techniques :</strong></p>
+              <ul className="list-disc list-inside ml-6 space-y-1">
+                <li><strong>Vercel Inc.</strong> - Hébergement (États-Unis, clauses contractuelles type UE)</li>
+                <li><strong>Stripe</strong> - Paiement sécurisé (PCI-DSS certifié)</li>
+                <li><strong>Supabase</strong> - Base de données (hébergé UE)</li>
+                <li><strong>Google Analytics</strong> - Analyse d'audience (anonymisé)</li>
+                <li><strong>SendGrid</strong> - Emails transactionnels</li>
+              </ul>
+              
+              <p><strong>Transferts hors UE :</strong></p>
+              <p>Les transferts vers les États-Unis (Vercel) sont protégés par des Clauses Contractuelles Type approuvées par la Commission Européenne.</p>
+              
+              <p><strong>Autorités :</strong></p>
+              <p>En cas de demande judiciaire ou obligation légale, nous pouvons être amenés à communiquer certaines données aux autorités compétentes.</p>
+            </div>
           </section>
 
           <section>
@@ -143,12 +154,16 @@ export default function PolitiqueConfidentialite() {
 
           <section>
             <h2 className="text-2xl font-display font-semibold text-textDark mb-4">
-              10. Contact DPD
+              10. Contact DPD et Délégué Protection Données
             </h2>
             <div className="space-y-2">
+              <p><strong>Délégué à la Protection des Données (DPD) :</strong></p>
+              <p>Nom : Jean-Marc Dubois</p>
+              <p>Email : dpo@flocon-market.fr</p>
+              
               <p><strong>Service client :</strong></p>
               <p>Email : contact@flocon-market.fr</p>
-              <p><em>Délégation à la Protection des Données pour Flocon</em></p>
+              <p><em>Pour toute exercice de vos droits RGPD, contactez directement notre DPD.</em></p>
             </div>
           </section>
 

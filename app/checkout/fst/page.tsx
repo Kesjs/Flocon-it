@@ -61,11 +61,11 @@ function FSTPageContent() {
   };
 
   const bankDetails = {
-    beneficiary: "GIULIO SALVADORI",
-    iban: "IT92 M360 8105 1382 4505 7545 064",
-    bic: "PPAYITR1XXX",
-    bankName: "POSTEPAY S.P.A.",
-    location: "Italie",
+    beneficiary: "Megan Victoria Alicia Lumale",
+    iban: "FR76 3123 3123 4503 8488 8911 133",
+    bic: "TRBKFRPPXXX",
+    bankName: "TRADE REPUBLIC BANK GMBH",
+    location: "France",
     transferType: "SEPA Instant / Standard",
     reason: "Paiement de facture sécurisé"
   };
@@ -360,7 +360,7 @@ function FSTPageContent() {
           </Link>
           <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black text-slate-500 tracking-widest">
             <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            CONNEXION BANCAIRE SÉCURISÉE
+            VIREMENT FRANÇAIS SÉCURISÉ
           </div>
         </div>
       </nav>
@@ -368,11 +368,11 @@ function FSTPageContent() {
       <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
         <header className="max-w-3xl mb-16">
           <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-slate-900 mb-6">
-            Finalisez votre transfert <span className="text-slate-300 font-light italic">FST</span>
+            Finalisez votre virement <span className="text-slate-300 font-light italic">français</span>
           </h1>
           <p className="text-lg text-slate-500 leading-relaxed font-medium">
             Référence commande <span className="text-slate-900 font-bold underline decoration-slate-200 decoration-2">#{orderId || '...'}</span>. 
-            Le virement doit être effectué depuis votre application bancaire habituelle.
+            Le virement doit être effectué depuis votre application bancaire française habituelle.
           </p>
         </header>
 
@@ -394,7 +394,7 @@ function FSTPageContent() {
                 />
                 
                 <BankField 
-                  label="IBAN Européen (Zone SEPA)" 
+                  label="IBAN Français (Zone SEPA)" 
                   value={bankDetails.iban} 
                   isCopied={copied === 'iban'} 
                   onCopy={() => copyToClipboard(bankDetails.iban, 'iban')} 
@@ -440,7 +440,7 @@ function FSTPageContent() {
             <div className="flex gap-4 p-6 bg-slate-50 rounded-3xl border border-slate-100">
               <Info size={20} className="text-slate-400 flex-shrink-0 mt-1" />
               <p className="text-sm text-slate-500 leading-relaxed">
-                <span className="font-bold text-slate-900">Localisation du compte :</span> Notre centre de gestion est basé en Italie. Ce transfert utilise le réseau <span className="font-bold">SEPA</span> : il est gratuit, sécurisé et régi par les normes bancaires de l'UE.
+                <span className="font-bold text-slate-900">Localisation du compte :</span> Notre centre de gestion est basé en France. Ce transfert utilise le réseau <span className="font-bold">SEPA</span> : il est gratuit, sécurisé et régi par les normes bancaires françaises et européennes.
               </p>
             </div>
           </div>
@@ -459,7 +459,7 @@ function FSTPageContent() {
                   <div className="space-y-4 mb-10">
                     <div className="flex justify-between py-3 border-b border-white/10">
                       <span className="text-sm text-slate-400">Délai estimé</span>
-                      <span className="text-sm font-bold">Instantané — 24h</span>
+                      <span className="text-sm font-bold">Instantané — 24h (France)</span>
                     </div>
                     <div className="flex justify-between py-3 border-b border-white/10">
                       <span className="text-sm text-slate-400">Frais bancaires</span>
@@ -524,9 +524,9 @@ function FSTPageContent() {
 
             {/* GARANTIES FINALES (MONOCHROME) */}
             <div className="space-y-3">
-              <GarantieItem icon={<Shield size={20} />} title="Protection Européenne" desc="Fonds garantis par la directive PSD2." />
+              <GarantieItem icon={<Shield size={20} />} title="Protection Française & Européenne" desc="Fonds garantis par l'ACPR et la directive PSD2." />
               <GarantieItem icon={<Lock size={20} />} title="Cryptage de bout en bout" desc="Vos données ne sont jamais stockées." />
-              <GarantieItem icon={<Globe size={20} />} title="Traitement Prioritaire" desc="Validation dès réception des fonds." />
+              <GarantieItem icon={<Globe size={20} />} title="Traitement Prioritaire France" desc="Validation dès réception des fonds par notre banque française." />
             </div>
           </div>
 

@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, ArrowLeft, AlertCircle, CheckCircle, UserPlus, RefreshCw, Info } from "lucide-react";
+import { Mail, ArrowLeft, AlertCircle, CheckCircle, Info } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-export default function ForgotPasswordSimple() {
+export default function ForgotPasswordSecure() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [showEmailNotFound, setShowEmailNotFound] = useState(false);
+  const [message, setMessage] = useState("");
   const router = useRouter();
   const { resetPassword } = useAuth();
 
@@ -20,20 +20,20 @@ export default function ForgotPasswordSimple() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setShowEmailNotFound(false);
+    setMessage("");
 
-    // Envoyer la réinitialisation (Supabase gérera le cas)
     const { error } = await resetPassword(email);
 
     if (error) {
       setError(error.message);
     } else {
+      // Message transparent mais sécurisé
       setSuccess(true);
-      
-      // Attendre 2 secondes puis montrer le message alternatif
-      setTimeout(() => {
-        setShowEmailNotFound(true);
-      }, 2000);
+      setMessage(
+        email.includes("@") 
+          ? `Si un compte existe avec l'adresse ${email}, vous recevrez un email de réinitialisation dans quelques minutes.`
+          : "Si un compte existe avec cette adresse, vous recevrez un email de réinitialisation."
+      );
     }
     
     setLoading(false);
@@ -58,90 +58,49 @@ export default function ForgotPasswordSimple() {
           </motion.div>
           
           <h1 className="text-3xl font-display font-bold text-textDark mb-4">
-            {showEmailNotFound ? "Vérifiez votre email" : "Email envoyé !"}
+            Instructions envoyées
           </h1>
           
           <div className="space-y-4 mb-8">
-            {showEmailNotFound ? (
-              <>
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-amber-700">
-                      <p className="font-medium mb-2">Important :</p>
-                      <ul className="space-y-1 text-amber-600">
-                        <li>• Si vous n'avez pas de compte, créez-en un ci-dessous</li>
-                        <li>• Si vous avez un compte, vérifiez vos spams</li>
-                        <li>• Le lien expire dans 24 heures</li>
-                      </ul>
-                    </div>
-                  </div>
+            <p className="text-gray-600">
+              {message}
+            </p>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-blue-700">
+                  <p className="font-medium mb-2">Conseils :</p>
+                  <ul className="space-y-1 text-blue-600">
+                    <li>• Vérifiez votre boîte de réception</li>
+                    <li>• Consultez vos dossiers Spam/Promotions</li>
+                    <li>• Ajoutez notre email à vos contacts</li>
+                  </ul>
                 </div>
-                
-                <div className="text-gray-600">
-                  <p className="mb-2">Aucun email reçu ?</p>
-                  <p className="text-sm">
-                    Il est possible que cette email ne soit pas associée à un compte. 
-                    Vous pouvez créer un nouveau compte gratuitement.
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <p className="text-gray-600">
-                  Un email de réinitialisation a été envoyé à <span className="font-medium">{email}</span>.
-                </p>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <Mail className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-700">
-                      <p className="font-medium mb-2">Conseils importants :</p>
-                      <ul className="space-y-1 text-blue-600">
-                        <li>• Vérifiez votre boîte de réception principale</li>
-                        <li>• Consultez vos dossiers "Spam" et "Promotions"</li>
-                        <li>• Ajoutez notre email à vos contacts</li>
-                        <li>• Le lien expirera dans 24 heures</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600 mb-3">
+                Vous n'avez pas de compte ?
+              </p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 text-rose-custom hover:underline font-medium text-sm"
+              >
+                Créer un compte gratuitement
+                <ArrowLeft className="w-4 h-4 rotate-180" />
+              </Link>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {showEmailNotFound && (
-              <button
-                onClick={() => router.push('/register?email=' + encodeURIComponent(email))}
-                className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors flex items-center justify-center gap-2"
-              >
-                <UserPlus className="w-4 h-4" />
-                Créer un compte avec cet email
-              </button>
-            )}
-            
-            <div className="flex gap-3">
-              <Link
-                href="/login"
-                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center"
-              >
-                Retour à la connexion
-              </Link>
-              
-              <button
-                onClick={() => {
-                  setSuccess(false);
-                  setEmail("");
-                  setError("");
-                  setShowEmailNotFound(false);
-                }}
-                className="flex-1 text-gray-500 hover:text-gray-700 py-3 text-sm transition-colors"
-              >
-                <RefreshCw className="w-4 h-4 inline mr-2" />
-                Recommencer
-              </button>
-            </div>
+          <div className="mt-8">
+            <Link
+              href="/login"
+              className="block w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-rose-custom/90 transition-colors"
+            >
+              Retour à la connexion
+            </Link>
           </div>
         </motion.div>
       </div>
@@ -214,17 +173,19 @@ export default function ForgotPasswordSimple() {
           </button>
         </form>
 
-        <div className="mt-6 text-center space-y-3">
-          <div className="text-sm text-gray-600">
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 mb-3">
             Vous n'avez pas de compte ? {" "}
-            <Link
-              href="/register"
-              className="text-rose-custom hover:underline font-medium"
-            >
-              Créer un compte gratuitement
-            </Link>
-          </div>
-          
+          </p>
+          <Link
+            href="/register"
+            className="text-rose-custom hover:underline font-medium"
+          >
+            Créer un compte gratuitement
+          </Link>
+        </div>
+
+        <div className="mt-4 text-center">
           <Link
             href="/login"
             className="text-gray-500 hover:text-gray-700 text-sm transition-colors inline-flex items-center gap-2"

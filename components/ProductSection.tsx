@@ -55,7 +55,9 @@ export const ProductSection = ({
         {layout === 'grid' ? (
           <div className={`grid ${getGridCols(columns)} gap-6`}>
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} className="h-full">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         ) : (

@@ -34,7 +34,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
 
   return (
     <div
-      className={`group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden will-change-transform flex flex-col ${className}`}
+      className={`group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden will-change-transform flex flex-col h-full ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ transform: 'translateZ(0)' }}

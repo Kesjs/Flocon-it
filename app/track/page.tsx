@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Package, CheckCircle2, Truck, Home, Search } from "lucide-react";
+import { Package, CheckCircle2, Truck, Home, Search, AlertCircle, Clock } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -13,6 +13,17 @@ interface OrderStep {
   label: string;
   description: string;
   icon: React.ElementType;
+}
+
+interface OrderData {
+  id: string;
+  status: OrderStatus;
+  trackingNumber?: string;
+  fstStatus: string;
+  total: number;
+  created_at: string;
+  updated_at: string;
+  user_email: string;
 }
 
 const steps: OrderStep[] = [
@@ -44,31 +55,50 @@ const steps: OrderStep[] = [
 
 export default function TrackOrder() {
   const [orderId, setOrderId] = useState("");
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus | null>(null);
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Simulation de recherche de commande
-  const handleSearch = () => {
+  // Recherche de commande réelle
+  const handleSearch = async () => {
     if (!orderId.trim()) return;
+    
     setIsSearching(true);
-    // Simulation d'une recherche
-    setTimeout(() => {
-      // Simule différents statuts selon l'ID
-      const statusMap: Record<string, OrderStatus> = {
-        "CMD-001": "delivered",
-        "CMD-002": "shipped",
-        "CMD-003": "preparing",
-      };
-      setCurrentStatus(statusMap[orderId] || "confirmed");
+    setError(null);
+    setOrderData(null);
+    
+    try {
+      const response = await fetch(`/api/track?orderId=${orderId.trim()}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setOrderData(result.order);
+        console.log('✅ Commande trouvée:', result.order);
+      } else {
+        setError(result.error || 'Commande non trouvée');
+        console.log('❌ Erreur recherche:', result.error);
+      }
+    } catch (error) {
+      console.error('💥 Erreur réseau:', error);
+      setError('Erreur de connexion au serveur');
+    } finally {
       setIsSearching(false);
-    }, 1000);
+    }
   };
 
   const getStepIndex = (status: OrderStatus) => {
     return steps.findIndex((step) => step.id === status);
   };
 
-  const currentStepIndex = currentStatus ? getStepIndex(currentStatus) : -1;
+  const currentStepIndex = orderData ? getStepIndex(orderData.status) : -1;
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="pt-28 min-h-screen bg-cream px-4 py-12">
@@ -98,7 +128,7 @@ export default function TrackOrder() {
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                placeholder="Ex: CMD-001, CMD-002, CMD-003"
+                placeholder="Ex: CMD-1770627789044"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none"
               />
             </div>
@@ -111,8 +141,25 @@ export default function TrackOrder() {
             </button>
           </div>
 
+          {/* Error State */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
+            >
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <div>
+                  <h3 className="font-semibold text-red-800">Erreur</h3>
+                  <p className="text-red-600">{error}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Progress Bar */}
-          {currentStatus && (
+          {orderData && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -183,7 +230,7 @@ export default function TrackOrder() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Numéro de commande</p>
-                    <p className="font-semibold text-textDark">{orderId}</p>
+                    <p className="font-semibold text-textDark">{orderData.id}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Statut actuel</p>
@@ -193,19 +240,44 @@ export default function TrackOrder() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Date de commande</p>
-                    <p className="font-semibold text-textDark">22 Jan 2026</p>
+                    <p className="font-semibold text-textDark">{formatDate(orderData.created_at)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Livraison estimée</p>
-                    <p className="font-semibold text-textDark">
-                      {currentStatus === "delivered"
-                        ? "Livrée"
-                        : currentStatus === "shipped"
-                        ? "25 Jan 2026"
-                        : "27 Jan 2026"}
-                    </p>
+                    <p className="text-sm text-gray-600">Montant total</p>
+                    <p className="font-semibold text-textDark">{orderData.total.toFixed(2)}€</p>
                   </div>
                 </div>
+
+                {/* Tracking Number */}
+                {orderData.trackingNumber && !orderData.trackingNumber.startsWith('EN_PREPARATION_') && (
+                  <div className="mt-6 p-4 bg-rose-50 rounded-lg border border-rose-100">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-rose-800">Numéro de suivi</p>
+                        <p className="font-mono font-bold text-rose-custom text-lg">{orderData.trackingNumber}</p>
+                      </div>
+                      <button
+                        onClick={() => window.open(`https://www.laposte.fr/particulier/suivre-vos-envois?code=${orderData.trackingNumber}`, '_blank')}
+                        className="px-4 py-2 bg-rose-custom text-white rounded-lg hover:bg-opacity-90 transition-colors"
+                      >
+                        Suivre sur La Poste
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Status Message */}
+                {orderData.fst_status === 'declared' && (
+                  <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-100">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-amber-600" />
+                      <div>
+                        <p className="font-semibold text-amber-800">En attente de validation</p>
+                        <p className="text-amber-600 text-sm">Votre virement est en cours de vérification par notre équipe.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Help Text */}
@@ -221,14 +293,14 @@ export default function TrackOrder() {
           )}
 
           {/* Empty State */}
-          {!currentStatus && !isSearching && (
+          {!orderData && !isSearching && !error && (
             <div className="text-center py-12">
               <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600">
                 Entrez un numéro de commande pour commencer le suivi
               </p>
               <p className="text-sm text-gray-500 mt-2">
-                Exemples : CMD-001 (livrée), CMD-002 (expédiée), CMD-003 (en préparation)
+                Utilisez le numéro de commande reçu par email
               </p>
             </div>
           )}
