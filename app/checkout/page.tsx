@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, CreditCard, Shield, Truck, Clock, X, Eye } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
 import { motion } from "framer-motion";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function Checkout() {
   const { cartItems, clearCart } = useCart();
@@ -61,45 +58,20 @@ export default function Checkout() {
     }
 
     setIsProcessing(true);
-    console.log('🚀 Inizio pagamento:', { cartItems: cartItems.length, customerEmail });
+    console.log('🚀 Inizio processo bonifico:', { cartItems: cartItems.length, customerEmail });
 
     try {
-      // Créer la session Stripe
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cartItems,
-          customerEmail,
-        }),
-      });
-
-      console.log('📡 Risposta API:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Errore API:', errorText);
-        throw new Error(`Errore API: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('✅ Dati ricevuti:', data);
-
-      const { sessionId, url } = data;
-
-      if (url) {
-        console.log('🔄 Reindirizzamento verso:', url);
-        // Rediriger vers Stripe Checkout
-        window.location.href = url;
-      } else {
-        console.error('❌ URL mancante nella risposta:', data);
-        throw new Error('URL di pagamento non ricevuto');
-      }
+      // Simuler l'envoi d'une confirmation par email
+      console.log('📧 Invio email di conferma con dettagli bonifico');
+      
+      // Rediriger vers la page de succès
+      setTimeout(() => {
+        router.push('/checkout/success');
+      }, 2000);
+      
     } catch (error) {
-      console.error('💥 Errore durante il pagamento:', error);
-      alert('Si è verificato un errore durante l\'elaborazione del pagamento. Riprova.');
+      console.error('💥 Errore durante il processo:', error);
+      alert('Si è verificato un errore. Riprova.');
     } finally {
       setIsProcessing(false);
     }

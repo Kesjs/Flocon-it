@@ -76,12 +76,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       >
                         <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                           {item.image ? (
-                            <OptimizedImage
+                            <img
                               src={item.image}
                               alt={item.name}
-                              fill
-                              className="object-cover"
-                              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                              width={80}
+                              height={80}
+                              className="object-cover w-full h-full"
+                              onError={(e) => {
                                 // Si l'image ne se charge pas, la cacher et montrer le fallback
                                 const target = e.currentTarget;
                                 target.style.display = 'none';
