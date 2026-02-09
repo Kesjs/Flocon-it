@@ -24,9 +24,9 @@ export default function BoutiqueContent() {
 
   // Categories for sidebar
   const categories = [
-    { id: 'tous', name: 'Tous les produits', count: products.length },
-    { id: 'Hiver', name: 'L\'Art du Cocooning', count: getProductsByCategory('Hiver').length },
-    { id: 'Saint-Valentin', name: 'Fleurs de Tendresse', count: getProductsByCategory('Saint-Valentin').length }
+    { id: 'tous', name: 'Tutti i prodotti', count: products.length },
+    { id: 'Hiver', name: "L'arte del Cocooning", count: getProductsByCategory('Hiver').length },
+    { id: 'Saint-Valentin', name: 'Fiori di Tenerezza', count: getProductsByCategory('Saint-Valentin').length }
   ];
 
   // Get initial filters from URL params
@@ -141,18 +141,18 @@ export default function BoutiqueContent() {
             className="max-w-2xl md:max-w-3xl"
           >
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 md:mb-6 leading-tight">
-              Boutique Flocon
+              Negozio Flocon
             </h1>
             <p className="text-base md:text-lg text-white/90 mb-6 md:mb-8 leading-relaxed">
-              Découvrez nos collections uniques pour l'hiver et la Saint-Valentin.
-              Des cadeaux qui marquent les esprits.
+              Scopri le nostre collezioni uniche per l'inverno e San Valentino.
+              Regali che lasciano il segno.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <a
                 href="#produits"
                 className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-rose-custom text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all duration-300 shadow-xl text-sm md:text-base"
               >
-                Explorer la Collection
+                Esplora la Collezione
                 <svg className="w-4 h-4 md:w-5 md:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
@@ -161,7 +161,7 @@ export default function BoutiqueContent() {
                 href="#occasions"
                 className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 transition-all duration-300 border border-white/30 text-sm md:text-base"
               >
-                Idées Cadeaux
+                Idee Regalo
               </a>
             </div>
           </motion.div>
@@ -176,7 +176,7 @@ export default function BoutiqueContent() {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-rose-custom rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-textDark">
-                  {filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
+                  {filteredProducts.length} prodotto{filteredProducts.length > 1 ? 's' : ''} trovato{filteredProducts.length > 1 ? 's' : ''}
                 </span>
               </div>
               
@@ -187,7 +187,7 @@ export default function BoutiqueContent() {
                   className={`p-2 rounded transition-colors ${
                     viewMode === 'grid' ? 'bg-white shadow-sm text-rose-custom' : 'text-gray-600 hover:text-textDark'
                   }`}
-                  title="Vue grille"
+                  title="Vista griglia"
                 >
                   <Grid className="w-4 h-4" />
                 </button>
@@ -196,7 +196,7 @@ export default function BoutiqueContent() {
                   className={`p-2 rounded transition-colors ${
                     viewMode === 'list' ? 'bg-white shadow-sm text-rose-custom' : 'text-gray-600 hover:text-textDark'
                   }`}
-                  title="Vue liste"
+                  title="Vista elenco"
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -209,7 +209,7 @@ export default function BoutiqueContent() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Rechercher un produit..."
+                  placeholder="Cerca un prodotto..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose w-64"
@@ -222,10 +222,10 @@ export default function BoutiqueContent() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose"
               >
-                <option value="name">Trier par nom</option>
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="rating">Meilleures évaluations</option>
+                <option value="name">Ordina per nome</option>
+                <option value="price-asc">Prezzo crescente</option>
+                <option value="price-desc">Prezzo decrescente</option>
+                <option value="rating">Migliori valutazioni</option>
               </select>
 
               {/* Mobile Filter Button */}
@@ -234,7 +234,7 @@ export default function BoutiqueContent() {
                 className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg" style={{ backgroundColor: 'var(--rose)' }}
               >
                 <Filter className="w-4 h-4" />
-                <span>Filtres</span>
+                <span>Filtri</span>
               </button>
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function BoutiqueContent() {
           {/* Sidebar - Categories */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold text-textDark mb-4">Catégories</h3>
+              <h3 className="font-semibold text-textDark mb-4">Categorie</h3>
               <div className="space-y-2">
                 {categories.map((category) => (
                   <button
@@ -288,8 +288,8 @@ export default function BoutiqueContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-textDark mb-2">Aucun produit trouvé</h3>
-                <p className="text-gray-600">Essayez de modifier vos filtres pour voir plus de résultats.</p>
+                <h3 className="text-lg font-medium text-textDark mb-2">Nessun prodotto trovato</h3>
+                <p className="text-gray-600">Prova a modificare i tuoi filtri per vedere più risultati.</p>
               </div>
             ) : (
               <div className={`grid gap-6 ${
@@ -334,7 +334,7 @@ export default function BoutiqueContent() {
             
             <div className="p-6">
               <div className="mb-6">
-                <h4 className="font-medium text-textDark mb-4">Catégories</h4>
+                <h4 className="font-medium text-textDark mb-4">Categorie</h4>
                 <div className="space-y-2">
                   {categories.map((category) => (
                     <button
@@ -373,19 +373,19 @@ export default function BoutiqueContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-display font-bold text-textDark mb-4">
-              Idées Cadeaux par Occasion
+              Idee Regalo per Occasione
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Trouvez le cadeau parfait pour chaque moment spécial
+              Trova il regalo perfetto per ogni momento speciale
             </p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {[
-              { icon: Heart, title: 'Saint-Valentin', link: '/boutique?category=Saint-Valentin', color: 'from-pink-400 to-rose-500' },
-              { icon: Snowflake, title: 'Hiver', link: '/boutique?category=Hiver', color: 'from-blue-400 to-indigo-500' },
-              { icon: Gift, title: 'Anniversaire', link: '/occasions', color: 'from-purple-400 to-pink-500' },
-              { icon: Star, title: 'Remerciements', link: '/occasions', color: 'from-amber-400 to-orange-500' }
+              { icon: Heart, title: 'San Valentino', link: '/boutique?category=Saint-Valentin', color: 'from-pink-400 to-rose-500' },
+              { icon: Snowflake, title: 'Inverno', link: '/boutique?category=Hiver', color: 'from-blue-400 to-indigo-500' },
+              { icon: Gift, title: 'Compleanno', link: '/occasions', color: 'from-purple-400 to-pink-500' },
+              { icon: Star, title: 'Ringraziamenti', link: '/occasions', color: 'from-amber-400 to-orange-500' }
             ].map((occasion, index) => (
               <a
                 key={index}

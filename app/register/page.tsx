@@ -44,13 +44,13 @@ export default function Register() {
     setCheckingEmail(false);
 
     if (checkError) {
-      setError("Erreur lors de la vérification de l'email. Veuillez réessayer.");
+      setError("Errore durante la verifica dell'email. Riprova.");
       setLoading(false);
       return;
     }
 
     if (exists) {
-      setError("Cet email est déjà utilisé. Veuillez vous connecter ou utiliser un autre email.");
+      setError("Questa email è già utilizzata. Accedi o usa un'altra email.");
       setLoading(false);
       return;
     }
@@ -108,7 +108,7 @@ export default function Register() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-all"
-                placeholder="Jean Dupont"
+                placeholder="Mario Rossi"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function Register() {
             {checkingEmail ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Vérification de l'email...
+                Verifica dell'email...
               </>
             ) : loading ? (
               <>
@@ -240,7 +240,7 @@ export default function Register() {
             className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3"
           >
             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-blue-700 text-sm">Vérification de la disponibilité de l'email...</p>
+            <p className="text-blue-700 text-sm">Verifica della disponibilità dell'email...</p>
           </motion.div>
         )}
 

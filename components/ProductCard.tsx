@@ -49,7 +49,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       <div className="absolute top-3 left-3 z-10">
         {product.oldPrice && product.oldPrice > product.price && (
           <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-            Promo -{discount}%
+            Offerta -{discount}%
           </span>
         )}
         {product.badge && !product.oldPrice && (
@@ -82,7 +82,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
         <Link href={`/boutique/${product.slug}`} className="block w-full h-full">
           {imageError ? (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-gray-500 text-sm">Image non disponible</span>
+              <span className="text-gray-500 text-sm">Immagine non disponibile</span>
             </div>
           ) : (
             <img
@@ -113,7 +113,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center space-x-2"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Ajouter au panier</span>
+            <span>Aggiungi al carrello</span>
           </button>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             {product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description}
           </p>
           <Link href={`/boutique/${product.slug}`} className="text-xs text-rose-custom hover:text-rose-custom/80 font-medium mt-1 transition-colors flex items-center gap-1">
-            Voir plus 
+            Vedi più 
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

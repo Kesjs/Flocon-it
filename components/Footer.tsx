@@ -12,40 +12,40 @@ export default function Footer() {
               Newsletter
             </h3>
             <p className="text-gray-300 mb-4">
-              Recevez nos dernières nouveautés et offres exclusives
+              Ricevi le nostre ultime novità e offerte esclusive
             </p>
             <form className="flex gap-2">
               <input
                 type="email"
-                placeholder="Votre email"
+                placeholder="La tua email"
                 className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/40"
               />
               <button
                 type="submit"
                 className="px-6 py-2 bg-rose-custom rounded-lg hover:bg-opacity-90 transition-colors font-medium"
               >
-                S'inscrire
+                Iscriviti
               </button>
             </form>
           </div>
 
           {/* Liens légaux */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Informations</h3>
+            <h3 className="text-xl font-display font-bold mb-4">Informazioni</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/cgv" className="text-gray-300 hover:text-white transition-colors">
-                  CGV
+                  Termini e Condizioni
                 </Link>
               </li>
               <li>
                 <Link href="/mentions-legales" className="text-gray-300 hover:text-white transition-colors">
-                  Mentions légales
+                  Note legali
                 </Link>
               </li>
               <li>
                 <Link href="/politique-confidentialite" className="text-gray-300 hover:text-white transition-colors">
-                  Politique de confidentialité
+                  Politica sulla privacy
                 </Link>
               </li>
               <li>
@@ -58,7 +58,7 @@ export default function Footer() {
 
           {/* Réseaux sociaux */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Suivez-nous</h3>
+            <h3 className="text-xl font-display font-bold mb-4">Seguici</h3>
             <div className="flex gap-4">
               <a
                 href="#"
@@ -93,7 +93,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-gray-300">
-          <p>&copy; 2026 Flocon. Tous droits réservés.</p>
+          <p>&copy; 2026 Flocon. Tutti i diritti riservati.</p>
         </div>
       </div>
     </footer>

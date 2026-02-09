@@ -65,7 +65,7 @@ export default function Header() {
               >
                 <Link href="/#collection-hiver" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    L'Art du Cocooning
+                    L'arte del Cocooning
                     <motion.div 
                       className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
                       style={{ backgroundColor: 'var(--rose)' }}
@@ -83,7 +83,7 @@ export default function Header() {
               >
                 <Link href="/#collection-valentin" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    Flocons de Tendresse
+                    Fiocchi di Tenerezza
                     <motion.div 
                       className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
                       style={{ backgroundColor: 'var(--rose)' }}
@@ -101,7 +101,7 @@ export default function Header() {
               >
                 <Link href="/boutique" className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group">
                   <span className="relative">
-                    Boutique
+                    Negozio
                     <motion.div 
                       className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
                       style={{ backgroundColor: 'var(--rose)' }}
@@ -131,7 +131,7 @@ export default function Header() {
                 </motion.div>
                 <input
                   type="text"
-                  placeholder="Rechercher..."
+                  placeholder="Cerca..."
                   className="ml-2 bg-transparent border-none outline-none text-sm w-32 group-hover:w-40 transition-all duration-300"
                 />
               </motion.div>
@@ -199,7 +199,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Settings className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Tableau de bord</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Pannello di controllo</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -213,7 +213,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Package className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Mes commandes</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">I miei ordini</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -227,7 +227,7 @@ export default function Header() {
                                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                   <Heart className="w-4 h-4 text-gray-600" />
                                 </div>
-                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">Ma wishlist</span>
+                                <span className="text-textDark group-hover:text-rose-custom-custom transition-colors">La mia wishlist</span>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-400" />
                             </Link>
@@ -245,7 +245,7 @@ export default function Header() {
                               <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
                                 <LogOut className="w-4 h-4 text-red-600" />
                               </div>
-                              <span className="text-red-600 group-hover:text-red-700 transition-colors">Déconnexion</span>
+                              <span className="text-red-600 group-hover:text-red-700 transition-colors">Disconnessione</span>
                             </button>
                           </div>
                         </motion.div>
@@ -261,7 +261,7 @@ export default function Header() {
                       transition={{ duration: 0.2 }}
                     >
                       <User className="w-4 h-4" />
-                      <span className="text-sm font-medium">Se connecter</span>
+                      <span className="text-sm font-medium">Accedi</span>
                     </motion.button>
                   </Link>
                 )}
@@ -347,7 +347,7 @@ export default function Header() {
                     </Link>
                   </motion.div>
                   
-                  {["L'Art du Cocooning", "Flocons de Tendresse", "Boutique"].map((item, index) => (
+                  {["L'arte del Cocooning", "Fiocchi di Tenerezza", "Negozio"].map((item, index) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -355,7 +355,7 @@ export default function Header() {
                       transition={{ duration: 0.2, delay: index * 0.1 }}
                     >
                       <Link
-                        href={item === "L'Art du Cocooning" ? "/#collection-hiver" : item === "Flocons de Tendresse" ? "/#collection-valentin" : "/boutique"}
+                        href={item === "L'arte del Cocooning" ? "/#collection-hiver" : item === "Fiocchi di Tenerezza" ? "/#collection-valentin" : "/boutique"}
                         onClick={() => setIsMenuOpen(false)}
                         className="text-textDark hover:text-rose-custom-custom transition-all duration-300 font-medium relative group block py-2"
                       >
@@ -382,7 +382,7 @@ export default function Header() {
                     <Search className="w-4 h-4 text-gray-600 group-hover:text-rose-custom-custom transition-colors duration-200" />
                     <input
                       type="text"
-                      placeholder="Rechercher..."
+                      placeholder="Cerca..."
                       className="ml-2 bg-transparent border-none outline-none text-sm flex-1 group-hover:w-40 transition-all duration-300"
                     />
                   </motion.div>

@@ -88,7 +88,7 @@ export default function HomePage() {
               className="text-3xl md:text-5xl lg:text-7xl font-display font-bold mb-4 md:mb-6 leading-tight will-change-transform"
               style={{ transform: 'translateZ(0)' }}
             >
-              L'amour mérite <br className="md:hidden" />un écrin à sa mesure.
+              L'amore merita una cornice su misura.
             </motion.h1>
 
             <motion.p
@@ -98,7 +98,7 @@ export default function HomePage() {
               className="text-base md:text-xl lg:text-2xl mb-6 md:mb-16 font-light leading-relaxed will-change-transform"
               style={{ transform: 'translateZ(0)' }}
             >
-              Ne lui offrez pas juste un objet,<br className="md:hidden" />offrez-lui le souvenir d'une attention inoubliable.
+              Non offrirle solo un oggetto,<br className="md:hidden" />offrile il ricordo di un'attenzione indimenticabile.
             </motion.p>
 
             {/* Bouton uniquement sur mobile */}
@@ -118,7 +118,7 @@ export default function HomePage() {
                   boxShadow: '0 4px 15px rgba(219, 39, 119, 0.2)' 
                 }}
               >
-                Découvrir
+                Scopri
               </motion.a>
             </motion.div>
 
@@ -139,7 +139,7 @@ export default function HomePage() {
                   boxShadow: '0 4px 15px rgba(219, 39, 119, 0.2)' 
                 }}
               >
-                Découvrir
+                Scopri
               </motion.a>
             </motion.div>
           </div>
@@ -202,13 +202,13 @@ export default function HomePage() {
             className="text-2xl md:text-3xl font-black mb-4 md:mb-6 drop-shadow-lg"
             style={{ fontFamily: 'Georgia, serif' }}
           >
-            Parce que chaque moment mérite d'être célébré
+            Perché ogni momento merita di essere celebrato
           </motion.h3>
           <p className="text-base md:text-lg font-light leading-relaxed mb-3">
-            Un cadeau n'est jamais qu'un simple objet.
+            Un regalo non è mai solo un semplice oggetto.
           </p>
           <p className="text-sm md:text-base font-medium leading-relaxed">
-            C'est un sourire, une émotion, un souvenir qui restera gravé dans les cœurs.
+            È un sorriso, un'emozione, un ricordo che rimarrà impresso nei cuori.
           </p>
         </div>
       </motion.div>
@@ -230,7 +230,7 @@ export default function HomePage() {
           />
         </div>
         <div className="absolute bottom-6 left-6 right-6 text-white text-center">
-          <h4 className="text-lg md:text-xl font-semibold mb-2">La joie de donner</h4>
+          <h4 className="text-lg md:text-xl font-semibold mb-2">La gioia di dare</h4>
         </div>
       </motion.div>
 
@@ -251,7 +251,7 @@ export default function HomePage() {
           />
         </div>
         <div className="absolute bottom-6 left-6 right-6 text-white text-center">
-          <h4 className="text-lg md:text-xl font-semibold mb-2">Le bonheur de recevoir</h4>
+          <h4 className="text-lg md:text-xl font-semibold mb-2">La felicità di ricevere</h4>
         </div>
       </motion.div>
     </div>
@@ -259,7 +259,7 @@ export default function HomePage() {
     <div className="bg-white rounded-3xl p-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-textDark mb-4">
-          Saisir l'instant, offrir l'inoubliable
+          Cattura l'istante, offri l'indimenticabile
         </h2>
       </div>
 
@@ -271,14 +271,14 @@ export default function HomePage() {
           >
             {/* 8 cartes au total dans une seule ligne */}
             {[
-              { icon: Heart, title: "Saint-Valentin pour Lui", color: "text-rose-500" },
-              { icon: Heart, title: "Saint-Valentin pour Elle", color: "text-pink-500" },
-              { icon: Cake, title: "Anniversaire", color: "text-purple-500" },
-              { icon: Flower2, title: "Nouveau Né", color: "text-blue-500" },
-              { icon: TreePine, title: "Noël", color: "text-green-600" },
-              { icon: Flower2, title: "Fête des Mères", color: "text-pink-500" },
-              { icon: Heart, title: "Remerciement", color: "text-amber-500" },
-              { icon: Gift, title: "Cadeau Surprise", color: "text-indigo-500" }
+              { icon: Heart, title: "San Valentino per Lui", color: "text-rose-500" },
+              { icon: Heart, title: "San Valentino per Lei", color: "text-pink-500" },
+              { icon: Cake, title: "Compleanno", color: "text-purple-500" },
+              { icon: Flower2, title: "Nato Recentemente", color: "text-blue-500" },
+              { icon: TreePine, title: "Natale", color: "text-green-600" },
+              { icon: Flower2, title: "Festa della Mamma", color: "text-pink-500" },
+              { icon: Heart, title: "Ringraziamento", color: "text-amber-500" },
+              { icon: Gift, title: "Regalo Sorpresa", color: "text-indigo-500" }
             ].map((moment, index) => (
               <div key={index} className="w-full md:w-1/4 flex-shrink-0 p-6 rounded-3xl bg-white border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
                 <div className="flex flex-col items-center text-center">
@@ -312,7 +312,7 @@ export default function HomePage() {
       {/* Bouton Explorer centré en dehors des cartes */}
       <div className="flex justify-center mt-8">
         <Link href="/occasions" className="bg-rose-custom text-white px-8 py-3 font-medium transition-colors duration-200 hover:bg-opacity-90">
-          Explorer tous les moments
+          Esplora tutti i momenti
         </Link>
       </div>
     </div>
@@ -323,7 +323,7 @@ export default function HomePage() {
       <section className="bg-white py-12 border-b">
         <div className="max-w-7xl mx-auto px-4">
           <div id="collection-hiver" className="mb-16">
-            <h2 className="text-4xl font-display font-bold text-textDark mb-12 text-center">L'Art du Cocooning</h2>
+            <h2 className="text-4xl font-display font-bold text-textDark mb-12 text-center">L'arte del Cocooning</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {hiverProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -331,7 +331,7 @@ export default function HomePage() {
             </div>
           </div>
           <div id="collection-valentin">
-            <h2 className="text-4xl font-display font-bold text-textDark mb-12 text-center">Flocons de Tendresse</h2>
+            <h2 className="text-4xl font-display font-bold text-textDark mb-12 text-center">Fiocchi di Tenerezza</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {valentinProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -361,16 +361,16 @@ export default function HomePage() {
       {/* Partie Droite - Texte avec Fond Rose */}
       <div className="w-full md:w-1/2  p-12 md:p-20 flex flex-col justify-center">
         <h2 className="text-3xl md:text-4xl font-bold text-rose-900 mb-8 leading-tight">
-          Transformez vos Souvenirs en Cadeaux Uniques
+          Trasforma i tuoi Ricordi in Regali Unici
         </h2>
         
         <p className="text-rose-950 text-lg md:text-xl leading-relaxed mb-6">
-          Ajoutez vos photos, vos messages et créez des présents qui marquent les esprits. 
-          Chaque détail compte pour rendre votre cadeau inoubliable.
+          Aggiungi le tue foto, i tuoi messaggi e crea regali che lasciano il segno. 
+          Ogni dettaglio conta per rendere il tuo regalo indimenticabile.
         </p>
         
         <p className="text-rose-900/80 text-base md:text-lg leading-relaxed">
-          L'art de la personnalisation Flocon : simple, élégant et profondément personnel.
+          L'arte della personalizzazione Flocon: semplice, elegante e profondamente personale.
         </p>
       </div>
     </div>
@@ -381,7 +381,7 @@ export default function HomePage() {
         href="/boutique/personnalise"
         className="inline-flex items-center px-8 py-3 bg-rose-custom text-white text-lg font-bold rounded-sm hover:bg-rose-700 transition-all duration-300 shadow-xl"
       >
-        Commencer à Personnaliser
+        Inizia a Personalizzare
         <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
@@ -404,10 +404,10 @@ export default function HomePage() {
     >
       <div className="text-center mb-12">
         <h2 className="text-3xl lg:text-4xl font-display font-black text-textDark mb-4">
-          Faites que les gens se sentent spéciaux
+          Fai sentire le persone speciali
         </h2>
         <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-          Découvrez comment nos créations transforment les moments ordinaires en souvenirs extraordinaires.
+          Scopri come le nostre creazioni trasformano i momenti ordinari in ricordi straordinari.
         </p>
       </div>
     </motion.div>
@@ -437,15 +437,15 @@ export default function HomePage() {
           </div>
           
           <h3 className="text-2xl font-display font-bold text-textDark mb-4">
-            Plus de 10 millions de moments spéciaux
+            Oltre 10 milioni di momenti speciali
           </h3>
           
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Rejoignez les milliers de clients qui ont fait confiance à Flocon pour célébrer leurs plus beaux moments.
+            Unisciti ai migliaia di clienti che hanno fidato in Flocon per celebrare i loro momenti più belli.
           </p>
           
           <Link href="#" className="text-rose-custom hover:text-rose-custom/80 font-medium transition-colors inline-flex items-center gap-1">
-            Lire plus de commentaires
+            Leggi più commenti
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
@@ -463,32 +463,32 @@ export default function HomePage() {
             {
               name: "Sophie",
               rating: 5,
-              text: "Le plaid 'Nuage' est incroyablement doux ! Je m'enveloppe à l'intérieur chaque soir.",
+              text: "Il plaid 'Nuvola' è incredibilmente morbido! Mi avvolgo dentro ogni sera.",
             },
             {
               name: "Thomas",
               rating: 5,
-              text: "J'ai offert le bijou 'Fiocco' à ma compagne. Elle a beaucoup aimé ! Service impeccable !",
+              text: "Ho offerto il gioiello 'Fiocco' alla mia compagna. È piaciuta molto! Servizio impeccabile!",
             },
             {
               name: "Marie",
               rating: 5,
-              text: "La bougie 'Crepitio' crée une atmosphère magique ! Parfait pour nos soirées cocooning.",
+              text: "La candela 'Crepitio' crea un'atmosfera magica! Perfetto per le nostre serate cocooning.",
             },
             {
               name: "Lucas",
               rating: 5,
-              text: "Excellente qualité et livraison rapide. Les cadeaux Flocon sont toujours parfaits !",
+              text: "Eccellente qualità e consegna rapida. I regali Flocon sono sempre perfetti!",
             },
             {
               name: "Emma",
               rating: 5,
-              text: "J'adore le design élégant et la attention aux détails. C'est devenu ma boutique référence !",
+              text: "Adoro il design elegante e l'attenzione ai dettagli. È diventato il mio negozio di riferimento!",
             },
             {
               name: "Nicolas",
               rating: 5,
-              text: "Service client exceptionnel et produits magnifiques. Je recommande vivement !",
+              text: "Servizio clienti eccezionale e prodotti magnifici. Consiglio vivamente!",
             },
           ].map((testimonial, index) => (
             <motion.div
