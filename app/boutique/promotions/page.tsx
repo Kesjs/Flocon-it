@@ -198,10 +198,10 @@ export default function PromotionsPage() {
         >
           <div className="flex flex-wrap justify-center gap-3">
             {[
-              { label: "Meilleures réductions", filter: "best" },
-              { label: "Moins de 20€", filter: "under20" },
-              { label: "Saint-Valentin", filter: "valentin" },
-              { label: "Nouveautés", filter: "new" }
+              { label: "Migliori sconti", filter: "best" },
+              { label: "Meno di 20€", filter: "under20" },
+              { label: "San Valentino", filter: "valentin" },
+              { label: "Novità", filter: "new" }
             ].map((filter, index) => (
               <button
                 key={index}
@@ -222,20 +222,20 @@ export default function PromotionsPage() {
         >
           <div className="flex items-center justify-center gap-2 text-rose-800 mb-3">
             <Clock className="w-5 h-5" />
-            <h3 className="font-bold text-xl">OFFRES LIMITÉES - TERMINE DANS :</h3>
+            <h3 className="font-bold text-xl">OFFERTE LIMITATE - TERMINA TRA:</h3>
           </div>
           <div className="flex justify-center gap-4 text-center">
             <div className="bg-rose-custom text-white rounded-lg p-4 min-w-[80px]">
               <div className="text-2xl font-black">23</div>
-              <div className="text-xs">HEURES</div>
+              <div className="text-xs">ORE</div>
             </div>
             <div className="bg-rose-custom text-white rounded-lg p-4 min-w-[80px]">
               <div className="text-2xl font-black">45</div>
-              <div className="text-xs">MINUTES</div>
+              <div className="text-xs">MINUTI</div>
             </div>
             <div className="bg-rose-custom text-white rounded-lg p-4 min-w-[80px]">
               <div className="text-2xl font-black">12</div>
-              <div className="text-xs">SECONDES</div>
+              <div className="text-xs">SECONDI</div>
             </div>
           </div>
         </motion.div>
@@ -307,18 +307,18 @@ export default function PromotionsPage() {
           {[
             {
               icon: Truck,
-              title: "Livraison offerte",
-              description: "Pour toute commande supérieure à 50€ en promotion"
+              title: "Spedizione gratuita",
+              description: "Per ogni ordine superiore a 50€ in promozione"
             },
             {
               icon: RotateCcw,
-              title: "Satisfait ou remboursé",
-              description: "30 jours pour changer d'avis sur vos achats promo"
+              title: "Soddisfatti o rimborsati",
+              description: "30 giorni per cambiare idea sui tuoi acquisti in promozione"
             },
             {
               icon: Gift,
-              title: "Cadeau surprise",
-              description: "Un petit cadeau offert avec chaque commande promotionnelle"
+              title: "Regalo sorpresa",
+              description: "Un piccolo regalo offerto con ogni ordine promozionale"
             }
           ].map((advantage, index) => (
             <div key={index} className="bg-white rounded-lg p-6 text-center">
@@ -338,18 +338,18 @@ export default function PromotionsPage() {
           transition={{ delay: 0.7 }}
           className="mt-12 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-8 text-center"
         >
-          <h3 className="text-xl font-bold text-textDark mb-4">Ne manquez aucune promotion !</h3>
+          <h3 className="text-xl font-bold text-textDark mb-4">Non perderti nessuna promozione!</h3>
           <p className="text-gray-700 mb-6">
-            Inscrivez-vous à notre newsletter et recevez les meilleures offres en avant-première.
+            Iscriviti alla nostra newsletter e ricevi le migliori offerte in anteprima.
           </p>
           <div className="max-w-md mx-auto flex gap-3">
             <input
               type="email"
-              placeholder="Votre email..."
+              placeholder="La tua email..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-custom"
             />
             <button className="bg-rose-custom text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
-              S'inscrire
+              Iscriviti
             </button>
           </div>
         </motion.div>

@@ -18,26 +18,26 @@ interface OrderStep {
 const steps: OrderStep[] = [
   {
     id: "confirmed",
-    label: "Commande confirmée",
-    description: "Votre commande a été reçue",
+    label: "Ordine confermato",
+    description: "Il tuo ordine è stato ricevuto",
     icon: CheckCircle2,
   },
   {
     id: "preparing",
-    label: "En préparation",
-    description: "Votre commande est en cours de préparation",
+    label: "In preparazione",
+    description: "Il tuo ordine è in preparazione",
     icon: Package,
   },
   {
     id: "shipped",
-    label: "Expédiée",
-    description: "Votre commande a été expédiée",
+    label: "Spedita",
+    description: "Il tuo ordine è stato spedito",
     icon: Truck,
   },
   {
     id: "delivered",
-    label: "Livrée",
-    description: "Votre commande a été livrée",
+    label: "Consegnata",
+    description: "Il tuo ordine è stato consegnato",
     icon: Home,
   },
 ];

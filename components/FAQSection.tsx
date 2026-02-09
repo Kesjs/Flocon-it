@@ -15,43 +15,43 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     id: "1",
-    question: "Quels sont les délais de livraison ?",
-    answer: "Nous livrons en 3-5 jours ouvrables pour la France métropolitaine. Les commandes passées avant 14h sont expédiées le jour même.",
+    question: "Quali sono i tempi di consegna?",
+    answer: "Consegnamo in 3-5 giorni lavorativi per l'Italia. Gli ordini effettuati prima delle 14h vengono spediti lo stesso giorno.",
     icon: Truck,
     category: "livraison"
   },
   {
     id: "2", 
-    question: "Puis-je personnaliser mon cadeau ?",
-    answer: "Oui ! Nous proposons des options de personnalisation gravure, emballage cadeau et messages personnalisés. Contactez-nous pour les demandes spéciales.",
+    question: "Posso personalizzare il mio regalo?",
+    answer: "Sì! Offriamo opzioni di personalizzazione incisione, confezione regalo e messaggi personalizzati. Contattaci per richieste speciali.",
     icon: Gift,
     category: "personnalisation"
   },
   {
     id: "3",
-    question: "Quelle est votre politique de retour ?",
-    answer: "Vous avez 30 jours pour retourner un article non utilisé. Les cadeaux personnalisés ne peuvent être retournés que s'il y a un défaut de fabrication.",
+    question: "Qual è la vostra politica di reso?",
+    answer: "Hai 30 giorni per restituire un articolo non utilizzato. I regali personalizzati possono essere restituiti solo in caso di difetto di fabbricazione.",
     icon: Shield,
     category: "retours"
   },
   {
     id: "4",
-    question: "Quels moyens de paiement acceptez-vous ?",
-    answer: "Nous acceptons les cartes bancaires, PayPal, Apple Pay et Google Pay. Tous les paiements sont sécurisés via Stripe.",
+    question: "Quali metodi di pagamento accettate?",
+    answer: "Accettiamo carte di credito, PayPal, Apple Pay e Google Pay. Tutti i pagamenti sono sicuri tramite Stripe.",
     icon: CreditCard,
     category: "paiement"
   },
   {
     id: "5",
-    question: "Proposez-vous des cartes cadeaux ?",
-    answer: "Oui ! Nos cartes cadeaux sont disponibles de 20€ à 500€. Elles sont valables 1 an sur tout le site et peuvent être utilisées en plusieurs fois.",
+    question: "Offrite buoni regalo?",
+    answer: "Sì! I nostri buoni regalo sono disponibili da 20€ a 500€. Sono validi 1 anno su tutto il sito e possono essere utilizzati più volte.",
     icon: Gift,
     category: "cadeaux"
   },
   {
     id: "6",
-    question: "Comment suivre ma commande ?",
-    answer: "Vous recevrez un email de confirmation avec un numéro de suivi dès l'expédition. Vous pouvez suivre votre commande en temps réel sur notre site.",
+    question: "Come seguire il mio ordine?",
+    answer: "Riceverai un'email di conferma con un numero di tracking non appena spedito. Puoi seguire il tuo ordine in tempo reale sul nostro sito.",
     icon: Clock,
     category: "suivi"
   }
@@ -62,13 +62,13 @@ export default function FAQSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>("tous");
 
   const categories = [
-    { id: "tous", name: "Toutes les questions", count: faqData.length },
-    { id: "livraison", name: "Livraison", count: faqData.filter(item => item.category === "livraison").length },
-    { id: "personnalisation", name: "Personnalisation", count: faqData.filter(item => item.category === "personnalisation").length },
-    { id: "retours", name: "Retours", count: faqData.filter(item => item.category === "retours").length },
-    { id: "paiement", name: "Paiement", count: faqData.filter(item => item.category === "paiement").length },
-    { id: "cadeaux", name: "Cartes Cadeaux", count: faqData.filter(item => item.category === "cadeaux").length },
-    { id: "suivi", name: "Suivi", count: faqData.filter(item => item.category === "suivi").length }
+    { id: "tous", name: "Tutte le domande", count: faqData.length },
+    { id: "livraison", name: "Consegna", count: faqData.filter(item => item.category === "livraison").length },
+    { id: "personnalisation", name: "Personalizzazione", count: faqData.filter(item => item.category === "personnalisation").length },
+    { id: "retours", name: "Resi", count: faqData.filter(item => item.category === "retours").length },
+    { id: "paiement", name: "Pagamento", count: faqData.filter(item => item.category === "paiement").length },
+    { id: "cadeaux", name: "Buoni Regalo", count: faqData.filter(item => item.category === "cadeaux").length },
+    { id: "suivi", name: "Tracciamento", count: faqData.filter(item => item.category === "suivi").length }
   ];
 
   const filteredFAQ = selectedCategory === "tous" 

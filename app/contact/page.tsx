@@ -32,11 +32,11 @@ export default function Contact() {
       <div className="max-w-6xl mx-auto py-12">
         <div className="max-w-6xl mx-auto py-12">
           <h1 className="text-4xl md:text-5xl font-display font-bold text-textDark mb-4">
-            Contactez-nous
+            Contattaci
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Notre équipe est à votre disposition pour répondre à toutes vos questions 
-            et vous accompagner dans votre expérience Flocon.
+            Il nostro team è a tua disposizione per rispondere a tutte le tue domande 
+            e accompagnarti nella tua esperienza Flocon.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function Contact() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-32">
               <h2 className="text-2xl font-display font-semibold text-textDark mb-6">
-                Contact direct
+                Contatto diretto
               </h2>
               
               <div className="space-y-6">
@@ -56,7 +56,7 @@ export default function Contact() {
                   <div>
                     <p className="font-medium text-textDark">Email</p>
                     <p className="text-gray-600">contact@flocon.fr</p>
-                    <p className="text-sm text-gray-500">Réponse sous 24h</p>
+                    <p className="text-sm text-gray-500">Risposta entro 24h</p>
                   </div>
                 </div>
 
@@ -65,8 +65,8 @@ export default function Contact() {
                     <Phone className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Téléphone</p>
-                    <p className="text-gray-600">+33 (0)1 23 45 67 89</p>
+                    <p className="font-medium text-textDark">Telefono</p>
+                    <p className="text-gray-600">+39 01 23 45 67 89</p>
                     <p className="text-sm text-gray-500">Lun-Ven: 9h-18h</p>
                   </div>
                 </div>
@@ -76,12 +76,12 @@ export default function Contact() {
                     <MapPin className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Boutique</p>
+                    <p className="font-medium text-textDark">Negozio</p>
                     <p className="text-gray-600">
-                      123 Rue de la Mode<br />
-                      75001 Paris, France
+                      123 Via della Moda<br />
+                      00100 Roma, Italia
                     </p>
-                    <p className="text-sm text-gray-500">Ouvert tous les jours</p>
+                    <p className="text-sm text-gray-500">Aperto tutti i giorni</p>
                   </div>
                 </div>
 
@@ -90,11 +90,11 @@ export default function Contact() {
                     <Clock className="w-6 h-6 text-rose-custom" />
                   </div>
                   <div>
-                    <p className="font-medium text-textDark">Horaires</p>
+                    <p className="font-medium text-textDark">Orari</p>
                     <p className="text-gray-600">
-                      Lundi-Vendredi: 9h-19h<br />
-                      Samedi: 10h-18h<br />
-                      Dimanche: 11h-17h
+                      Lunedì-Venerdì: 9h-19h<br />
+                      Sabato: 10h-18h<br />
+                      Domenica: 11h-17h
                     </p>
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function Contact() {
 
               {/* Réseaux sociaux */}
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="font-medium text-textDark mb-4">Suivez-nous</h3>
+                <h3 className="font-medium text-textDark mb-4">Seguici</h3>
                 <div className="flex gap-3">
                   <a href="#" className="p-2 bg-gray-100 rounded-lg hover:bg-rose-custom hover:text-white transition-colors">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ export default function Contact() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-display font-semibold text-textDark mb-6">
-                Envoyer un message
+                Invia un messaggio
               </h2>
               
               {isSubmitted ? (
@@ -140,10 +140,10 @@ export default function Contact() {
                     <Send className="w-12 h-12 text-green-600" />
                   </div>
                   <h3 className="text-lg font-semibold text-green-800 mb-2">
-                    Message envoyé !
+                    Messaggio inviato!
                   </h3>
                   <p className="text-green-700">
-                    Nous vous répondrons dès que possible.
+                    Ti risponderemo il prima possibile.
                   </p>
                 </div>
               ) : (
@@ -151,7 +151,7 @@ export default function Contact() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-textDark mb-2">
-                        Nom complet *
+                        Nome completo *
                       </label>
                       <input
                         type="text"
@@ -161,7 +161,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-colors"
-                        placeholder="Jean Dupont"
+                        placeholder="Mario Rossi"
                       />
                     </div>
                     <div>
@@ -176,14 +176,14 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-colors"
-                        placeholder="jean.dupont@email.com"
+                        placeholder="mario.rossi@email.com"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-textDark mb-2">
-                      Sujet *
+                      Oggetto *
                     </label>
                     <select
                       id="subject"
@@ -193,18 +193,18 @@ export default function Contact() {
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-colors"
                     >
-                      <option value="">Choisissez un sujet</option>
-                      <option value="commande">Question sur une commande</option>
-                      <option value="produit">Informations sur un produit</option>
-                      <option value="retour">Demande de retour</option>
-                      <option value="partenariat">Partenariat</option>
-                      <option value="autre">Autre</option>
+                      <option value="">Scegli un argomento</option>
+                      <option value="commande">Domanda su un ordine</option>
+                      <option value="produit">Informazioni su un prodotto</option>
+                      <option value="retour">Richiesta di reso</option>
+                      <option value="partenariat">Partenariato</option>
+                      <option value="altro">Altro</option>
                     </select>
                   </div>
 
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-textDark mb-2">
-                      Message *
+                      Messaggio *
                     </label>
                     <textarea
                       id="message"
@@ -214,7 +214,7 @@ export default function Contact() {
                       required
                       rows={6}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose focus:border-transparent outline-none transition-colors resize-none"
-                      placeholder="Décrivez votre demande en détail..."
+                      placeholder="Descrivi la tua richiesta in dettaglio..."
                     />
                   </div>
 
@@ -226,9 +226,9 @@ export default function Contact() {
                       className="mt-1 w-4 h-4 text-rose-custom focus:ring-rose border-gray-300 rounded"
                     />
                     <label htmlFor="consent" className="text-sm text-gray-600">
-                      J'accepte que mes données soient traitées en conformité avec la 
+                      Accetto che i miei dati siano trattati in conformità con la 
                       <Link href="/politique-confidentialite" className="text-rose-custom hover:underline ml-1">
-                        politique de confidentialité
+                        politica sulla privacy
                       </Link>
                     </label>
                   </div>
@@ -238,30 +238,30 @@ export default function Contact() {
                     className="w-full bg-rose-custom text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
                   >
                     <Send className="w-5 h-5" />
-                    Envoyer le message
+                    Invia il messaggio
                   </button>
                 </form>
               )}
 
               {/* Informations supplémentaires */}
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="font-medium text-textDark mb-4">Autres moyens de contact</h3>
+                <h3 className="font-medium text-textDark mb-4">Altri mezzi di contatto</h3>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="font-medium text-gray-700">Service client</p>
-                    <p className="text-gray-600">support@flocon.fr</p>
+                    <p className="font-medium text-gray-700">Servizio clienti</p>
+                    <p className="text-gray-600">support@flocon.it</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Réclamations</p>
-                    <p className="text-gray-600">reclamations@flocon.fr</p>
+                    <p className="font-medium text-gray-700">Reclami</p>
+                    <p className="text-gray-600">reclami@flocon.it</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Presse</p>
-                    <p className="text-gray-600">presse@flocon.fr</p>
+                    <p className="font-medium text-gray-700">Stampa</p>
+                    <p className="text-gray-600">stampa@flocon.it</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Partenariats</p>
-                    <p className="text-gray-600">partenariats@flocon.fr</p>
+                    <p className="font-medium text-gray-700">Partenariati</p>
+                    <p className="text-gray-600">partenariati@flocon.it</p>
                   </div>
                 </div>
               </div>

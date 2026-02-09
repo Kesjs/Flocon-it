@@ -23,8 +23,8 @@ try {
 
 
 export const metadata: Metadata = {
-  title: "Flocon - E-commerce de qualité",
-  description: "Découvrez nos collections hivernales et de la Saint-Valentin",
+  title: "Flocon - E-commerce di qualità",
+  description: "Scopri le nostre collezioni invernali e di San Valentino",
   icons: {
     icon: [
       { url: '/logof.jpg', type: 'image/jpeg' }
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="it" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logof.jpg" type="image/jpeg" />
         <link rel="shortcut icon" href="/logof.jpg" />
